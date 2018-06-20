@@ -16,17 +16,19 @@ const styles = theme => ({
   })
 });
 
-function PaperSheet(props) {
-  const { classes } = props;
-  return (
-    <div>
-      <Paper className={classes.root} elevation={4}>
-        <Typography variant="headline" component="h3">
-          <JournalTextArea />
-        </Typography>
-      </Paper>
-    </div>
-  );
+class PaperSheet extends React.Component {
+  render() {
+    const { classes } = this.props;
+    return (
+      <div>
+        <Paper className={classes.root} elevation={4}>
+          <Typography variant="headline" component="h3">
+            <JournalTextArea url={this.props.url} />
+          </Typography>
+        </Paper>
+      </div>
+    );
+  }
 }
 
 PaperSheet.propTypes = {

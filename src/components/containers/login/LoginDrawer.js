@@ -8,11 +8,13 @@ import Drawer from "@material-ui/core/Drawer";
 import Button from "@material-ui/core/Button";
 import List from "@material-ui/core/List";
 import Divider from "@material-ui/core/Divider";
-// import { mailFolderListItems, otherMailFolderListItems } from "./tileData";
 
 const styles = theme => ({
   list: {
     width: 250
+  },
+  button: {
+    marginTop: theme.spacing.unit * 3
   },
   textField: {
     marginLeft: theme.spacing.unit * 3,
@@ -29,7 +31,8 @@ class TemporaryDrawer extends React.Component {
     right: false,
     username: "",
     password: "",
-    loginError: false
+    loginError: false,
+    signup: false
   };
 
   componentWillReceiveProps(nextProps) {
@@ -48,6 +51,38 @@ class TemporaryDrawer extends React.Component {
 
   handleLogin = e => {
     e.preventDefault();
+    this.authenticateUser();
+  };
+
+  handleSignup = e => {
+    e.preventDefault();
+    const headers = {
+      Accept: "application/json",
+      "Content-Type": "application/json"
+    };
+    const body = {
+      username: this.state.username,
+      password: this.state.password
+    };
+    fetch(`${this.props.url}/users`, {
+      method: "POST",
+      headers: headers,
+      body: JSON.stringify({ user: body })
+    })
+      .then(res => res.json())
+      .then(json => {
+        if (json.id !== null) {
+          this.authenticateUser();
+        } else {
+          this.setState({
+            loginError: true
+          });
+        }
+      });
+  };
+
+  //authenticates the User. Sets jwt token if authenticated and fetchs user and current user information, otherwise modifies state to produce error in renderLoginForm.
+  authenticateUser = () => {
     const headers = {
       Accept: "application/json",
       "Content-Type": "application/json"
@@ -65,7 +100,10 @@ class TemporaryDrawer extends React.Component {
       .then(json => {
         if (!json.error) {
           localStorage.setItem("token", json.jwt);
-          this.setState({ loginError: false });
+          this.setState({ loginError: false }, () => {
+            this.props.fetchUsersAndCurrentUser();
+            this.props.openLoginDrawer();
+          });
         } else {
           this.setState({
             loginError: true
@@ -74,110 +112,173 @@ class TemporaryDrawer extends React.Component {
       });
   };
 
-  render() {
-    const { classes } = this.props;
+  //if this.state.signup is true, a new user signup form is rendered. If false (default), a login form is rendered.  The forms are almost identical, with a few differences in methods called or Button labels.
+  renderLoginDrawer = classes => {
+    let loginOrSignupDrawer;
+    if (this.state.signup) {
+      loginOrSignupDrawer = (
+        <Grid align="center">
+          <Typography
+            variant="headline"
+            component="h3"
+            className={classes.typography}
+          >
+            Signup a New User
+          </Typography>
+          <form
+            className={classes.container}
+            noValidate
+            autoComplete="off"
+            onSubmit={e => this.handleSignup(e)}
+          >
+            {this.renderLoginForm(classes, "signup")}
+            <Button variant="raised" color="primary" type="submit">
+              Login
+            </Button>
+          </form>
 
-    const sideList = (
-      <Grid align="center">
-        <Typography
-          variant="headline"
-          component="h3"
-          className={classes.typography}
-        >
-          Login
-        </Typography>
-        <form
-          className={classes.container}
-          noValidate
-          autoComplete="off"
-          onSubmit={e => this.handleLogin(e)}
-        >
-          {this.state.loginError ? (
-            <Grid>
-              <Grid>
-                <TextField
-                  error
-                  id="existingUsername"
-                  label="Username"
-                  className={classes.textField}
-                  value={this.state.username}
-                  onChange={this.handleChange("existingUsername")}
-                  margin="normal"
-                />
-              </Grid>
-              <Grid>
-                <TextField
-                  error
-                  id="existingPassword"
-                  label="Password"
-                  className={classes.textField}
-                  value={this.state.password}
-                  type="password"
-                  onChange={this.handleChange("existingPassword")}
-                  margin="normal"
-                />
-              </Grid>
-              <Grid>
-                <Typography
-                  variant="subheading"
-                  component="h5"
-                  color="secondary"
-                >
-                  Username and/or Password Incorrect
-                </Typography>
-              </Grid>
-            </Grid>
-          ) : (
-            <Grid>
-              <Grid>
-                <TextField
-                  id="existingUsername"
-                  label="Username"
-                  className={classes.textField}
-                  value={this.state.username}
-                  onChange={this.handleChange("existingUsername")}
-                  margin="normal"
-                />
-              </Grid>
-
-              <Grid>
-                <TextField
-                  id="existingPassword"
-                  label="Password"
-                  className={classes.textField}
-                  value={this.state.password}
-                  type="password"
-                  onChange={this.handleChange("existingPassword")}
-                  margin="normal"
-                />
-              </Grid>
-            </Grid>
-          )}
           <Button
             variant="raised"
-            color="primary"
-            type="submit"
+            color="default"
             className={classes.button}
+            onClick={() => this.toggleSignup()}
+          >
+            Back to Login
+          </Button>
+        </Grid>
+      );
+    } else {
+      loginOrSignupDrawer = (
+        <Grid align="center">
+          <Typography
+            variant="headline"
+            component="h3"
+            className={classes.typography}
           >
             Login
+          </Typography>
+          <form
+            className={classes.container}
+            noValidate
+            autoComplete="off"
+            onSubmit={e => this.handleLogin(e)}
+          >
+            {this.renderLoginForm(classes, "login")}
+            <Button variant="raised" color="primary" type="submit">
+              Login
+            </Button>
+          </form>
+          <Button
+            variant="raised"
+            color="default"
+            className={classes.button}
+            onClick={() => this.toggleSignup()}
+          >
+            Create a New User
           </Button>
-        </form>
-      </Grid>
-    );
+        </Grid>
+      );
+    }
+    return loginOrSignupDrawer;
+  };
+
+  //renders input textfields with errors if a login or signup attempt has an error (if a username is already taken, or an incorrect username/password combo is attempted)
+  renderLoginForm = (classes, loginOrSignup) => {
+    let loginOrSignupForm;
+    if (this.state.loginError) {
+      loginOrSignupForm = (
+        <Grid>
+          <Grid>
+            <TextField
+              error
+              id="username"
+              label="Username"
+              className={classes.textField}
+              value={this.state.username}
+              onChange={this.handleChange("username")}
+              margin="normal"
+            />
+          </Grid>
+          <Grid>
+            <TextField
+              error
+              id="password"
+              label="Password"
+              className={classes.textField}
+              value={this.state.password}
+              type="password"
+              onChange={this.handleChange("password")}
+              margin="normal"
+            />
+          </Grid>
+          <Grid>
+            {loginOrSignup === "login" ? (
+              <Typography variant="subheading" component="h5" color="secondary">
+                Incorrect Username or Password
+              </Typography>
+            ) : (
+              <Typography variant="subheading" component="h5" color="secondary">
+                Username is already taken
+              </Typography>
+            )}
+          </Grid>
+        </Grid>
+      );
+    } else {
+      loginOrSignupForm = (
+        <Grid>
+          <Grid>
+            <TextField
+              id="username"
+              label="Username"
+              className={classes.textField}
+              value={this.state.username}
+              onChange={this.handleChange("username")}
+              margin="normal"
+            />
+          </Grid>
+          <Grid>
+            <TextField
+              id="password"
+              label="Password"
+              className={classes.textField}
+              value={this.state.password}
+              type="password"
+              onChange={this.handleChange("password")}
+              margin="normal"
+            />
+          </Grid>
+        </Grid>
+      );
+    }
+    return loginOrSignupForm;
+  };
+
+  //switches login and signup forms, and clears username/password state
+  toggleSignup = () => {
+    this.setState(prevState => {
+      return {
+        signup: !prevState.signup,
+        username: "",
+        password: "",
+        loginError: false
+      };
+    });
+  };
+
+  render() {
+    const { classes } = this.props;
 
     return (
       <div>
         <Drawer
           anchor="right"
           open={this.state.right}
-          onClose={() => this.props.openLoginDrawer()}
+          onClose={e => {
+            this.props.openLoginDrawer();
+          }}
         >
-          <div
-            onClick={() => this.props.openLoginDrawer()}
-            onKeyDown={() => this.props.openLoginDrawer()}
-          >
-            {sideList}
-          </div>
+          <div>{this.renderLoginDrawer(classes)}</div>
         </Drawer>
       </div>
     );

@@ -6,25 +6,26 @@ import MenuItem from "@material-ui/core/MenuItem";
 import TextField from "@material-ui/core/TextField";
 import Input from "@material-ui/core/Input";
 import Button from "@material-ui/core/Button";
+import ReactDOM from "react-dom";
 
 const styles = theme => ({
   submitButton: {
     margin: theme.spacing.unit,
     marginLeft: window.innerWidth / 6,
     flex: 1,
-    // marginRight: window.innerWidth / 6,
-    marginBottom: theme.spacing.unit * 2
-  },
-  loginButton: {
-    margin: theme.spacing.unit,
-
     marginRight: window.innerWidth / 6,
-    flex: 1,
-
-    // marginLeft: window.innerWidth / 6,
-    // marginRight: window.innerWidth / 6,
     marginBottom: theme.spacing.unit * 2
   },
+  // loginButton: {
+  //   margin: theme.spacing.unit,
+  //
+  //   marginRight: window.innerWidth / 6,
+  //   flex: 1,
+  //
+  //   // marginLeft: window.innerWidth / 6,
+  //   // marginRight: window.innerWidth / 6,
+  //   marginBottom: theme.spacing.unit * 2
+  // },
   title: theme.mixins.gutters({
     paddingTop: 16,
     paddingBottom: 16,
@@ -57,7 +58,8 @@ const styles = theme => ({
 class TextFields extends React.Component {
   state = {
     textTitle: "",
-    textArea: ""
+    textArea: "",
+    test: false
   };
 
   postJournalEntry = (user_id, title, content) => {
@@ -90,7 +92,6 @@ class TextFields extends React.Component {
   };
 
   render() {
-    console.log(window.innerHeight);
     const { classes } = this.props;
 
     return (
@@ -135,14 +136,6 @@ class TextFields extends React.Component {
             Submit
           </Button>
           <div style={{ flex: 6 }} />
-          <Button
-            variant="contained"
-            color="primary"
-            className={classes.loginButton}
-            onClick={() => this.props.openLoginDrawer()}
-          >
-            Login
-          </Button>
         </div>
       </div>
     );

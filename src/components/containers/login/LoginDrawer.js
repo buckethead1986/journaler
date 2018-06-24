@@ -36,7 +36,7 @@ class TemporaryDrawer extends React.Component {
   };
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps !== this.props) {
+    if (nextProps.loginDrawerOpen !== this.props.loginDrawerOpen) {
       this.setState({
         right: nextProps.loginDrawerOpen
       });

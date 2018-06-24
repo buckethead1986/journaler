@@ -46,10 +46,10 @@ class App extends Component {
                 {
                   currentUser: this.state.users.filter(user => {
                     return user.id === json.id;
-                  })
+                  })[0]
                 },
                 // () => console.log(this.state)
-                () => this.props.history.push(`/journaler/${json.id}`)
+                () => this.props.history.push(`/journaler`)
               );
             })
         )
@@ -156,14 +156,13 @@ class App extends Component {
             );
           }}
         />
-        {this.state.currentUser.length !== 0 ? (
+        {this.state.currentUser.id !== undefined ? (
           <Route
             exact
-            path="/journaler/:id"
+            path="/journaler/new"
             render={() => {
               return (
                 <div>
-                  <JournalTabs url={url} store={this.props.store} />
                   <JournalTextArea url={url} store={this.props.store} />
                 </div>
               );

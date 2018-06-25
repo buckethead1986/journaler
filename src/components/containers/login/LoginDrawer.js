@@ -83,6 +83,7 @@ class TemporaryDrawer extends React.Component {
 
   //authenticates the User. Sets jwt token if authenticated and fetchs user and current user information, otherwise modifies state to produce error in renderLoginForm.
   authenticateUser = () => {
+    console.log("authenticateUser");
     const headers = {
       Accept: "application/json",
       "Content-Type": "application/json"

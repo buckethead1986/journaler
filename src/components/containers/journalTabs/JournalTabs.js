@@ -2,18 +2,20 @@ import React from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
-// import Tooltip from "@material-ui/core/Tooltip";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import Typography from "@material-ui/core/Typography";
-// import PhoneIcon from "@material-ui/icons/Phone";
-// import CalendarToday from "@material-ui/icons/BugReport";
 import CheckBoxOutline from "@material-ui/icons/CheckBoxOutlineBlank";
 import CheckBox from "@material-ui/icons/CheckBox";
-import Paper from "@material-ui/core/Paper";
+import JournalPaper from "./JournalPaper";
+import { daysInEachMonth, getMonthWord } from "../Helper";
+// import { thisIsATest } from "../Helper";
+// import Paper from "@material-ui/core/Paper";
 
-let tabs = [];
-let tabContainers = {};
+let tabs = []; //array of tab data
+let tabContainers = {}; //data displayed for specific tabs
+let journalIndex; //location in journals array
+let valueCounter = 29; //links tab click to which tabContainer is displayed
 
 function TabContainer(props) {
   return (
@@ -30,8 +32,6 @@ TabContainer.propTypes = {
 const styles = theme => ({
   root: {
     flexGrow: 1,
-    // width: "100%",
-    // backgroundColor: theme.palette.background.paper
     backgroundColor: theme.palette.background.paper
   },
   // tabRoot: {
@@ -48,6 +48,7 @@ const styles = theme => ({
   //   }
   // },
   tabsRoot: {
+    // borderTop: "1px solid #e8e8e8",
     borderBottom: "1px solid #e8e8e8"
   },
   tabsIndicator: {
@@ -66,7 +67,7 @@ const styles = theme => ({
   // },
   tabRoot: {
     textTransform: "initial",
-    minWidth: 72,
+    minWidth: 50,
     // fontWeight: theme.typography.fontWeightRegular,
     // marginRight: theme.spacing.unit * 4,
     fontFamily: [
@@ -93,7 +94,6 @@ const styles = theme => ({
       color: "#40a9ff"
     }
   },
-  // tabSelected: {},
   typography: {
     padding: theme.spacing.unit * 3
   }
@@ -101,214 +101,205 @@ const styles = theme => ({
 
 class ScrollableTabsButtonAuto extends React.Component {
   state = {
-    value: 0, //change this to alter which tab you start on
+    value: 0,
     tabs: [],
+    journals: [],
     tabContainers: {}
   };
 
   handleChange = (event, value) => {
-    this.setState({ value, shownTab: value });
+    this.setState({ value });
   };
 
+  //upon created, add a 'date created attribute' for sorting over. 'yearmonthdayhourminutesecond' just for sorting purposes
   componentDidMount() {
-    console.log(this.props.currentUser);
-    let currentUser = this.props.currentUser;
-    debugger;
-    this.renderTabs(this.props.classes);
-    // this.renderTabsTest(this.props.classes);
+    // journals = this.props.currentUser.journals;
+    journalIndex = this.props.currentUser.journals.length - 1;
+    tabs = [];
+    this.setState({ journals: this.props.currentUser.journals }, () =>
+      this.renderTabs()
+    );
+    // this.renderTabs();
   }
 
-  // renderTabsTest = classes => {
-  //   let date = new Date();
-  //   let journal = this.props.currentUser.journals[
-  //     this.props.currentUser.journals.length - 1
-  //   ];
-  //
-  // };
+  // componentWillReceiveProps(nextProps) {
+  //   console.log(
+  //     this.props.currentUser.journals,
+  //     nextProps.currentUser.journals,
+  //     this.state.journals,
+  //     this.props.currentUser.journals.length - 1,
+  //     journalIndex,
+  //     this.state.tabs,
+  //     this.state.tabContainers,
+  //     valueCounter
+  //   );
+  //   if (nextProps.currentUser !== this.props.currentUser) {
+  //     // journals = nextProps.currentUser.journals;
+  //     journalIndex = nextProps.currentUser.journals.length - 1;
+  //     valueCounter = 29;
+  //     this.setState(
+  //       {
+  //         tabs: [],
+  //         tabContainer: {},
+  //         journals: nextProps.currentUser.journals
+  //       },
+  //       () => this.renderTabs()
+  //     );
+  //   }
+  // }
 
-  //what if instead you get the journals, and turn that into an object, with keys 1-29, set at the moment as you figure out what 30 days (corresponding to the month youre showing) is.
-  var arr = this.props.currentUser.journals
-  var result = arr.reduce(function(map, obj) {
-    map[obj.id] = {title: obj.title, content: obj.content, year: [obj.created_at.split("T")[0].split("-")[0]][0], month: [obj.created_at.split("T")[0].split("-")[1]][0], day: [obj.created_at.split("T")[0].split("-")[2]][0]}
-    return map;
-}, {});
-
-  renderTabs = classes => {
-    // let tabs = [];
-    // let tabContainers = {};
-    let valueCounter = 29;
-    let journals = this.props.currentUser.journals.slice();
-    let date = new Date();
-    let previousMonthLength = this.daysInEachMonth(
+  renderTabs = () => {
+    // let date = new Date();
+    let date = this.props.date;
+    let year = date.getFullYear();
+    let month = date.getMonth();
+    let monthWord = getMonthWord(month);
+    let previousYear = year;
+    let previousMonth = month - 1;
+    let previousMonthWord = getMonthWord(previousMonth);
+    let previousMonthLength = daysInEachMonth(
       date.getMonth() - 1,
-      date.getYear()
+      date.getFullYear()
     );
-    //journals will be created in chronological order, so iterate through them in reverse, if a day doesnt have a journal, render a blank tab, otherwise return a
-    //full tab, up to 30.
-    //Use 'today' to start, and then check the journals creation date, and fill in blank tabs for any non-written days.
-    //'shift' journals off of a copy of the array iff theyre on the right day, otherwise fill in blank tabs
+    //For January to December transition
+    if (month === 0) {
+      previousYear--;
+      previousMonth = 11;
+      previousMonthWord = "Dec";
+      previousMonthLength = 31;
+    }
 
+    // //test data
+    // year = 2018;
+    // month = 0;
+    // previousYear = 2017;
+    // previousMonth = 11;
+    // monthWord = "THING";
+    // previousMonthWord = "bacon";
+    // previousMonthLength = 31;
+
+    //shift journalIndex to chosen startDate. This is code for a stetch goal, currently there isnt a way to shift the tab start date.
+    if (journalIndex >= 0) {
+      this.shiftJournalIndex(year, month, date);
+    }
     //adding journal entries for this month from todays date, counting backwards
     for (let i = date.getDate(); i > 0; i--) {
-      this.renderTabsDateCheck(journals, valueCounter, i, classes, date);
-      journals.pop();
-      valueCounter--;
+      this.renderTabsDateCheck(i, year, month, monthWord);
     }
-
     let count = 30 - tabs.length;
-
     //'tabs' length is all the days of the current month, now adding journal entries in the previous month, up to 30 total
     for (let i = previousMonthLength, j = 0; j < count; i--, j++) {
-      this.renderTabsDateCheck(journals, valueCounter, i, classes, date);
-      journals.pop();
-      valueCounter--;
+      this.renderTabsDateCheck(
+        i,
+        previousYear,
+        previousMonth,
+        previousMonthWord
+      );
     }
-
     this.setState({
       tabs: tabs,
-      value: tabs.length - 1,
+      value: tabs.length - 1, //change this to alter the tab you start on.  Currently the first tab shown is todays tab
       tabContainers: tabContainers
     });
   };
-
-  //Check that the journals array has items, and if the year, month, and day match the current tab iteration.
-  //If so, adds a colorful tab to tabs, and adds the journal information to tabContainers
-  renderTabsDateCheck = (journals, valueCounter, i, classes, date) => {
-    if (
-      journals.length > 0 &&
+  //shifts journalIndex to the final entry for chosen year/month/day
+  shiftJournalIndex = (year, month, date) => {
+    //year
+    while (
       parseInt(
-        journals[journals.length - 1].created_at.split("T")[0].split("-")[0]
-      ) === date.getFullYear() &&
-      parseInt(
-        journals[journals.length - 1].created_at.split("T")[0].split("-")[1] - 1
-      ) === date.getMonth() &&
-      parseInt(
-        journals[journals.length - 1].created_at.split("T")[0].split("-")[2]
-      ) === i
+        this.state.journals[journalIndex].created_at.split("T")[0].split("-")[0]
+      ) !== year
     ) {
-      this.renderJournalTabView(journals, valueCounter, i, classes);
-    } else {
-      this.renderBlankTabView(valueCounter, i, classes);
+      journalIndex--;
+    }
+    //month
+    while (
+      parseInt(
+        this.state.journals[journalIndex].created_at
+          .split("T")[0]
+          .split("-")[1] - 1
+      ) !== month
+    ) {
+      journalIndex--;
+    }
+
+    //days in the future of chosen date
+    while (
+      parseInt(
+        this.state.journals[journalIndex].created_at.split("T")[0].split("-")[2]
+      ) > date.getDate()
+    ) {
+      journalIndex--;
     }
   };
 
-  renderJournalTabView = (journals, valueCounter, i, classes) => {
+  //Check that the journalIndex references a possible index and if the year, month, and day match the current tab iteration.
+  //If so, adds a colorful tab to tabs, and adds the journal information to tabContainers
+  renderTabsDateCheck = (i, year, month, monthWord) => {
+    if (
+      journalIndex >= 0 &&
+      parseInt(
+        this.state.journals[journalIndex].created_at.split("T")[0].split("-")[2]
+      ) === i
+    ) {
+      this.renderJournalTabView(i, monthWord);
+    } else {
+      this.renderBlankTabView(i, monthWord);
+    }
+  };
+
+  renderJournalTabView = (i, monthWord) => {
     tabs.unshift(
       <Tab
-        key={`Jun ${i}`}
-        className={classes.tabRoot}
-        label={`Jun ${i}`}
+        key={`${monthWord} ${i}`}
+        className={this.props.classes.tabRoot}
+        label={`${monthWord} ${i}`}
         icon={<CheckBox style={{ color: "#33cc00" }} />}
       />
     );
-    //code here for multiple journals in a day
-    tabContainers[valueCounter] = (
-      <TabContainer>{journals[journals.length - 1].content}</TabContainer>
-    );
+    let array = [];
+    this.checkForAdditionalTabContainerData(i, array, monthWord);
   };
 
-  renderBlankTabView = (valueCounter, i, classes) => {
+  checkForAdditionalTabContainerData = (i, array, monthWord) => {
+    array.push(
+      <JournalPaper key={`${monthWord} ${i} journal ${journalIndex}`}>
+        {this.state.journals[journalIndex].content}
+      </JournalPaper>
+    );
+    journalIndex--;
+
+    if (
+      journalIndex >= 0 &&
+      parseInt(
+        this.state.journals[journalIndex].created_at.split("T")[0].split("-")[2]
+      ) === i
+    ) {
+      this.checkForAdditionalTabContainerData(i, array, monthWord);
+    } else {
+      tabContainers[valueCounter] = (
+        <TabContainer key={`${monthWord} ${i} container`}>{array}</TabContainer>
+      );
+      valueCounter--;
+    }
+  };
+
+  renderBlankTabView = (i, monthWord) => {
     tabs.unshift(
       <Tab
-        key={`Jun ${i}`}
-        className={classes.tabRoot}
-        label={`Jun ${i}`}
+        key={`${monthWord} ${i}`}
+        className={this.props.classes.tabRoot}
+        label={`${monthWord} ${i}`}
         icon={<CheckBoxOutline style={{ color: "#33cc00" }} />}
       />
     );
-    tabContainers[valueCounter] = <TabContainer>No Journal Today</TabContainer>;
+    tabContainers[valueCounter] = (
+      <TabContainer key={`${monthWord} ${i} container`}>
+        No Journal Today
+      </TabContainer>
+    );
+    valueCounter--;
   };
-
-  daysInEachMonth = (month, year) => {
-    let days;
-    switch (month) {
-      case 0:
-        days = 31;
-        break;
-      case 1:
-        if (year === 2020 || year === 2024 || year === 2028) {
-          days = 29;
-        } else {
-          days = 28;
-        }
-        break;
-      case 2:
-        days = 31;
-        break;
-      case 3:
-        days = 30;
-      case 4:
-        days = 31;
-        break;
-      case 5:
-        days = 30;
-        break;
-      case 6:
-        days = 31;
-        break;
-      case 7:
-        days = 31;
-        break;
-      case 8:
-        days = 30;
-        break;
-      case 9:
-        days = 31;
-        break;
-      case 10:
-        days = 30;
-        break;
-      case 11:
-        days = 31;
-        break;
-      default:
-        days = 0;
-        break;
-    }
-    return days;
-  };
-
-  // renderTabView = classes => {};
-  //
-  // renderTabContainers = value => {
-  //   {
-  //     value === 0 && <TabContainer>Item One</TabContainer>;
-  //   }
-  //   {
-  //     value === 1 && <TabContainer>Item Two</TabContainer>;
-  //   }
-  //   {
-  //     value === 2 && <TabContainer>Item Three</TabContainer>;
-  //   }
-  //   {
-  //     value === 3 && <TabContainer>Item Four</TabContainer>;
-  //   }
-  //   {
-  //     value === 4 && <TabContainer>Item Five</TabContainer>;
-  //   }
-  //   {
-  //     value === 5 && <TabContainer>Bacon</TabContainer>;
-  //   }
-  //
-  //   {
-  //     value === 6 && <TabContainer>Item Seven</TabContainer>;
-  //   }
-  //   {
-  //     value === 7 && <TabContainer>Item Eight</TabContainer>;
-  //   }
-  //   {
-  //     value === 8 && <TabContainer>Item Nine</TabContainer>;
-  //   }
-  //   {
-  //     value === 9 && <TabContainer>Item Ten</TabContainer>;
-  //   }
-  //   {
-  //     value === 10 && <TabContainer>Item Eleven</TabContainer>;
-  //   }
-  //   {
-  //     value === 11 && <TabContainer>Item Twelve</TabContainer>;
-  //   }
-  // };
 
   render() {
     const { classes } = this.props;

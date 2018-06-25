@@ -48,8 +48,7 @@ class App extends Component {
                     return user.id === json.id;
                   })[0]
                 },
-                // () => console.log(this.state)
-                () => this.props.history.push(`/journaler`)
+                () => this.props.history.push(`/journaler/${json.id}`)
               );
             })
         )
@@ -62,6 +61,10 @@ class App extends Component {
   //     .then(json => this.setState({ users: json }));
   // };
 
+  // testFunction = (tabs, tabContainers) => {
+  //   console.log(tabs, tabContainers);
+  // };
+
   logoutLink = () => {
     this.setState(
       {
@@ -70,7 +73,7 @@ class App extends Component {
         users: []
       },
       () => {
-        localStorage.clear();
+        localStorage.removeItem("token");
         this.props.history.push("/journaler");
       }
     );
@@ -82,53 +85,15 @@ class App extends Component {
     });
   };
 
-  // componentDidMount() {
-  //   this.focusDiv();
-  // }
-  // componentDidUpdate() {
-  //   console.log("here");
-  //   if (this.state.active) this.focusDiv();
-  // }
-  // focusDiv() {
-  //   ReactDOM.findDOMNode(this.refs.dropdown).focus();
-  // }
-
-  // focusDiv = () => {
-  //   console.log(
-  //     ReactDOM.findDOMNode(this.foo)
-  //       .getElementsByTagName("div")[2]
-  //       .getElementsByTagName("div")[0]
-  //       .getElementsByTagName("textarea")[0]
-  //   );
-  //   ReactDOM.findDOMNode(this.foo)
-  //     .getElementsByTagName("div")[2]
-  //     .getElementsByTagName("div")[0]
-  //     .getElementsByTagName("textarea")[0];
-
-  // ReactDOM.findDOMNode(this.a).focus();
-  // };
-
-  // setRef(elem) {
-  //   console.log(elem);
-  // }
-
-  // fetchCurrentUser = () => {
-  //   fetch(`${url}/current_user`, {
-  //     headers: {
-  //       "content-type": "application/json",
-  //       accept: "application/json",
-  //       Authorization: localStorage.getItem("token")
-  //     }
-  //   })
-  //     .then(res => res.json())
-  //     .then(json => console.log(json));
-  // };
-
+  //not tabs in appbar, scrollable button list, change state of parent component which renders different papers based on value
   render() {
+    let date = new Date(); //move to state, allows rerender of tabs based on date (date.setDate(newdate)
+
     return (
       <div style={{ backgroundColor: "white", height: "100vh" }}>
         <AppBar
           url={url}
+          store={this.props.store}
           currentUser={this.state.currentUser}
           logoutLink={this.logoutLink}
           openLoginDrawer={this.openLoginDrawer}
@@ -140,20 +105,33 @@ class App extends Component {
           loginDrawerOpen={this.state.loginDrawerOpen}
           openLoginDrawer={this.openLoginDrawer}
           fetchUsersAndCurrentUser={this.fetchUsersAndCurrentUser}
-          // fetchCurrentUser={this.fetchCurrentUser}
         />
+        {this.state.currentUser.length !== 0 ? (
+          <JournalTabs
+            url={url}
+            date={date}
+            store={this.props.store}
+            currentUser={this.state.currentUser}
+          />
+        ) : (
+          ""
+        )}
+        {this.state.currentUser.length !== 0 ? (
+          <Route
+            exact
+            path="/journaler/:id"
+            render={() => {
+              return <JournalTextArea url={url} store={this.props.store} />;
+            }}
+          />
+        ) : (
+          ""
+        )}
         <Route
           exact
           path="/journaler"
           render={() => {
-            return (
-              <JournalTextArea
-                url={url}
-                // ref={foo => (this.foo = foo)}
-                store={this.props.store}
-                // openLoginDrawer={this.openLoginDrawer}
-              />
-            );
+            return <JournalTextArea url={url} store={this.props.store} />;
           }}
         />
         {this.state.currentUser.id !== undefined ? (

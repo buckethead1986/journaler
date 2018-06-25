@@ -8,7 +8,6 @@ import Button from "@material-ui/core/Button";
 import LoginDrawer from "./login/LoginDrawer";
 import JournalTabs from "./journalTabs/JournalTabs";
 import Divider from "@material-ui/core/Divider";
-
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 
@@ -26,7 +25,9 @@ TabContainer.propTypes = {
 
 const styles = theme => ({
   root: {
-    flexGrow: 1
+    flexGrow: 1,
+    marginBottom: theme.spacing.unit * 2
+
     // display: "flex"
     // zIndex: 1,
     // overflow: "hidden",
@@ -58,6 +59,7 @@ class SimpleAppBar extends React.Component {
     this.setState({ value });
   };
   render() {
+    // console.log(this.props);
     const { classes } = this.props;
     const { value } = this.state;
     let text;
@@ -66,52 +68,43 @@ class SimpleAppBar extends React.Component {
     } else {
       text = "Journaler";
     }
-    return (
-      <div className={classes.root}>
-        {this.props.currentUser.length !== 0 ? (
-          <AppBar position="static" color="default">
-            <Toolbar>
-              <Typography variant="title" color="inherit" style={{ flex: 6 }}>
-                {text}
-              </Typography>
-              <Button
-                variant="contained"
-                color="primary"
-                className={classes.loginButton}
-                onClick={() => this.props.logoutLink()}
-                disableRipple={true}
-                disableFocusRipple={true}
-              >
-                Logout
-              </Button>
-            </Toolbar>
-            <Divider />
-            <JournalTabs
-              url={this.props.url}
-              store={this.props.store}
-              currentUser={this.props.currentUser}
-            />
-          </AppBar>
-        ) : (
-          <AppBar position="static" color="default">
-            <Toolbar>
-              <Typography variant="title" color="inherit" style={{ flex: 6 }}>
-                {text}
-              </Typography>
-              <Button
-                variant="contained"
-                color="primary"
-                className={classes.loginButton}
-                onClick={() => this.props.openLoginDrawer()}
-                disableRipple={true}
-                disableFocusRipple={true}
-              >
-                Login
-              </Button>
-            </Toolbar>
-          </AppBar>
-        )}
-      </div>
+    return this.props.currentUser.length !== 0 ? (
+      <AppBar position="static" color="default">
+        <Toolbar>
+          <Typography variant="title" style={{ flex: 6 }}>
+            {text}
+          </Typography>
+          <Button
+            variant="contained"
+            color="primary"
+            className={classes.loginButton}
+            onClick={() => this.props.logoutLink()}
+            disableRipple={true}
+            disableFocusRipple={true}
+          >
+            Logout
+          </Button>
+        </Toolbar>
+        <Divider />
+      </AppBar>
+    ) : (
+      <AppBar position="static" color="default">
+        <Toolbar>
+          <Typography variant="title" color="inherit" style={{ flex: 6 }}>
+            {text}
+          </Typography>
+          <Button
+            variant="contained"
+            color="primary"
+            className={classes.loginButton}
+            onClick={() => this.props.openLoginDrawer()}
+            disableRipple={true}
+            disableFocusRipple={true}
+          >
+            Login
+          </Button>
+        </Toolbar>
+      </AppBar>
     );
   }
 }

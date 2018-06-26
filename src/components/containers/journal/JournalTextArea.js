@@ -6,7 +6,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import TextField from "@material-ui/core/TextField";
 import Input from "@material-ui/core/Input";
 import Button from "@material-ui/core/Button";
-import ReactDOM from "react-dom";
+// import ReactDOM from "react-dom";
 
 const styles = theme => ({
   submitButton: {
@@ -78,14 +78,14 @@ class TextFields extends React.Component {
         body: JSON.stringify(body)
       })
         .then(res => res.json())
-        .then(json => console.log(json))
+        // .then(json => console.log(json))
         .then(() =>
           this.setState({
             textTitle: "",
             textArea: ""
           })
         )
-        .then(() => this.props.fetchUsersAndCurrentUser());
+        .then(() => this.props.fetchJournals());
     } else {
       this.setState({
         emptySubmit: true
@@ -102,6 +102,7 @@ class TextFields extends React.Component {
     );
   };
 
+  //Prevents submissions with empty content, also triggers submit button change.
   checkForContent = () => {
     if (this.state.textArea === "" && this.state.hasContent === true) {
       this.setState({

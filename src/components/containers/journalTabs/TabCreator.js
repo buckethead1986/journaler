@@ -6,6 +6,7 @@ import JournalTextArea from "../journal/JournalTextArea";
 
 class TabCreator extends React.Component {
   render() {
+    // console.log(this.props.journals);
     return (
       <Grid fluid>
         <Row>
@@ -19,7 +20,12 @@ class TabCreator extends React.Component {
             />
           </Col>
           <Col>
-            <JournalTextArea url={this.props.url} store={this.props.store} />
+            <JournalTextArea
+              url={this.props.url}
+              store={this.props.store}
+              fetchJournals={this.props.fetchJournals}
+              fetchUsersAndCurrentUser={this.props.fetchUsersAndCurrentUser}
+            />
           </Col>
         </Row>
       </Grid>

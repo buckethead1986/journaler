@@ -5,8 +5,8 @@ import LoginDrawer from "./components/containers/login/LoginDrawer";
 import JournalArea from "./components/containers/journal/JournalArea";
 import JournalTabs from "./components/containers/journalTabs/JournalTabs";
 import JournalTextArea from "./components/containers/journal/JournalTextArea";
-import ReactDOM from "react-dom";
 import TabCreator from "./components/containers/journalTabs/TabCreator";
+import { renderTabsHelper } from "./components/containers/RenderTabsHelper";
 
 const url = "http://localhost:3001/api/v1";
 
@@ -18,7 +18,9 @@ class App extends Component {
     loginDrawerOpen: false,
     currentUser: [],
     users: [],
-    journals: []
+    journals: [],
+    tabs: [],
+    tabContainer: {}
   };
 
   componentDidMount() {
@@ -31,10 +33,16 @@ class App extends Component {
   }
 
   // componentWillReceiveProps(nextProps) {
-  //   if (nextProp.currentUser.journals.length !== this.props.currentUser.journals.length) {
-  //
-  //   }
+  //   console.log(this.props.journals, nextProps.journals);
+  //   // if (this.props.store.getState(). !== ) {
+  //   //
+  //   // }
   // }
+
+  setTabAndTabContainerState = (tabs, tabContainer) => {
+    console.log(tabs, tabContainer);
+    this.setState({ tabs, tabContainer });
+  };
 
   fetchUsersAndCurrentUser = () => {
     fetch(`${url}/users`)
@@ -57,18 +65,38 @@ class App extends Component {
                     return user.id === json.id;
                   })[0].journals
                 },
-                () => console.log(this.state.currentUser, this.state.journals),
-                this.props.history.push(`/journaler/${json.id}`)
+                () =>
+                  renderTabsHelper(
+                    this.state.journals,
+                    this.props.store,
+                    new Date(),
+                    this.setTabAndTabContainerState
+                  )
+                // () => console.log(this.state.currentUser, this.state.journals)
               );
             })
+            .then(() => this.props.history.push(`/journaler/${json.id}`))
         )
       );
   };
 
   fetchJournals = () => {
-    fetch(`${url}/users`)
+    fetch(`${url}/users/${this.state.currentUser.id}`)
       .then(res => res.json())
-      .then(json => console.log(json));
+      .then(json =>
+        this.setState(
+          {
+            journals: json
+          },
+          () =>
+            renderTabsHelper(
+              this.state.journals,
+              this.props.store,
+              new Date(),
+              this.setTabAndTabContainerState
+            )
+        )
+      );
   };
 
   // fetchUsers = () => {
@@ -77,8 +105,8 @@ class App extends Component {
   //     .then(json => this.setState({ users: json }));
   // };
 
-  // testFunction = (tabs, tabContainers) => {
-  //   console.log(tabs, tabContainers);
+  // testFunction = (tabs, tabContainer) => {
+  //   console.log(tabs, tabContainer);
   // };
 
   logoutLink = () => {
@@ -103,6 +131,7 @@ class App extends Component {
 
   //not tabs in appbar, scrollable button list, change state of parent component which renders different papers based on value
   render() {
+    console.log(this.state.tabs, this.state.tabContainer);
     let date = new Date(); //move to state, allows rerender of tabs based on date (date.setDate(newdate)
 
     return (
@@ -113,6 +142,7 @@ class App extends Component {
           currentUser={this.state.currentUser}
           logoutLink={this.logoutLink}
           openLoginDrawer={this.openLoginDrawer}
+          tabs={this.state.tabs}
           loginOrLogoutButton={this.loginOrLogoutButton}
         />
         <LoginDrawer
@@ -123,7 +153,8 @@ class App extends Component {
           fetchUsersAndCurrentUser={this.fetchUsersAndCurrentUser}
         />
 
-        {this.state.currentUser.length !== 0 ? (
+        {this.state.currentUser.length !== 0 &&
+        this.state.journals.length !== 0 ? (
           <Route
             exact
             path="/journaler/:id"
@@ -135,6 +166,8 @@ class App extends Component {
                   store={this.props.store}
                   currentUser={this.state.currentUser}
                   journals={this.state.journals}
+                  fetchJournals={this.fetchJournals}
+                  tabContainer
                   fetchUsersAndCurrentUser={this.fetchUsersAndCurrentUser}
                 />
               );
@@ -150,36 +183,9 @@ class App extends Component {
             return <JournalTextArea url={url} store={this.props.store} />;
           }}
         />
-        {this.state.currentUser.id !== undefined ? (
-          <Route
-            exact
-            path="/journaler/new"
-            render={() => {
-              return (
-                <div>
-                  <JournalTextArea url={url} store={this.props.store} />
-                </div>
-              );
-            }}
-          />
-        ) : (
-          ""
-        )}
       </div>
     );
   }
 }
 
 export default withRouter(App);
-
-// {this.state.currentUser.length !== 0 ? (
-//   <JournalTabs
-//     url={url}
-//     date={date}
-//     store={this.props.store}
-//     currentUser={this.state.currentUser}
-//     journals={this.state.journals}
-//   />
-// ) : (
-//   ""
-// )}

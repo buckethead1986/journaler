@@ -2,12 +2,16 @@ export default function reducer(
   state = {
     // users: [],
     // loggedInUser: []
+    tabs: [],
+    tabContainer: {}
   },
   action
 ) {
   switch (action.type) {
-    // case "LOG_IN_USER":
-    //   return Object.assign({}, state, { loggedInUser: action.payload });
+    case "ADD_TABS":
+      return Object.assign({}, state, { tabs: action.payload });
+    case "ADD_TABS_CONTAINERS":
+      return Object.assign({}, state, { tabContainer: action.payload });
     // case "ADD_USERS":
     //   return Object.assign({}, state, { users: action.payload });
     default:

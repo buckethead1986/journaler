@@ -1,4 +1,5 @@
 import React from "react";
+import JournalPaper from "./JournalPaper";
 
 class NewJournalTabs extends React.Component {
   constructor() {
@@ -18,10 +19,10 @@ class NewJournalTabs extends React.Component {
   }
 
   render() {
-    console.log(this.props.currentUser, this.props.journals);
+    // console.log(this.props.currentUser, this.props.journals);
     return (
       <div>
-        <div>hey</div>
+        <JournalPaper>hey</JournalPaper>
       </div>
     );
   }

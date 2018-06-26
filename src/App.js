@@ -6,6 +6,7 @@ import JournalArea from "./components/containers/journal/JournalArea";
 import JournalTabs from "./components/containers/journalTabs/JournalTabs";
 import JournalTextArea from "./components/containers/journal/JournalTextArea";
 import ReactDOM from "react-dom";
+import TabCreator from "./components/containers/journalTabs/TabCreator";
 
 const url = "http://localhost:3001/api/v1";
 
@@ -16,7 +17,8 @@ class App extends Component {
   state = {
     loginDrawerOpen: false,
     currentUser: [],
-    users: []
+    users: [],
+    journals: []
   };
 
   componentDidMount() {
@@ -27,6 +29,12 @@ class App extends Component {
       this.props.history.push("/journaler");
     }
   }
+
+  // componentWillReceiveProps(nextProps) {
+  //   if (nextProp.currentUser.journals.length !== this.props.currentUser.journals.length) {
+  //
+  //   }
+  // }
 
   fetchUsersAndCurrentUser = () => {
     fetch(`${url}/users`)
@@ -44,15 +52,23 @@ class App extends Component {
             .then(json => {
               this.setState(
                 {
-                  currentUser: this.state.users.filter(user => {
+                  currentUser: json,
+                  journals: this.state.users.filter(user => {
                     return user.id === json.id;
-                  })[0]
+                  })[0].journals
                 },
-                () => this.props.history.push(`/journaler/${json.id}`)
+                () => console.log(this.state.currentUser, this.state.journals),
+                this.props.history.push(`/journaler/${json.id}`)
               );
             })
         )
       );
+  };
+
+  fetchJournals = () => {
+    fetch(`${url}/users`)
+      .then(res => res.json())
+      .then(json => console.log(json));
   };
 
   // fetchUsers = () => {
@@ -106,22 +122,22 @@ class App extends Component {
           openLoginDrawer={this.openLoginDrawer}
           fetchUsersAndCurrentUser={this.fetchUsersAndCurrentUser}
         />
-        {this.state.currentUser.length !== 0 ? (
-          <JournalTabs
-            url={url}
-            date={date}
-            store={this.props.store}
-            currentUser={this.state.currentUser}
-          />
-        ) : (
-          ""
-        )}
+
         {this.state.currentUser.length !== 0 ? (
           <Route
             exact
             path="/journaler/:id"
             render={() => {
-              return <JournalTextArea url={url} store={this.props.store} />;
+              return (
+                <TabCreator
+                  url={url}
+                  date={date}
+                  store={this.props.store}
+                  currentUser={this.state.currentUser}
+                  journals={this.state.journals}
+                  fetchUsersAndCurrentUser={this.fetchUsersAndCurrentUser}
+                />
+              );
             }}
           />
         ) : (
@@ -155,3 +171,15 @@ class App extends Component {
 }
 
 export default withRouter(App);
+
+// {this.state.currentUser.length !== 0 ? (
+//   <JournalTabs
+//     url={url}
+//     date={date}
+//     store={this.props.store}
+//     currentUser={this.state.currentUser}
+//     journals={this.state.journals}
+//   />
+// ) : (
+//   ""
+// )}

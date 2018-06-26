@@ -59,36 +59,60 @@ class TextFields extends React.Component {
   state = {
     textTitle: "",
     textArea: "",
-    test: false
+    hasContent: false,
+    emptySubmit: false
   };
 
   postJournalEntry = (user_id, title, content) => {
-    const headers = {
-      Accept: "application/json",
-      "Content-Type": "application/json"
-    };
-    const body = {
-      journal: { user_id, title, content }
-    };
-    fetch(`${this.props.url}/journals`, {
-      method: "POST",
-      headers: headers,
-      body: JSON.stringify(body)
-    })
-      .then(res => res.json())
-      .then(json => console.log(json))
-      .then(() =>
-        this.setState({
-          textTitle: "",
-          textArea: ""
-        })
-      );
+    if (this.state.hasContent) {
+      const headers = {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      };
+      const body = {
+        journal: { user_id, title, content }
+      };
+      fetch(`${this.props.url}/journals`, {
+        method: "POST",
+        headers: headers,
+        body: JSON.stringify(body)
+      })
+        .then(res => res.json())
+        .then(json => console.log(json))
+        .then(() =>
+          this.setState({
+            textTitle: "",
+            textArea: ""
+          })
+        )
+        .then(() => this.props.fetchUsersAndCurrentUser());
+    } else {
+      this.setState({
+        emptySubmit: true
+      });
+    }
   };
 
   handleChange = name => event => {
-    this.setState({
-      [name]: event.target.value
-    });
+    this.setState(
+      {
+        [name]: event.target.value
+      },
+      () => this.checkForContent()
+    );
+  };
+
+  checkForContent = () => {
+    if (this.state.textArea === "" && this.state.hasContent === true) {
+      this.setState({
+        hasContent: false
+      });
+    } else if (this.state.textArea !== "" && this.state.hasContent === false) {
+      this.setState({
+        hasContent: true,
+        emptySubmit: false
+      });
+    }
   };
 
   render() {
@@ -122,19 +146,36 @@ class TextFields extends React.Component {
           />
         </Paper>
         <div style={{ display: "flex" }}>
-          <Button
-            variant="contained"
-            color="primary"
-            className={classes.submitButton}
-            onClick={() =>
-              this.postJournalEntry(
-                4,
-                this.state.textTitle,
-                this.state.textArea
-              )}
-          >
-            Submit
-          </Button>
+          {this.state.emptySubmit ? (
+            <Button
+              variant="contained"
+              color="secondary"
+              className={classes.submitButton}
+              onClick={() =>
+                this.postJournalEntry(
+                  4,
+                  this.state.textTitle,
+                  this.state.textArea
+                )}
+            >
+              Content can't be empty
+            </Button>
+          ) : (
+            <Button
+              variant="contained"
+              color="primary"
+              className={classes.submitButton}
+              onClick={() =>
+                this.postJournalEntry(
+                  4,
+                  this.state.textTitle,
+                  this.state.textArea
+                )}
+            >
+              Submit
+            </Button>
+          )}
+
           <div style={{ flex: 6 }} />
         </div>
       </div>

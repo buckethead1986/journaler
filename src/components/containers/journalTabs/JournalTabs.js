@@ -113,35 +113,55 @@ class ScrollableTabsButtonAuto extends React.Component {
 
   //upon created, add a 'date created attribute' for sorting over. 'yearmonthdayhourminutesecond' just for sorting purposes
   componentDidMount() {
-    // journals = this.props.currentUser.journals;
-    journalIndex = this.props.currentUser.journals.length - 1;
+    // journals = this.props.journals;
+    journalIndex = this.props.journals.length - 1;
     tabs = [];
-    this.setState({ journals: this.props.currentUser.journals }, () =>
-      this.renderTabs()
-    );
+    this.setState({ journals: this.props.journals }, () => this.renderTabs());
     // this.renderTabs();
   }
 
+  componentWillReceiveProps(nextProps) {
+    console.log(nextProps.journals.length, this.props.journals.length);
+    if (nextProps.journals.length !== this.props.journals.length) {
+      console.log("here");
+      journalIndex = this.props.journals.length - 1;
+      tabs = [];
+      this.setState(
+        {
+          journals: nextProps.journals
+        },
+        () => this.doAThing()
+      );
+    }
+  }
+
+  doAThing = () => {
+    console.log(this.state.journals, this.state.tabContainers);
+    let journls = this.state.journals;
+    let tabsContainers = this.state.tabContainers;
+    // debugger;
+  };
+
   // componentWillReceiveProps(nextProps) {
   //   console.log(
-  //     this.props.currentUser.journals,
-  //     nextProps.currentUser.journals,
+  //     this.props.journals,
+  //     nextProps.journals,
   //     this.state.journals,
-  //     this.props.currentUser.journals.length - 1,
+  //     this.props.journals.length - 1,
   //     journalIndex,
   //     this.state.tabs,
   //     this.state.tabContainers,
   //     valueCounter
   //   );
   //   if (nextProps.currentUser !== this.props.currentUser) {
-  //     // journals = nextProps.currentUser.journals;
-  //     journalIndex = nextProps.currentUser.journals.length - 1;
+  //     // journals = nextProps.journals;
+  //     journalIndex = nextProps.journals.length - 1;
   //     valueCounter = 29;
   //     this.setState(
   //       {
   //         tabs: [],
   //         tabContainer: {},
-  //         journals: nextProps.currentUser.journals
+  //         journals: nextProps.journals
   //       },
   //       () => this.renderTabs()
   //     );
@@ -149,6 +169,8 @@ class ScrollableTabsButtonAuto extends React.Component {
   // }
 
   renderTabs = () => {
+    console.log("doing things", this.props.journals); //State is correct up through here, but by the setState at the end of renderTabs, its old.
+    journalIndex = this.props.journals.length - 1;
     // let date = new Date();
     let date = this.props.date;
     let year = date.getFullYear();
@@ -196,14 +218,22 @@ class ScrollableTabsButtonAuto extends React.Component {
         previousMonthWord
       );
     }
-    this.setState({
-      tabs: tabs,
-      value: tabs.length - 1, //change this to alter the tab you start on.  Currently the first tab shown is todays tab
-      tabContainers: tabContainers
-    });
+    this.setState(
+      {
+        tabs: tabs,
+        value: tabs.length - 1, //change this to alter the tab you start on.  Currently the first tab shown is todays tab
+        tabContainers: tabContainers
+      },
+      () => console.log("state was updated", this.state.tabContainers[29])
+    );
   };
   //shifts journalIndex to the final entry for chosen year/month/day
   shiftJournalIndex = (year, month, date) => {
+    console.log(
+      this.state.journals,
+      journalIndex,
+      this.state.journals[journalIndex]
+    );
     //year
     while (
       parseInt(
@@ -213,6 +243,11 @@ class ScrollableTabsButtonAuto extends React.Component {
       journalIndex--;
     }
     //month
+    console.log(
+      this.state.journals,
+      journalIndex,
+      this.state.journals[journalIndex]
+    );
     while (
       parseInt(
         this.state.journals[journalIndex].created_at
@@ -220,6 +255,11 @@ class ScrollableTabsButtonAuto extends React.Component {
           .split("-")[1] - 1
       ) !== month
     ) {
+      console.log(
+        this.state.journals,
+        journalIndex,
+        this.state.journals[journalIndex]
+      );
       journalIndex--;
     }
 
@@ -263,7 +303,11 @@ class ScrollableTabsButtonAuto extends React.Component {
 
   checkForAdditionalTabContainerData = (i, array, monthWord) => {
     array.push(
-      <JournalPaper key={`${monthWord} ${i} journal ${journalIndex}`}>
+      <JournalPaper
+        key={`${monthWord} ${i} journal ${journalIndex}`}
+        content={this.state.journals[journalIndex].content}
+        title={this.state.journals[journalIndex].title}
+      >
         {this.state.journals[journalIndex].content}
       </JournalPaper>
     );
@@ -302,6 +346,7 @@ class ScrollableTabsButtonAuto extends React.Component {
   };
 
   render() {
+    console.log(this.props.journals);
     const { classes } = this.props;
     const { value } = this.state;
 

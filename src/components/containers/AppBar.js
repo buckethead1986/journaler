@@ -124,11 +124,18 @@ class SimpleAppBar extends React.Component {
     value: 0
   };
 
+  componentWillReceiveProps(nextProps) {
+    if (this.props.tabs.length !== nextProps.tabs.length) {
+      this.props.changeShownJournalValue(nextProps.tabs.length - 1);
+    }
+  }
+
   handleChange = (event, value) => {
-    this.setState({ value });
+    this.props.changeShownJournalValue(value);
   };
+
   render() {
-    console.log(this.props);
+    console.log(this.props.tabs.length);
     const { classes } = this.props;
     const { value } = this.state;
     let text;
@@ -157,7 +164,7 @@ class SimpleAppBar extends React.Component {
 
         <Divider />
         <Tabs
-          value={value}
+          value={this.props.shownJournalValue}
           onChange={this.handleChange}
           indicatorColor="primary"
           textColor="primary"

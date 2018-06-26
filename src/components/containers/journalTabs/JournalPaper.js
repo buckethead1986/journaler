@@ -13,6 +13,7 @@ const styles = theme => ({
 });
 
 function PaperSheet(props) {
+  console.log(props, props.title, props.content);
   const { classes } = props;
   return (
     <div>
@@ -20,7 +21,7 @@ function PaperSheet(props) {
         <Typography variant="headline" component="h3">
           {props.title}
         </Typography>
-        <Typography component="p">{props.content}</Typography>
+        <Typography component="h3">{props.content}</Typography>
       </Paper>
     </div>
   );

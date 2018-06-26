@@ -106,9 +106,11 @@ export function renderTabsHelper(
   date,
   setTabAndTabContainerState
 ) {
+  console.log(journals, tabs, tabContainer, valueCounter);
   tabs = [];
-  tabContainer = {};
+  tabContainer = [];
   valueCounter = 29;
+  console.log(journals, tabs, tabContainer, valueCounter);
   // journalIndex = journals.length - 1;
   // handleChange = (event, value) => {
   //   this.setState({ value });
@@ -317,13 +319,18 @@ const renderJournalTabView = (i, monthWord, journals) => {
 
 const checkForAdditionalTabContainerData = (i, array, monthWord, journals) => {
   array.push(
-    <JournalPaper
-      key={`${monthWord} ${i} journal ${journalIndex}`}
-      content={journals[journalIndex].content}
-      title={journals[journalIndex].title}
-    >
-      {journals[journalIndex].content}
-    </JournalPaper>
+    // <JournalPaper
+    //   key={`${monthWord} ${i} journal ${journalIndex}`}
+    //   content={journals[journalIndex].content}
+    //   title={journals[journalIndex].title}
+    // >
+    //   {journals[journalIndex].content}
+    // </JournalPaper>
+    [
+      journals[journalIndex].id,
+      journals[journalIndex].title,
+      journals[journalIndex].content
+    ]
   );
   journalIndex--;
 
@@ -334,9 +341,9 @@ const checkForAdditionalTabContainerData = (i, array, monthWord, journals) => {
   ) {
     checkForAdditionalTabContainerData(i, array, monthWord, journals);
   } else {
-    tabContainer[valueCounter] = (
-      <TabContainer key={`${monthWord} ${i} container`}>{array}</TabContainer>
-    );
+    tabContainer[valueCounter] =
+      // <TabContainer key={`${monthWord} ${i} container`}>{array}</TabContainer>
+      array;
     valueCounter--;
   }
 };
@@ -350,11 +357,10 @@ const renderBlankTabView = (i, monthWord) => {
       icon={<CheckBoxOutline style={{ color: "#33cc00" }} />}
     />
   );
-  tabContainer[valueCounter] = (
-    <TabContainer key={`${monthWord} ${i} container`}>
-      No Journal Today
-    </TabContainer>
-  );
+  tabContainer[valueCounter] =
+    // <TabContainer key={`${monthWord} ${i} container`}>
+    [];
+  // </TabContainer>
   valueCounter--;
 };
 

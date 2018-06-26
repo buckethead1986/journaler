@@ -20,7 +20,8 @@ class App extends Component {
     users: [],
     journals: [],
     tabs: [],
-    tabContainer: {}
+    tabContainer: [],
+    shownJournalValue: 0
   };
 
   componentDidMount() {
@@ -39,8 +40,11 @@ class App extends Component {
   //   // }
   // }
 
+  changeShownJournalValue = value => {
+    this.setState({ shownJournalValue: value });
+  };
+
   setTabAndTabContainerState = (tabs, tabContainer) => {
-    console.log(tabs, tabContainer);
     this.setState({ tabs, tabContainer });
   };
 
@@ -75,7 +79,9 @@ class App extends Component {
                 // () => console.log(this.state.currentUser, this.state.journals)
               );
             })
-            .then(() => this.props.history.push(`/journaler/${json.id}`))
+            .then(() =>
+              this.props.history.push(`/journaler/${this.state.currentUser.id}`)
+            )
         )
       );
   };
@@ -86,7 +92,7 @@ class App extends Component {
       .then(json =>
         this.setState(
           {
-            journals: json
+            journals: json.journals
           },
           () =>
             renderTabsHelper(
@@ -143,6 +149,8 @@ class App extends Component {
           logoutLink={this.logoutLink}
           openLoginDrawer={this.openLoginDrawer}
           tabs={this.state.tabs}
+          shownJournalValue={this.state.shownJournalValue}
+          changeShownJournalValue={this.changeShownJournalValue}
           loginOrLogoutButton={this.loginOrLogoutButton}
         />
         <LoginDrawer
@@ -154,7 +162,7 @@ class App extends Component {
         />
 
         {this.state.currentUser.length !== 0 &&
-        this.state.journals.length !== 0 ? (
+        this.state.tabContainer.length !== 0 ? (
           <Route
             exact
             path="/journaler/:id"
@@ -167,7 +175,8 @@ class App extends Component {
                   currentUser={this.state.currentUser}
                   journals={this.state.journals}
                   fetchJournals={this.fetchJournals}
-                  tabContainer
+                  tabContainer={this.state.tabContainer}
+                  shownJournalValue={this.state.shownJournalValue}
                   fetchUsersAndCurrentUser={this.fetchUsersAndCurrentUser}
                 />
               );

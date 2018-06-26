@@ -19,12 +19,24 @@ class NewJournalTabs extends React.Component {
   }
 
   render() {
-    // console.log(this.props.currentUser, this.props.journals);
-    return (
-      <div>
-        <JournalPaper>hey</JournalPaper>
-      </div>
+    let mappedJournals = this.props.tabContainer[
+      this.props.shownJournalValue
+    ].map(journal => {
+      console.log(journal);
+      return (
+        <JournalPaper
+          key={journal[0]}
+          title={journal[1]}
+          content={journal[2]}
+        />
+      );
+    });
+
+    console.log(
+      this.props.tabContainer[this.props.shownJournalValue],
+      mappedJournals
     );
+    return <div>{mappedJournals}</div>;
   }
 }
 

@@ -3,7 +3,7 @@ import { Route, withRouter } from "react-router-dom";
 import AppBar from "./components/containers/AppBar";
 import LoginDrawer from "./components/containers/login/LoginDrawer";
 import JournalArea from "./components/containers/journal/JournalArea";
-import JournalTabs from "./components/containers/journalTabs/JournalTabs";
+// import JournalTabs from "./components/containers/journalTabs/JournalTabs";
 import JournalTextArea from "./components/containers/journal/JournalTextArea";
 import TabCreator from "./components/containers/journalTabs/TabCreator";
 import { renderTabsHelper } from "./components/containers/RenderTabsHelper";
@@ -44,8 +44,8 @@ class App extends Component {
     this.setState({ shownJournalValue: value });
   };
 
-  setTabAndTabContainerState = (tabs, tabContainer) => {
-    this.setState({ tabs, tabContainer });
+  setTabAndTabContainerState = (tabs, tabContainer, shownJournalValue) => {
+    this.setState({ tabs, tabContainer, shownJournalValue });
   };
 
   fetchUsersAndCurrentUser = () => {
@@ -65,9 +65,11 @@ class App extends Component {
               this.setState(
                 {
                   currentUser: json,
-                  journals: this.state.users.filter(user => {
-                    return user.id === json.id;
-                  })[0].journals
+                  journals: this.sortJournals(
+                    this.state.users.filter(user => {
+                      return user.id === json.id;
+                    })[0].journals
+                  )
                 },
                 () =>
                   renderTabsHelper(
@@ -89,20 +91,29 @@ class App extends Component {
   fetchJournals = () => {
     fetch(`${url}/users/${this.state.currentUser.id}`)
       .then(res => res.json())
-      .then(json =>
+      .then(json => {
         this.setState(
           {
-            journals: json.journals
+            journals: this.sortJournals(json.journals)
           },
-          () =>
+          () => {
             renderTabsHelper(
               this.state.journals,
               this.props.store,
               new Date(),
               this.setTabAndTabContainerState
-            )
-        )
-      );
+            );
+          }
+        );
+      });
+  };
+
+  sortJournals = journals => {
+    return journals.sort((a, b) => {
+      return a.created_at > b.created_at
+        ? 1
+        : b.created_at > a.created_at ? -1 : 0;
+    });
   };
 
   // fetchUsers = () => {
@@ -135,9 +146,8 @@ class App extends Component {
     });
   };
 
-  //not tabs in appbar, scrollable button list, change state of parent component which renders different papers based on value
   render() {
-    console.log(this.state.tabs, this.state.tabContainer);
+    // console.log(this.state.tabs, this.state.tabContainer);
     let date = new Date(); //move to state, allows rerender of tabs based on date (date.setDate(newdate)
 
     return (
@@ -177,7 +187,6 @@ class App extends Component {
                   fetchJournals={this.fetchJournals}
                   tabContainer={this.state.tabContainer}
                   shownJournalValue={this.state.shownJournalValue}
-                  fetchUsersAndCurrentUser={this.fetchUsersAndCurrentUser}
                 />
               );
             }}

@@ -11,48 +11,25 @@ import Button from "@material-ui/core/Button";
 const styles = theme => ({
   submitButton: {
     margin: theme.spacing.unit,
-    marginLeft: window.innerWidth / 6,
+    marginLeft: theme.spacing.unit * 2,
     flex: 1,
-    marginRight: window.innerWidth / 6,
+    marginRight: theme.spacing.unit * 2,
     marginBottom: theme.spacing.unit * 2
   },
-  // loginButton: {
-  //   margin: theme.spacing.unit,
-  //
-  //   marginRight: window.innerWidth / 6,
-  //   flex: 1,
-  //
-  //   // marginLeft: window.innerWidth / 6,
-  //   // marginRight: window.innerWidth / 6,
-  //   marginBottom: theme.spacing.unit * 2
-  // },
-  title: theme.mixins.gutters({
-    paddingTop: 16,
-    paddingBottom: 16,
-    marginTop: theme.spacing.unit * 2,
-    marginLeft: window.innerWidth / 6,
-    marginRight: window.innerWidth / 6
-  }),
   text: theme.mixins.gutters({
     paddingTop: 16,
     paddingBottom: 16,
     marginTop: theme.spacing.unit,
-    marginLeft: window.innerWidth / 6,
-    marginRight: window.innerWidth / 6
+    marginLeft: theme.spacing.unit * 2,
+    marginRight: theme.spacing.unit * 2
+  }),
+  title: theme.mixins.gutters({
+    marginTop: theme.spacing.unit * 3
   }),
   container: {
     display: "flex",
     flexWrap: "wrap"
-  },
-  textField: {
-    marginLeft: theme.spacing.unit,
-    marginRight: theme.spacing.unit
-
-    // width: 400 //overrides fullWidth prop of textField
   }
-  // menu: {
-  //   width: 200
-  // }
 });
 
 class TextFields extends React.Component {
@@ -63,22 +40,30 @@ class TextFields extends React.Component {
     emptySubmit: false
   };
 
+  //Posts Journal entry to API.  If the title is blank, changes it to 'Untitled', then calls fetchJournals to fetch updated journals list for this user.
+  //emptySubmit is a check for content not to be blank.  If a submit is attempted with no content, it fails and the submit button is modified.
   postJournalEntry = (user_id, title, content) => {
     if (this.state.hasContent) {
       const headers = {
         Accept: "application/json",
         "Content-Type": "application/json"
       };
-      const body = {
-        journal: { user_id, title, content }
-      };
+      let body;
+      if (this.state.textTitle === "") {
+        body = {
+          journal: { user_id, title: "Untitled", content }
+        };
+      } else {
+        body = {
+          journal: { user_id, title, content }
+        };
+      }
       fetch(`${this.props.url}/journals`, {
         method: "POST",
         headers: headers,
         body: JSON.stringify(body)
       })
         .then(res => res.json())
-        // .then(json => console.log(json))
         .then(() =>
           this.setState({
             textTitle: "",
@@ -121,12 +106,14 @@ class TextFields extends React.Component {
 
     return (
       <div>
-        <Paper className={classes.title} elevation={4}>
+        <Paper
+          className={[classes.text, classes.title].join(" ")}
+          elevation={4}
+        >
           <Input
             id="text-title"
             value={this.state.textTitle}
             onChange={this.handleChange("textTitle")}
-            className={classes.textField}
             fullWidth={true}
             placeholder="Title (optional)"
             disableUnderline={true}
@@ -139,7 +126,6 @@ class TextFields extends React.Component {
             rows="30"
             value={this.state.textArea}
             onChange={this.handleChange("textArea")}
-            className={classes.textField}
             fullWidth={true}
             placeholder="Start Writing"
             autoFocus={true}

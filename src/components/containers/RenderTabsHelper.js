@@ -1,5 +1,5 @@
 import React from "react";
-import PropTypes from "prop-types";
+// import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Tabs from "@material-ui/core/Tabs";
@@ -8,7 +8,7 @@ import Typography from "@material-ui/core/Typography";
 import CheckBoxOutline from "@material-ui/icons/CheckBoxOutlineBlank";
 import CheckBox from "@material-ui/icons/CheckBox";
 import JournalPaper from "./journalTabs/JournalPaper";
-import { daysInEachMonth, getMonthWord } from "./Helper";
+import { daysInEachMonth, getMonthWord, getFullMonthWord } from "./Helper";
 // import { thisIsATest } from "../Helper";
 // import Paper from "@material-ui/core/Paper";
 
@@ -17,17 +17,17 @@ let tabContainer; //data displayed for specific tabs
 let journalIndex; //location in journals array
 let valueCounter; //links tab click to which tabContainer is displayed
 
-function TabContainer(props) {
-  return (
-    <Typography component="div" style={{ padding: 8 * 3 }}>
-      {props.children}
-    </Typography>
-  );
-}
-
-TabContainer.propTypes = {
-  children: PropTypes.node.isRequired
-};
+// function TabContainer(props) {
+//   return (
+//     <Typography component="div" style={{ padding: 8 * 3 }}>
+//       {props.children}
+//     </Typography>
+//   );
+// }
+//
+// TabContainer.propTypes = {
+//   children: PropTypes.node.isRequired
+// };
 
 const styles = {
   // root: {
@@ -106,11 +106,11 @@ export function renderTabsHelper(
   date,
   setTabAndTabContainerState
 ) {
-  console.log(journals, tabs, tabContainer, valueCounter);
+  // console.log(journals, tabs, tabContainer, valueCounter);
   tabs = [];
   tabContainer = [];
   valueCounter = 29;
-  console.log(journals, tabs, tabContainer, valueCounter);
+  // console.log(journals, tabs, tabContainer, valueCounter);
   // journalIndex = journals.length - 1;
   // handleChange = (event, value) => {
   //   this.setState({ value });
@@ -203,31 +203,25 @@ export function renderTabsHelper(
   // monthWord = "THING";
   // previousMonthWord = "bacon";
   // previousMonthLength = 31;
-  console.log("before shiftjournalindex", tabs, journalIndex, journals.length);
+  // console.log("before shiftjournalindex", tabs, journalIndex, journals.length);
   //shift journalIndex to chosen startDate. This is code for a stetch goal, currently there isnt a way to shift the tab start date.
   if (journalIndex >= 0) {
     shiftJournalIndex(year, month, date, journals);
   }
-  console.log("before first loop", tabs, journalIndex);
+  // console.log("before first loop", tabs, journalIndex);
   //adding journal entries for this month from todays date, counting backwards
   for (let i = date.getDate(); i > 0; i--) {
-    renderTabsDateCheck(i, year, month, monthWord, journals);
+    renderTabsDateCheck(i, year, month, journals);
   }
-  console.log("before second loop", tabs, journalIndex);
+  // console.log("before second loop", tabs, journalIndex);
   let count = 30 - tabs.length;
   //'tabs' length is all the days of the current month, now adding journal entries in the previous month, up to 30 total
   for (let i = previousMonthLength, j = 0; j < count; i--, j++) {
-    renderTabsDateCheck(
-      i,
-      previousYear,
-      previousMonth,
-      previousMonthWord,
-      journals
-    );
+    renderTabsDateCheck(i, previousYear, previousMonth, journals);
   }
-  console.log(tabs);
+  // console.log(tabs);
   console.log(tabs, tabContainer);
-  setTabAndTabContainerState(tabs, tabContainer);
+  setTabAndTabContainerState(tabs, tabContainer, tabs.length - 1);
   // store.dispatch({ type: "ADD_TABS", payload: tabs });
   // store.dispatch({ type: "ADD_TABS_CONTAINERS", payload: tabContainer });
   // this.setState(
@@ -284,40 +278,41 @@ const shiftJournalIndex = (year, month, date, journals) => {
 
 //Check that the journalIndex references a possible index and if the year, month, and day match the current tab iteration.
 //If so, adds a colorful tab to tabs, and adds the journal information to tabContainer
-const renderTabsDateCheck = (i, year, month, monthWord, journals) => {
-  console.log("rendercheck", journalIndex);
-  if (journalIndex >= 0) {
-    console.log(
-      "renderTabsDateCheck",
-      parseInt(journals[journalIndex].created_at.split("T")[0].split("-")[2])
-    );
-  }
+const renderTabsDateCheck = (i, year, month, journals) => {
+  // console.log("rendercheck", journalIndex);
+  // if (journalIndex >= 0) {
+  //   console.log(journals, journals[journalIndex], i);
+  //   // console.log(
+  //   //   "renderTabsDateCheck",
+  //   //   parseInt(journals[journalIndex].created_at.split("T")[0].split("-")[2])
+  //   // );
+  // }
   if (
     journalIndex >= 0 &&
     parseInt(journals[journalIndex].created_at.split("T")[0].split("-")[2]) ===
       i
   ) {
-    console.log("got here");
-    renderJournalTabView(i, monthWord, journals);
+    // console.log("got here");
+    renderJournalTabView(i, month, journals);
   } else {
-    renderBlankTabView(i, monthWord, journals);
+    renderBlankTabView(i, month);
   }
 };
 
-const renderJournalTabView = (i, monthWord, journals) => {
+const renderJournalTabView = (i, month, journals) => {
   tabs.unshift(
     <Tab
-      key={`${monthWord} ${i}`}
+      key={`${getMonthWord(month)} ${i}`}
       style={styles.tabRoot}
-      label={`${monthWord} ${i}`}
+      label={`${getMonthWord(month)} ${i}`}
       icon={<CheckBox style={{ color: "#33cc00" }} />}
     />
   );
   let array = [];
-  checkForAdditionalTabContainerData(i, array, monthWord, journals);
+  checkForAdditionalTabContainerData(i, array, month, journals);
 };
 
-const checkForAdditionalTabContainerData = (i, array, monthWord, journals) => {
+const checkForAdditionalTabContainerData = (i, array, month, journals) => {
   array.push(
     // <JournalPaper
     //   key={`${monthWord} ${i} journal ${journalIndex}`}
@@ -339,27 +334,31 @@ const checkForAdditionalTabContainerData = (i, array, monthWord, journals) => {
     parseInt(journals[journalIndex].created_at.split("T")[0].split("-")[2]) ===
       i
   ) {
-    checkForAdditionalTabContainerData(i, array, monthWord, journals);
+    checkForAdditionalTabContainerData(i, array, month, journals);
   } else {
-    tabContainer[valueCounter] =
-      // <TabContainer key={`${monthWord} ${i} container`}>{array}</TabContainer>
-      array;
+    tabContainer[valueCounter] = {};
+    // <TabContainer key={`${monthWord} ${i} container`}>{array}</TabContainer>
+    tabContainer[valueCounter]["journal"] = array;
+    // array;
+    tabContainer[valueCounter]["date"] = `${getFullMonthWord(month)} ${i}`;
     valueCounter--;
   }
 };
 
-const renderBlankTabView = (i, monthWord) => {
+const renderBlankTabView = (i, month) => {
   tabs.unshift(
     <Tab
-      key={`${monthWord} ${i}`}
+      key={`${getMonthWord(month)} ${i}`}
       style={styles.tabRoot}
-      label={`${monthWord} ${i}`}
+      label={`${getMonthWord(month)} ${i}`}
       icon={<CheckBoxOutline style={{ color: "#33cc00" }} />}
     />
   );
-  tabContainer[valueCounter] =
-    // <TabContainer key={`${monthWord} ${i} container`}>
-    [];
+  tabContainer[valueCounter] = {};
+  tabContainer[valueCounter]["date"] = `${getFullMonthWord(month)} ${i}`;
+  // <TabContainer key={`${monthWord} ${i} container`}>
+  // [];
+  // tabContainer[valueCounter]["date"] = `${monthWord} ${i}`;
   // </TabContainer>
   valueCounter--;
 };

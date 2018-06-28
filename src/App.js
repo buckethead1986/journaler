@@ -147,6 +147,7 @@ class App extends Component {
   };
 
   render() {
+    console.log(this.state);
     // console.log(this.state.tabs, this.state.tabContainer);
     let date = new Date(); //move to state, allows rerender of tabs based on date (date.setDate(newdate)
 

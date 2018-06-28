@@ -2,7 +2,11 @@ import React from "react";
 import JournalPaper from "./JournalPaper";
 
 const JournalTabs = props => {
-  console.log(props.tabContainer[props.shownJournalValue]);
+  // console.log(
+  //   props.tabContainer[props.shownJournalValue],
+  //   props.date,
+  //   props.journals
+  // );
   // constructor() {
   //   super();
   //
@@ -34,6 +38,15 @@ const JournalTabs = props => {
         />
       );
     });
+  } else {
+    // mappedJournals = (
+    //   <JournalPaper
+    //     key={props.shownJournalValue}
+    //     title={journal[1]}
+    //     content={journal[2]}
+    //     date={journal[3]}
+    //   />
+    // );
   }
 
   return <div>{mappedJournals}</div>;

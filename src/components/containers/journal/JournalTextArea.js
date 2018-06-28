@@ -140,7 +140,7 @@ class TextFields extends React.Component {
               className={classes.submitButton}
               onClick={() =>
                 this.postJournalEntry(
-                  4,
+                  this.props.currentUser.id,
                   this.state.textTitle,
                   this.state.textArea
                 )}
@@ -154,7 +154,7 @@ class TextFields extends React.Component {
               className={classes.submitButton}
               onClick={() =>
                 this.postJournalEntry(
-                  4,
+                  this.props.currentUser.id,
                   this.state.textTitle,
                   this.state.textArea
                 )}

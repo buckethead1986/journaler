@@ -15,14 +15,13 @@ const styles = theme => ({
 });
 
 class TabCreator extends React.Component {
-  render() {
-    console.log(this.props);
-    const dateMessage = `Journals written on ${this.props.tabContainer[
-      this.props.shownJournalValue
-    ].date}`;
-    const { classes } = this.props;
-    return (
-      <Grid container wrap="nowrap" spacing={0}>
+  renderJournalsOrBlank = (classes, props) => {
+    let dateMessage;
+    if ("journal" in props.tabContainer[props.shownJournalValue]) {
+      dateMessage = `Journals written on ${props.tabContainer[
+        props.shownJournalValue
+      ].date}`;
+      return (
         <Grid item xs={5} className={classes.typography}>
           <Typography
             variant="headline"
@@ -32,15 +31,43 @@ class TabCreator extends React.Component {
             {dateMessage}
           </Typography>
           <JournalTabs
-            url={this.props.url}
-            date={this.props.date}
-            store={this.props.store}
-            currentUser={this.props.currentUser}
-            journals={this.props.journals}
-            tabContainer={this.props.tabContainer}
-            shownJournalValue={this.props.shownJournalValue}
+            url={props.url}
+            date={props.date}
+            store={props.store}
+            currentUser={props.currentUser}
+            journals={props.journals}
+            tabContainer={props.tabContainer}
+            shownJournalValue={props.shownJournalValue}
           />
         </Grid>
+      );
+    } else {
+      dateMessage = `No Journals written on ${props.tabContainer[
+        props.shownJournalValue
+      ].date}`;
+      return (
+        <Grid item xs={5} className={classes.typography}>
+          <Typography
+            variant="headline"
+            component="h3"
+            style={{ textAlign: "center" }}
+          >
+            {dateMessage}
+          </Typography>
+        </Grid>
+      );
+    }
+  };
+
+  render() {
+    console.log(this.props);
+    const dateMessage = `Journals written on ${this.props.tabContainer[
+      this.props.shownJournalValue
+    ].date}`;
+    const { classes } = this.props;
+    return (
+      <Grid container wrap="nowrap" spacing={0}>
+        {this.renderJournalsOrBlank(classes, this.props)}
 
         <Grid item xs={7} className={classes.typography}>
           <Typography
@@ -53,6 +80,7 @@ class TabCreator extends React.Component {
           <JournalTextArea
             url={this.props.url}
             store={this.props.store}
+            currentUser={this.props.currentUser}
             fetchJournals={this.props.fetchJournals}
           />
         </Grid>

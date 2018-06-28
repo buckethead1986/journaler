@@ -60,10 +60,6 @@ class TabCreator extends React.Component {
   };
 
   render() {
-    console.log(this.props);
-    const dateMessage = `Journals written on ${this.props.tabContainer[
-      this.props.shownJournalValue
-    ].date}`;
     const { classes } = this.props;
     return (
       <Grid container wrap="nowrap" spacing={0}>

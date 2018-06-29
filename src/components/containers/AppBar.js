@@ -44,35 +44,6 @@ const styles = theme => ({
     backgroundColor: "#1890ff"
   },
   tabSelected: {}
-  // tabRoot: {
-  //   textTransform: "initial",
-  //   minWidth: 50,
-  //   // fontWeight: theme.typography.fontWeightRegular,
-  //   // marginRight: theme.spacing.unit * 4,
-  //   fontFamily: [
-  //     "-apple-system",
-  //     "BlinkMacSystemFont",
-  //     '"Segoe UI"',
-  //     "Roboto",
-  //     '"Helvetica Neue"',
-  //     "Arial",
-  //     "sans-serif",
-  //     '"Apple Color Emoji"',
-  //     '"Segoe UI Emoji"',
-  //     '"Segoe UI Symbol"'
-  //   ].join(","),
-  //   "&:hover": {
-  //     color: "#40a9ff",
-  //     opacity: 1
-  //   },
-  //   "&$tabSelected": {
-  //     color: "#1890ff"
-  //     // fontWeight: theme.typography.fontWeightMedium
-  //   },
-  //   "&:focus": {
-  //     color: "#40a9ff"
-  //   }
-  // },
 });
 
 class SimpleAppBar extends React.Component {
@@ -98,7 +69,7 @@ class SimpleAppBar extends React.Component {
     if (this.props.currentUser.length !== 0) {
       text = `Welcome, ${this.props.currentUser.username}`;
     } else {
-      text = "Journaler";
+      text = "";
     }
     return this.props.currentUser.length !== 0 ? (
       <AppBar position="static" color="default">

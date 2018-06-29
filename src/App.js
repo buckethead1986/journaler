@@ -3,7 +3,7 @@ import { Route, withRouter } from "react-router-dom";
 import AppBar from "./components/containers/AppBar";
 import LoginDrawer from "./components/containers/login/LoginDrawer";
 import SettingsDrawer from "./components/containers/settings/SettingsDrawer";
-import JournalArea from "./components/containers/journal/JournalArea";
+// import JournalArea from "./components/containers/journal/JournalArea";
 // import JournalTabs from "./components/containers/journalTabs/JournalTabs";
 import JournalTextArea from "./components/containers/journal/JournalTextArea";
 import TabCreator from "./components/containers/journalTabs/TabCreator";
@@ -23,24 +23,30 @@ class App extends Component {
     tabContainer: [],
     shownJournalValue: 0,
     settingsDrawerOpen: false,
-    loginDrawerOpen: false
+    loginDrawerOpen: false,
+    fromHomePage: false,
+    textTitle: "",
+    textArea: ""
   };
 
+  //redirects to '/journaler' unless localstorage token is authorized.
   componentDidMount() {
-    const token = localStorage.getItem("token");
-    if (token) {
-      this.fetchUsersAndCurrentUser();
-    } else {
-      this.props.history.push("/journaler");
-    }
+    fetch(`${url}/current_user`, {
+      headers: {
+        "content-type": "application/json",
+        accept: "application/json",
+        Authorization: localStorage.getItem("token")
+      }
+    })
+      .then(res => res.json())
+      .then(json => {
+        if (!json.error) {
+          this.fetchUsersAndCurrentUser();
+        } else {
+          this.props.history.push("/journaler");
+        }
+      });
   }
-
-  // componentWillReceiveProps(nextProps) {
-  //   console.log(this.props.journals, nextProps.journals);
-  //   // if (this.props.store.getState(). !== ) {
-  //   //
-  //   // }
-  // }
 
   changeShownJournalValue = value => {
     this.setState({ shownJournalValue: value });
@@ -80,7 +86,6 @@ class App extends Component {
                     new Date(),
                     this.setTabAndTabContainerState
                   )
-                // () => console.log(this.state.currentUser, this.state.journals)
               );
             })
             .then(() =>
@@ -110,6 +115,7 @@ class App extends Component {
       });
   };
 
+  //simple sort function to make sure journals are sorted in chronological order. Rails API was sometimes misordering items.
   sortJournals = journals => {
     return journals.sort((a, b) => {
       return a.created_at > b.created_at
@@ -118,16 +124,7 @@ class App extends Component {
     });
   };
 
-  // fetchUsers = () => {
-  //   fetch(`${url}/users`)
-  //     .then(res => res.json())
-  //     .then(json => this.setState({ users: json }));
-  // };
-
-  // testFunction = (tabs, tabContainer) => {
-  //   console.log(tabs, tabContainer);
-  // };
-
+  //self explanatory. logs out a user, resets or removes state.
   logoutLink = () => {
     this.setState(
       {
@@ -142,12 +139,25 @@ class App extends Component {
     );
   };
 
-  openLoginDrawer = () => {
-    this.setState(prevState => {
-      return { loginDrawerOpen: !prevState.loginDrawerOpen };
+  //retains content already written in journal area if you log in or sign up.
+  pullJournalContent = (textTitle, textArea) => {
+    this.setState({
+      textTitle,
+      textArea
     });
   };
 
+  //toggles the login drawer open and closed.  Begins on signup section if its opened from the 'signup to save journal' button.
+  openLoginDrawer = (fromHomePage = false) => {
+    this.setState(prevState => {
+      return {
+        loginDrawerOpen: !prevState.loginDrawerOpen,
+        fromHomePage
+      };
+    });
+  };
+
+  //toggles settings drawer open and closed
   openSettingsDrawer = () => {
     this.setState(prevState => {
       return { settingsDrawerOpen: !prevState.settingsDrawerOpen };
@@ -155,7 +165,6 @@ class App extends Component {
   };
 
   render() {
-    // console.log(this.state.tabs, this.state.tabContainer);
     let date = new Date(); //move to state, allows rerender of tabs based on date (date.setDate(newdate)
 
     return (
@@ -171,6 +180,7 @@ class App extends Component {
           shownJournalValue={this.state.shownJournalValue}
           changeShownJournalValue={this.changeShownJournalValue}
           loginOrLogoutButton={this.loginOrLogoutButton}
+          pullJournalContent={this.pullJournalContent}
         />
         <LoginDrawer
           url={url}
@@ -178,6 +188,7 @@ class App extends Component {
           loginDrawerOpen={this.state.loginDrawerOpen}
           openLoginDrawer={this.openLoginDrawer}
           fetchUsersAndCurrentUser={this.fetchUsersAndCurrentUser}
+          fromHomePage={this.state.fromHomePage}
         />
         <SettingsDrawer
           url={url}
@@ -186,7 +197,23 @@ class App extends Component {
           openSettingsDrawer={this.openSettingsDrawer}
           fetchUsersAndCurrentUser={this.fetchUsersAndCurrentUser}
         />
-
+        <Route
+          exact
+          path="/journaler"
+          render={() => {
+            return (
+              <TabCreator
+                url={url}
+                store={this.props.store}
+                loginDrawerOpen={this.state.loginDrawerOpen}
+                openLoginDrawer={this.openLoginDrawer}
+                pullJournalContent={this.pullJournalContent}
+                textTitle={this.state.textTitle}
+                textArea={this.state.textArea}
+              />
+            );
+          }}
+        />
         {this.state.currentUser.length !== 0 &&
         this.state.tabContainer.length !== 0 ? (
           <Route
@@ -203,6 +230,8 @@ class App extends Component {
                   fetchJournals={this.fetchJournals}
                   tabContainer={this.state.tabContainer}
                   shownJournalValue={this.state.shownJournalValue}
+                  textTitle={this.state.textTitle}
+                  textArea={this.state.textArea}
                 />
               );
             }}
@@ -210,13 +239,6 @@ class App extends Component {
         ) : (
           ""
         )}
-        <Route
-          exact
-          path="/journaler"
-          render={() => {
-            return <JournalTextArea url={url} store={this.props.store} />;
-          }}
-        />
       </div>
     );
   }

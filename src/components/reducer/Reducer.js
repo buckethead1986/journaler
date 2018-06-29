@@ -4,13 +4,19 @@ export default function reducer(
     // loggedInUser: []
     // tabs: [],
     // tabContainer: {},
-    shownJournalValue: 0
+    // shownJournalValue: 0
+    // textArea: "",
+    // textTitle: ""
   },
   action
 ) {
   switch (action.type) {
-    case "CHANGE_SHOWN_JOURNAL_VALUE":
-      return Object.assign({}, state, { shownJournalValue: action.payload });
+    // case "ADD_TEXT_TITLE":
+    //   return Object.assign({}, state, { textTitle: action.payload });
+    // case "ADD_TEXT_AREA":
+    //   return Object.assign({}, state, { textArea: action.payload });
+    // case "CHANGE_SHOWN_JOURNAL_VALUE":
+    //   return Object.assign({}, state, { shownJournalValue: action.payload });
     // case "ADD_TABS":
     //   return Object.assign({}, state, { tabs: action.payload });
     // case "ADD_TABS_CONTAINERS":

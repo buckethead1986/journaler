@@ -35,10 +35,20 @@ class TemporaryDrawer extends React.Component {
     signup: false
   };
 
+  //toggles logindrawer state open or closed.  If 'login' button was clicked, changes signup state so login form is rendered.  If 'signup' was clicked, rendered signup form first
   componentWillReceiveProps(nextProps) {
-    if (nextProps.loginDrawerOpen !== this.props.loginDrawerOpen) {
+    if (
+      nextProps.loginDrawerOpen !== this.props.loginDrawerOpen &&
+      nextProps.fromHomePage === true
+    ) {
       this.setState({
-        right: nextProps.loginDrawerOpen
+        right: nextProps.loginDrawerOpen,
+        signup: true
+      });
+    } else if (nextProps.loginDrawerOpen !== this.props.loginDrawerOpen) {
+      this.setState({
+        right: nextProps.loginDrawerOpen,
+        signup: false
       });
     }
   }
@@ -191,6 +201,7 @@ class TemporaryDrawer extends React.Component {
           <Grid>
             <TextField
               error
+              autoFocus
               id="username"
               label="Username"
               className={classes.textField}
@@ -229,6 +240,7 @@ class TemporaryDrawer extends React.Component {
         <Grid>
           <Grid>
             <TextField
+              autoFocus
               id="username"
               label="Username"
               className={classes.textField}

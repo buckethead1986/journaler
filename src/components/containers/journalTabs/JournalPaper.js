@@ -11,25 +11,13 @@ const styles = theme => ({
     margin: theme.spacing.unit * 2,
     marginTop: theme.spacing.unit * 3,
     marginRight: theme.spacing.unit
-    // overflow: "hidden"
   })
-  // root: {
-  //   overflow: 'hidden',
-  //   padding: `0 ${theme.spacing.unit * 3}px`,
-  // },
-  // wrapper: {
-  //   // maxWidth: 400
-  // }
 });
 
 class PaperSheet extends React.Component {
-  constructor() {
-    super();
-
-    this.state = {
-      fullSize: false
-    };
-  }
+  state = {
+    fullSize: false
+  };
 
   toggleSize = () => {
     this.setState(prevState => {

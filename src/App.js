@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Route, withRouter } from "react-router-dom";
 import AppBar from "./components/containers/AppBar";
 import LoginDrawer from "./components/containers/login/LoginDrawer";
+import SettingsDrawer from "./components/containers/settings/SettingsDrawer";
 import JournalArea from "./components/containers/journal/JournalArea";
 // import JournalTabs from "./components/containers/journalTabs/JournalTabs";
 import JournalTextArea from "./components/containers/journal/JournalTextArea";
@@ -15,13 +16,14 @@ class App extends Component {
     super();
   }
   state = {
-    loginDrawerOpen: false,
     currentUser: [],
     users: [],
     journals: [],
     tabs: [],
     tabContainer: [],
-    shownJournalValue: 0
+    shownJournalValue: 0,
+    settingsDrawerOpen: false,
+    loginDrawerOpen: false
   };
 
   componentDidMount() {
@@ -146,8 +148,13 @@ class App extends Component {
     });
   };
 
+  openSettingsDrawer = () => {
+    this.setState(prevState => {
+      return { settingsDrawerOpen: !prevState.settingsDrawerOpen };
+    });
+  };
+
   render() {
-    console.log(this.state);
     // console.log(this.state.tabs, this.state.tabContainer);
     let date = new Date(); //move to state, allows rerender of tabs based on date (date.setDate(newdate)
 
@@ -159,6 +166,7 @@ class App extends Component {
           currentUser={this.state.currentUser}
           logoutLink={this.logoutLink}
           openLoginDrawer={this.openLoginDrawer}
+          openSettingsDrawer={this.openSettingsDrawer}
           tabs={this.state.tabs}
           shownJournalValue={this.state.shownJournalValue}
           changeShownJournalValue={this.changeShownJournalValue}
@@ -169,6 +177,13 @@ class App extends Component {
           store={this.props.store}
           loginDrawerOpen={this.state.loginDrawerOpen}
           openLoginDrawer={this.openLoginDrawer}
+          fetchUsersAndCurrentUser={this.fetchUsersAndCurrentUser}
+        />
+        <SettingsDrawer
+          url={url}
+          store={this.props.store}
+          settingsDrawerOpen={this.state.settingsDrawerOpen}
+          openSettingsDrawer={this.openSettingsDrawer}
           fetchUsersAndCurrentUser={this.fetchUsersAndCurrentUser}
         />
 

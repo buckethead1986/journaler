@@ -355,6 +355,11 @@ const renderBlankTabView = (i, month) => {
     />
   );
   tabContainer[valueCounter] = {};
+  // tabContainer[valueCounter]["journal"] = [
+  //   journals[journalIndex].id,
+  //   journals[journalIndex].title,
+  //   journals[journalIndex].content
+  // ];
   tabContainer[valueCounter]["date"] = `${getFullMonthWord(month)} ${i}`;
   // <TabContainer key={`${monthWord} ${i} container`}>
   // [];

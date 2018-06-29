@@ -110,6 +110,16 @@ class SimpleAppBar extends React.Component {
             variant="contained"
             color="primary"
             className={classes.loginButton}
+            onClick={() => this.props.openSettingsDrawer()}
+            disableRipple={true}
+            disableFocusRipple={true}
+          >
+            Settings
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            className={classes.loginButton}
             onClick={() => this.props.logoutLink()}
             disableRipple={true}
             disableFocusRipple={true}
@@ -117,7 +127,6 @@ class SimpleAppBar extends React.Component {
             Logout
           </Button>
         </Toolbar>
-
         <Divider />
         <Tabs
           value={this.props.shownJournalValue}

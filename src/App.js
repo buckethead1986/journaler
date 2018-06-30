@@ -180,7 +180,6 @@ class App extends Component {
           shownJournalValue={this.state.shownJournalValue}
           changeShownJournalValue={this.changeShownJournalValue}
           loginOrLogoutButton={this.loginOrLogoutButton}
-          pullJournalContent={this.pullJournalContent}
         />
         <LoginDrawer
           url={url}
@@ -230,6 +229,7 @@ class App extends Component {
                   fetchJournals={this.fetchJournals}
                   tabContainer={this.state.tabContainer}
                   shownJournalValue={this.state.shownJournalValue}
+                  pullJournalContent={this.pullJournalContent}
                   textTitle={this.state.textTitle}
                   textArea={this.state.textArea}
                 />

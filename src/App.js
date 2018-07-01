@@ -3,11 +3,10 @@ import { Route, withRouter } from "react-router-dom";
 import AppBar from "./components/containers/AppBar";
 import LoginDrawer from "./components/containers/login/LoginDrawer";
 import SettingsDrawer from "./components/containers/settings/SettingsDrawer";
-// import JournalArea from "./components/containers/journal/JournalArea";
-// import JournalTabs from "./components/containers/journalTabs/JournalTabs";
 import JournalTextArea from "./components/containers/journal/JournalTextArea";
 import TabCreator from "./components/containers/journalTabs/TabCreator";
 import { renderTabsHelper } from "./components/containers/RenderTabsHelper";
+import { checkColorCodes } from "./components/containers/Helper";
 
 const url = "http://localhost:3001/api/v1";
 
@@ -46,22 +45,18 @@ class App extends Component {
       });
   }
 
+  //checks colors and updates User API with color settings, then rerenders tabs
   changeColorSettings = (e, colorsObject) => {
-    //decide if youre going to use store or state to handle this.
     e.preventDefault();
-    this.props.store.dispatch({
-      type: "SUBMIT_COLOR",
-      payload: colorsObject
-    });
-    this.postSettingsToAPI(colorsObject);
-    // console.log(hasJournalColor, noJournalColor, backgroundColor);
+    let checkedColors = checkColorCodes(colorsObject, this.state.colors);
+
+    this.postSettingsToAPI(checkedColors);
     this.setState(
       {
-        colors: colorsObject
+        colors: checkedColors
       },
       () => {
         this.openSettingsDrawer();
-        // console.log(this.state.colors);
         renderTabsHelper(
           this.state.journals,
           this.props.store,
@@ -123,14 +118,15 @@ class App extends Component {
                     this.state.users.find(user => user.id === json.id).settings
                   )
                 },
-                () =>
+                () => {
                   renderTabsHelper(
                     this.state.journals,
                     this.props.store,
                     new Date(),
                     this.setTabAndTabContainerState,
                     this.state.colors
-                  )
+                  );
+                }
               );
             })
             .then(() =>
@@ -222,7 +218,6 @@ class App extends Component {
 
   render() {
     let date = new Date(); //move to state, allows rerender of tabs based on date (date.setDate(newdate)
-
     return (
       <div
         style={{
@@ -272,6 +267,7 @@ class App extends Component {
                 pullJournalContent={this.pullJournalContent}
                 textTitle={this.state.textTitle}
                 textArea={this.state.textArea}
+                colors={this.state.colors}
               />
             );
           }}
@@ -295,6 +291,7 @@ class App extends Component {
                   pullJournalContent={this.pullJournalContent}
                   textTitle={this.state.textTitle}
                   textArea={this.state.textArea}
+                  colors={this.state.colors}
                 />
               );
             }}

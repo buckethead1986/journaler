@@ -109,8 +109,7 @@ export function renderTabsHelper(
   // }
 
   journalIndex = journals.length - 1;
-  // let date = new Date();
-  // let date = date;
+
   let year = date.getFullYear();
   let month = date.getMonth();
   let monthWord = getMonthWord(month);
@@ -177,6 +176,7 @@ const shiftJournalIndex = (year, month, date, journals) => {
   //month
 
   while (
+    //This breaks if all journals are in months previous to the one. This works if the month is july, and its counting down from dec, but not dec => july
     parseInt(
       journals[journalIndex].created_at.split("T")[0].split("-")[1] - 1
     ) !== month &&

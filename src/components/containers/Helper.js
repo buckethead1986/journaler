@@ -108,3 +108,60 @@ export function daysInEachMonth(month, year) {
   }
   return days;
 }
+//checks that the color input is a valid hex code, rgb, or normal color word.  If not, resets to previous color.
+export function checkColorCodes(colorsObject, colors) {
+  let checkedColorCodes = Object.assign({}, colorsObject);
+
+  for (let item in colorsObject) {
+    let trueFalse = false;
+    if (colorsObject[item][0] === "#") {
+      let isOk = /(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i.test(colorsObject[item]); //hex check
+      if (isOk) {
+        trueFalse = true;
+      }
+    } else if (colorsObject[item].slice(0, 3).toLowerCase() === "rgb") {
+      //rgb check
+      if (checkRgb(colorsObject[item])) {
+        trueFalse = true;
+      }
+    } else {
+      switch (colorsObject[item].toLowerCase()) { //normal color words check
+        case "red":
+        case "orange":
+        case "yellow":
+        case "green":
+        case "blue":
+        case "purple":
+        case "black":
+        case "brown":
+        case "gold":
+        case "grey":
+        case "gray":
+        case "indigo":
+        case "maroon":
+        case "magenta":
+        case "navy":
+        case "pink":
+        case "silver":
+        case "violet":
+        case "white":
+          trueFalse = true;
+          break;
+        default:
+          trueFalse = false;
+          break;
+      }
+    }
+    if (!trueFalse) {
+      checkedColorCodes[item] = colors[item];
+    }
+  }
+  return checkedColorCodes;
+}
+
+function checkRgb(rgb) {
+  var rxValidRgb = /([R][G][B][A]?[(]\s*([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\s*,\s*([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\s*,\s*([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])(\s*,\s*((0\.[0-9]{1})|(1\.0)|(1)))?[)])/i;
+  if (rxValidRgb.test(rgb)) {
+    return true;
+  }
+}

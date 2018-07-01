@@ -1,13 +1,12 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
+import Grid from "@material-ui/core/Grid";
+import Tab from "@material-ui/core/Tab";
 import Paper from "@material-ui/core/Paper";
+import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import IconButton from "@material-ui/core/IconButton";
-import Tab from "@material-ui/core/Tab";
-import Button from "@material-ui/core/Button";
-import Grid from "@material-ui/core/Grid";
-
 import ZoomOutMap from "@material-ui/icons/ZoomOutMap";
 
 const styles = theme => ({
@@ -36,45 +35,7 @@ class PaperSheet extends React.Component {
 
   //This reformats the json data, which removes line breaks, back into text that looks like what the user input.
   parse = text => {
-    // let newText = text.slice(0, 200);
-    // let newText = "this is a test \nof the regex \n this test\n new test \n";
-    // // console.log(newText.indexOf("#"));
-    // // console.log(newText);
-    // if (newText.split("\n").length > 3) {
-    //   let index = 0;
-    //   let cumulativeIndex = 0;
-    //   let testText = newText.slice();
-    //   for (let i = index, j = 0; i < newText.length, j < 3; j++) {
-    //     index = testText.indexOf("\n") + 1;
-    //     cumulativeIndex += index;
-    //     testText = testText.slice(index);
-    //     // console.log(index, testText, cumulativeIndex);
-    //   }
-    // cumulativeIndex--;
-    // console.log(index, testText, newText.slice(0, cumulativeIndex));
-    // newText =
-    // console.log(textFinder);
-    // }
-    // console.log(text);
-    // // Damn pesky carriage returns...
-    // text = text.replace("\\r\\n", "\n");
-    // console.log(text);
-    // text = text.replace("\\r", "\\n");
-    // console.log(text);
-    // text = text.replace("\\n", "<br />");
-    // console.log(text);
-    // text = text.split("\\n").map(text => <p>{text}</p>); //works on physical '\n'
     text = text.split("\n").map((text, index) => <p key={index}>{text}</p>); //works on weird arrow rails renders
-    // console.log(text);
-    // if (text.split("\n").length) {
-    // }
-    // text = text.split("\\n").join("<br />");
-    // text = text.replace("\n", "\\n");
-    // text = str_replace("\r\n", "\n", text);
-    // text = str_replace("\r", "\n", text);
-    // console.log(text);
-    // // JSON requires new line characters be escaped
-    // text = str_replace("\n", "\\n", text);
     return text;
   };
 

@@ -168,8 +168,7 @@ class TextFields extends React.Component {
   };
 
   render() {
-    const colors = this.props.store.getState().colors;
-    const { classes } = this.props;
+    const { classes, colors } = this.props;
 
     return (
       <div>

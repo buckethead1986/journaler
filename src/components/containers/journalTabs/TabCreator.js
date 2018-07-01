@@ -21,10 +21,6 @@ const styles = theme => ({
 });
 
 class TabCreator extends React.Component {
-  // componentWillReceiveProps(nextProps) {
-  //   console.log(nextProps.colors);
-  // }
-
   renderJournalsOrBlank = () => {
     let dateMessage;
     if (this.props.currentUser) {
@@ -103,6 +99,7 @@ class TabCreator extends React.Component {
           pullJournalContent={this.props.pullJournalContent}
           textTitle={this.props.textTitle}
           textArea={this.props.textArea}
+          colors={this.props.colors}
         />
       </Grid>
     );

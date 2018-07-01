@@ -43,12 +43,16 @@ class TemporaryDrawer extends React.Component {
     ) {
       this.setState({
         right: nextProps.loginDrawerOpen,
-        signup: true
+        signup: true,
+        username: "",
+        password: ""
       });
     } else if (nextProps.loginDrawerOpen !== this.props.loginDrawerOpen) {
       this.setState({
         right: nextProps.loginDrawerOpen,
-        signup: false
+        signup: false,
+        username: "",
+        password: ""
       });
     }
   }

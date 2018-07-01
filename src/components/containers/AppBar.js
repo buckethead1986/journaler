@@ -10,18 +10,6 @@ import Divider from "@material-ui/core/Divider";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 
-// function TabContainer(props) {
-//   return (
-//     <Typography component="div" style={{ padding: 8 * 3 }}>
-//       {props.children}
-//     </Typography>
-//   );
-// }
-//
-// TabContainer.propTypes = {
-//   children: PropTypes.node.isRequired
-// };
-
 const styles = theme => ({
   root: {
     flexGrow: 1,
@@ -60,7 +48,6 @@ class SimpleAppBar extends React.Component {
   componentWillReceiveProps(nextProps) {
     if (this.props.tabs.length !== nextProps.tabs.length) {
       this.props.changeShownJournalValue(nextProps.tabs.length - 1);
-      // this.props.changeShownJournalValue(23); //for testing purposes
     }
   }
 
@@ -68,10 +55,26 @@ class SimpleAppBar extends React.Component {
     this.props.changeShownJournalValue(value);
   };
 
+  renderButton = (text, callbackFunction, classes, colors) => {
+    return (
+      <Button
+        variant="contained"
+        style={{
+          color: colors.buttonTextColor || "default",
+          backgroundColor: colors.buttonBackgroundColor || "default"
+        }}
+        className={classes.loginButton}
+        onClick={() => callbackFunction()}
+        disableRipple={true}
+        disableFocusRipple={true}
+      >
+        {text}
+      </Button>
+    );
+  };
+
   render() {
-    console.log(this.props.store.getState().colors);
-    const colors = this.props.store.getState().colors;
-    const { classes } = this.props;
+    const { classes, colors } = this.props;
     const { value } = this.state;
     let text;
     if (this.props.currentUser.length !== 0) {
@@ -85,32 +88,13 @@ class SimpleAppBar extends React.Component {
           <Typography variant="title" style={{ flex: 6 }}>
             {text}
           </Typography>
-          <Button
-            variant="contained"
-            style={{
-              color: colors.buttonTextColor,
-              backgroundColor: colors.buttonBackgroundColor
-            }}
-            className={classes.loginButton}
-            onClick={() => this.props.openSettingsDrawer()}
-            disableRipple={true}
-            disableFocusRipple={true}
-          >
-            Settings
-          </Button>
-          <Button
-            variant="contained"
-            style={{
-              color: colors.buttonTextColor,
-              backgroundColor: colors.buttonBackgroundColor
-            }}
-            className={classes.loginButton}
-            onClick={() => this.props.logoutLink()}
-            disableRipple={true}
-            disableFocusRipple={true}
-          >
-            Logout
-          </Button>
+          {this.renderButton(
+            "Settings",
+            this.props.openSettingsDrawer,
+            classes,
+            colors
+          )}
+          {this.renderButton("Logout", this.props.logoutLink, classes, colors)}
         </Toolbar>
         <Divider />
         <Tabs
@@ -134,19 +118,12 @@ class SimpleAppBar extends React.Component {
           <Typography variant="title" color="inherit" style={{ flex: 6 }}>
             {text}
           </Typography>
-          <Button
-            variant="contained"
-            style={{
-              color: colors.buttonTextColor,
-              backgroundColor: colors.buttonBackgroundColor
-            }}
-            className={classes.loginButton}
-            onClick={() => this.props.openLoginDrawer()}
-            disableRipple={true}
-            disableFocusRipple={true}
-          >
-            Login
-          </Button>
+          {this.renderButton(
+            "Login",
+            this.props.openLoginDrawer,
+            classes,
+            colors
+          )}
         </Toolbar>
       </AppBar>
     );

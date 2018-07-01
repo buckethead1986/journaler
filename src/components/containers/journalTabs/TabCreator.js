@@ -5,7 +5,7 @@ import JournalTabs from "./JournalTabs";
 import JournalTextArea from "../journal/JournalTextArea";
 import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
-import { renderHelpPage } from "./TutorialText";
+import { renderHelpPage } from "../tutorial/TutorialText";
 
 const styles = theme => ({
   root: theme.mixins.gutters({
@@ -21,6 +21,10 @@ const styles = theme => ({
 });
 
 class TabCreator extends React.Component {
+  // componentWillReceiveProps(nextProps) {
+  //   console.log(nextProps.colors);
+  // }
+
   renderJournalsOrBlank = () => {
     let dateMessage;
     if (this.props.currentUser) {

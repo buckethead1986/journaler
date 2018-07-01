@@ -6,7 +6,6 @@ import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import LoginDrawer from "./login/LoginDrawer";
-// import JournalTabs from "./journalTabs/JournalTabs";
 import Divider from "@material-ui/core/Divider";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
@@ -48,7 +47,14 @@ const styles = theme => ({
 
 class SimpleAppBar extends React.Component {
   state = {
-    value: 0
+    value: 0,
+    colors: this.props.store.getState().colors || [
+      "#33cc00",
+      "#33cc00",
+      "white",
+      "#3F51B5",
+      "white"
+    ]
   };
 
   componentWillReceiveProps(nextProps) {
@@ -63,13 +69,15 @@ class SimpleAppBar extends React.Component {
   };
 
   render() {
+    console.log(this.props.store.getState().colors);
+    const colors = this.props.store.getState().colors;
     const { classes } = this.props;
     const { value } = this.state;
     let text;
     if (this.props.currentUser.length !== 0) {
       text = `Welcome, ${this.props.currentUser.username}`;
     } else {
-      text = "";
+      text = "Journaler";
     }
     return this.props.currentUser.length !== 0 ? (
       <AppBar position="static" color="default">
@@ -79,7 +87,10 @@ class SimpleAppBar extends React.Component {
           </Typography>
           <Button
             variant="contained"
-            color="primary"
+            style={{
+              color: colors.buttonTextColor,
+              backgroundColor: colors.buttonBackgroundColor
+            }}
             className={classes.loginButton}
             onClick={() => this.props.openSettingsDrawer()}
             disableRipple={true}
@@ -89,7 +100,10 @@ class SimpleAppBar extends React.Component {
           </Button>
           <Button
             variant="contained"
-            color="primary"
+            style={{
+              color: colors.buttonTextColor,
+              backgroundColor: colors.buttonBackgroundColor
+            }}
             className={classes.loginButton}
             onClick={() => this.props.logoutLink()}
             disableRipple={true}
@@ -122,7 +136,10 @@ class SimpleAppBar extends React.Component {
           </Typography>
           <Button
             variant="contained"
-            color="primary"
+            style={{
+              color: colors.buttonTextColor,
+              backgroundColor: colors.buttonBackgroundColor
+            }}
             className={classes.loginButton}
             onClick={() => this.props.openLoginDrawer()}
             disableRipple={true}

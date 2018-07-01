@@ -12,9 +12,6 @@ import { renderTabsHelper } from "./components/containers/RenderTabsHelper";
 const url = "http://localhost:3001/api/v1";
 
 class App extends Component {
-  constructor() {
-    super();
-  }
   state = {
     currentUser: [],
     users: [],
@@ -26,7 +23,8 @@ class App extends Component {
     loginDrawerOpen: false,
     fromHomePage: false,
     textTitle: "",
-    textArea: ""
+    textArea: "",
+    colors: {}
   };
 
   //redirects to '/journaler' unless localstorage token is authorized.
@@ -47,6 +45,49 @@ class App extends Component {
         }
       });
   }
+
+  changeColorSettings = (e, colorsObject) => {
+    //decide if youre going to use store or state to handle this.
+    e.preventDefault();
+    this.props.store.dispatch({
+      type: "SUBMIT_COLOR",
+      payload: colorsObject
+    });
+    this.postSettingsToAPI(colorsObject);
+    // console.log(hasJournalColor, noJournalColor, backgroundColor);
+    this.setState(
+      {
+        colors: colorsObject
+      },
+      () => {
+        this.openSettingsDrawer();
+        // console.log(this.state.colors);
+        renderTabsHelper(
+          this.state.journals,
+          this.props.store,
+          new Date(),
+          this.setTabAndTabContainerState,
+          this.state.colors
+        );
+      }
+    );
+  };
+
+  postSettingsToAPI = colorsObject => {
+    fetch(`${url}/users/${this.state.currentUser.id}`, {
+      method: "PATCH",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        user: {
+          id: this.state.currentUser.id,
+          settings: JSON.stringify(colorsObject)
+        }
+      })
+    });
+  };
 
   changeShownJournalValue = value => {
     this.setState({ shownJournalValue: value });
@@ -77,6 +118,9 @@ class App extends Component {
                     this.state.users.filter(user => {
                       return user.id === json.id;
                     })[0].journals
+                  ),
+                  colors: JSON.parse(
+                    this.state.users.find(user => user.id === json.id).settings
                   )
                 },
                 () =>
@@ -84,7 +128,8 @@ class App extends Component {
                     this.state.journals,
                     this.props.store,
                     new Date(),
-                    this.setTabAndTabContainerState
+                    this.setTabAndTabContainerState,
+                    this.state.colors
                   )
               );
             })
@@ -108,7 +153,8 @@ class App extends Component {
               this.state.journals,
               this.props.store,
               new Date(),
-              this.setTabAndTabContainerState
+              this.setTabAndTabContainerState,
+              this.state.colors
             );
           }
         );
@@ -130,9 +176,19 @@ class App extends Component {
       {
         loginDrawerOpen: false,
         currentUser: [],
-        users: []
+        users: [],
+        textTitle: "",
+        textArea: "",
+        colors: {
+          hasJournalsColor: "#33cc00",
+          noJournalsColor: "#33cc00",
+          buttonTextColor: "white",
+          buttonBackgroundColor: "#3F51B5",
+          backgroundColor: "white"
+        }
       },
       () => {
+        this.props.store.dispatch({ type: "RESET_COLORS" });
         localStorage.removeItem("token");
         this.props.history.push("/journaler");
       }
@@ -168,7 +224,12 @@ class App extends Component {
     let date = new Date(); //move to state, allows rerender of tabs based on date (date.setDate(newdate)
 
     return (
-      <div style={{ backgroundColor: "white", height: "100vh" }}>
+      <div
+        style={{
+          backgroundColor: this.state.colors.backgroundColor,
+          height: "100vh"
+        }}
+      >
         <AppBar
           url={url}
           store={this.props.store}
@@ -180,6 +241,7 @@ class App extends Component {
           shownJournalValue={this.state.shownJournalValue}
           changeShownJournalValue={this.changeShownJournalValue}
           loginOrLogoutButton={this.loginOrLogoutButton}
+          colors={this.state.colors}
         />
         <LoginDrawer
           url={url}
@@ -194,7 +256,8 @@ class App extends Component {
           store={this.props.store}
           settingsDrawerOpen={this.state.settingsDrawerOpen}
           openSettingsDrawer={this.openSettingsDrawer}
-          fetchUsersAndCurrentUser={this.fetchUsersAndCurrentUser}
+          changeColorSettings={this.changeColorSettings}
+          colors={this.state.colors}
         />
         <Route
           exact

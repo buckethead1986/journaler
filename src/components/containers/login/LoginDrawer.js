@@ -70,9 +70,17 @@ class TemporaryDrawer extends React.Component {
       Accept: "application/json",
       "Content-Type": "application/json"
     };
+    const settings = {
+      hasJournalsColor: "#33cc00",
+      noJournalsColor: "#33cc00",
+      buttonTextColor: "white",
+      buttonBackgroundColor: "#3F51B5",
+      backgroundColor: "white"
+    };
     const body = {
       username: this.state.username,
-      password: this.state.password
+      password: this.state.password,
+      settings: JSON.stringify(settings)
     };
     fetch(`${this.props.url}/users`, {
       method: "POST",

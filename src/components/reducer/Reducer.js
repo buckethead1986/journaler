@@ -7,10 +7,29 @@ export default function reducer(
     // shownJournalValue: 0
     // textArea: "",
     // textTitle: ""
+    colors: {
+      hasJournalsColor: "#33cc00",
+      noJournalsColor: "#33cc00",
+      buttonTextColor: "white",
+      buttonBackgroundColor: "#3F51B5",
+      backgroundColor: "white"
+    }
   },
   action
 ) {
   switch (action.type) {
+    case "SUBMIT_COLOR":
+      return Object.assign({}, state, { colors: action.payload });
+    case "RESET_COLORS":
+      return Object.assign({}, state, {
+        colors: {
+          hasJournalsColor: "#33cc00",
+          noJournalsColor: "#33cc00",
+          buttonTextColor: "white",
+          buttonBackgroundColor: "#3F51B5",
+          backgroundColor: "white"
+        }
+      });
     // case "ADD_TEXT_TITLE":
     //   return Object.assign({}, state, { textTitle: action.payload });
     // case "ADD_TEXT_AREA":

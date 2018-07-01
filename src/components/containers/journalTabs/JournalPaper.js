@@ -3,14 +3,12 @@ import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
-import Tab from "@material-ui/core/Tab";
-
-import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
-import ZoomOutMap from "@material-ui/icons/ZoomOutMap";
+import Tab from "@material-ui/core/Tab";
+import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
 
-// import Truncate from 'react-truncate';
+import ZoomOutMap from "@material-ui/icons/ZoomOutMap";
 
 const styles = theme => ({
   root: theme.mixins.gutters({
@@ -66,7 +64,7 @@ class PaperSheet extends React.Component {
     // text = text.replace("\\n", "<br />");
     // console.log(text);
     // text = text.split("\\n").map(text => <p>{text}</p>); //works on physical '\n'
-    text = text.split("\n").map(text => <p>{text}</p>); //works on weird arrow rails renders
+    text = text.split("\n").map((text, index) => <p key={index}>{text}</p>); //works on weird arrow rails renders
     // console.log(text);
     // if (text.split("\n").length) {
     // }
@@ -158,7 +156,7 @@ class PaperSheet extends React.Component {
   };
 
   smallUntoggleableJournals = () => {
-    console.log(this.props.content);
+    // console.log(this.props.content);
     // debugger;
     return (
       <div>

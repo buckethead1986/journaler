@@ -69,7 +69,8 @@ export function renderHelpPage(props) {
         <Typography variant="subheading" />
         <Typography variant="subheading">
           If you want to save a journal (don't worry, any current progress will
-          be saved) or change the color scheme, login in the upper right. Then:
+          be saved), see metrics, or change the color scheme, login in the upper
+          right. Then:
         </Typography>
         <ul>
           <li>

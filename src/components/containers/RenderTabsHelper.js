@@ -89,8 +89,12 @@ export function renderTabsHelper(
   journals,
   store,
   date,
-  setTabAndTabContainerState
+  setTabAndTabContainerState,
+  colors
 ) {
+  // console.log(colors);
+  // let colors2 = store.getState().colors;
+  // console.log(colors2);
   tabs = [];
   tabContainer = [];
   valueCounter = 29;
@@ -134,20 +138,28 @@ export function renderTabsHelper(
   // previousMonthWord = "bacon";
   // previousMonthLength = 31;
   // console.log("before shiftjournalindex", tabs, journalIndex, journals.length);
+
+  //
+
+  //shiftjournalindex currently breaks if there are no journals entries for the current month. //does it still?
+
+  //
+
   //shift journalIndex to chosen startDate. This is code for a stetch goal, currently there isnt a way to shift the tab start date.
   if (journalIndex >= 0) {
     shiftJournalIndex(year, month, date, journals);
   }
+
   // console.log("before first loop", tabs, journalIndex);
   //adding journal entries for this month from todays date, counting backwards
   for (let i = date.getDate(); i > 0; i--) {
-    renderTabsDateCheck(i, year, month, journals);
+    renderTabsDateCheck(i, year, month, journals, colors);
   }
   // console.log("before second loop", tabs, journalIndex);
   let count = 30 - tabs.length;
   //'tabs' length is all the days of the current month, now adding journal entries in the previous month, up to 30 total
   for (let i = previousMonthLength, j = 0; j < count; i--, j++) {
-    renderTabsDateCheck(i, previousYear, previousMonth, journals);
+    renderTabsDateCheck(i, previousYear, previousMonth, journals, colors);
   }
   setTabAndTabContainerState(tabs, tabContainer, tabs.length - 1);
 }
@@ -157,7 +169,8 @@ const shiftJournalIndex = (year, month, date, journals) => {
   //year
   while (
     parseInt(journals[journalIndex].created_at.split("T")[0].split("-")[0]) !==
-    year
+      year &&
+    journalIndex > 0
   ) {
     journalIndex--;
   }
@@ -166,7 +179,8 @@ const shiftJournalIndex = (year, month, date, journals) => {
   while (
     parseInt(
       journals[journalIndex].created_at.split("T")[0].split("-")[1] - 1
-    ) !== month
+    ) !== month &&
+    journalIndex > 0
   ) {
     journalIndex--;
   }
@@ -174,7 +188,8 @@ const shiftJournalIndex = (year, month, date, journals) => {
   //days in the future of chosen date
   while (
     parseInt(journals[journalIndex].created_at.split("T")[0].split("-")[2]) >
-    date.getDate()
+      date.getDate() &&
+    journalIndex > 0
   ) {
     journalIndex--;
   }
@@ -182,25 +197,25 @@ const shiftJournalIndex = (year, month, date, journals) => {
 
 //Check that the journalIndex references a possible index and if the year, month, and day match the current tab iteration.
 //If so, adds a colorful tab to tabs, and adds the journal information to tabContainer
-const renderTabsDateCheck = (i, year, month, journals) => {
+const renderTabsDateCheck = (i, year, month, journals, colors) => {
   if (
     journalIndex >= 0 &&
     parseInt(journals[journalIndex].created_at.split("T")[0].split("-")[2]) ===
       i
   ) {
-    renderJournalTabView(i, month, journals);
+    renderJournalTabView(i, month, journals, colors);
   } else {
-    renderBlankTabView(i, month);
+    renderBlankTabView(i, month, colors);
   }
 };
 
-const renderJournalTabView = (i, month, journals) => {
+const renderJournalTabView = (i, month, journals, colors) => {
   tabs.unshift(
     <Tab
       key={`${getMonthWord(month)} ${i}`}
       style={styles.tabRoot}
       label={`${getMonthWord(month)} ${i}`}
-      icon={<CheckBox style={{ color: "#33cc00" }} />}
+      icon={<CheckBox style={{ color: colors.hasJournalsColor }} />}
     />
   );
   let array = [];
@@ -232,13 +247,13 @@ const checkForAdditionalTabContainerData = (i, array, month, journals) => {
 };
 
 //No journals for this day, no 'journal' key gets created for tabContainer[valueCounter]
-const renderBlankTabView = (i, month) => {
+const renderBlankTabView = (i, month, colors) => {
   tabs.unshift(
     <Tab
       key={`${getMonthWord(month)} ${i}`}
       style={styles.tabRoot}
       label={`${getMonthWord(month)} ${i}`}
-      icon={<CheckBoxOutline style={{ color: "#33cc00" }} />}
+      icon={<CheckBoxOutline style={{ color: colors.noJournalsColor }} />}
     />
   );
   tabContainer[valueCounter] = {};

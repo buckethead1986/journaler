@@ -33,7 +33,12 @@ const styles = theme => ({
 
 class SettingsDrawer extends React.Component {
   state = {
-    right: false
+    right: false,
+    hasJournalsColor: this.props.colors[0] || "#33cc00",
+    noJournalsColor: this.props.colors[1] || "#33cc00",
+    buttonTextColor: this.props.colors[2] || "white",
+    buttonBackgroundColor: this.props.colors[2] || "#3F51B5",
+    backgroundColor: this.props.colors[3] || "white"
   };
 
   componentWillReceiveProps(nextProps) {
@@ -68,11 +73,24 @@ class SettingsDrawer extends React.Component {
           className={classes.container}
           noValidate
           autoComplete="off"
-          onSubmit={e => this.handleLogin(e)}
+          onSubmit={e =>
+            this.props.changeColorSettings(e, {
+              hasJournalsColor: this.state.hasJournalsColor,
+              noJournalsColor: this.state.noJournalsColor,
+              buttonTextColor: this.state.buttonTextColor,
+              buttonBackgroundColor: this.state.buttonBackgroundColor,
+              backgroundColor: this.state.backgroundColor
+            })}
         >
-          {this.renderFormTemplate(classes, "color", CheckBox)}
-          {this.renderFormTemplate(classes, "Alpha", CheckBox)}
-          {this.renderFormTemplate(classes, "Beta", CheckBoxOutlineBlank)}
+          {this.renderIconTemplate(classes, "hasJournalsColor", CheckBox)}
+          {this.renderIconTemplate(
+            classes,
+            "noJournalsColor",
+            CheckBoxOutlineBlank
+          )}
+          {this.renderColorTemplate(classes, "buttonTextColor")}
+          {this.renderColorTemplate(classes, "buttonBackgroundColor")}
+          {this.renderColorTemplate(classes, "backgroundColor")}
           <Button variant="raised" color="primary" type="submit">
             Submit Settings
           </Button>
@@ -81,8 +99,7 @@ class SettingsDrawer extends React.Component {
     );
   };
 
-  renderFormTemplate = (classes, name, icon) => {
-    let uppercaseName = name.toUpperCase();
+  renderIconTemplate = (classes, name, icon) => {
     const IconTagName = icon;
     return (
       <div className={classes.margin}>
@@ -92,9 +109,8 @@ class SettingsDrawer extends React.Component {
           </Grid>
           <Grid item>
             <TextField
-              error
               id={name}
-              label={uppercaseName}
+              label={this.splitAroundUppercase(name)}
               className={classes.textField}
               value={this.state.name}
               onChange={this.handleChange(`${name}`)}
@@ -105,7 +121,49 @@ class SettingsDrawer extends React.Component {
     );
   };
 
+  renderColorTemplate = (classes, name) => {
+    return (
+      <div className={classes.margin}>
+        <Grid container spacing={8} alignItems="flex-end">
+          <Grid item>
+            <div
+              style={{
+                backgroundColor: this.state[name],
+                height: "25px",
+                width: "25px",
+                border: "2px solid black",
+                borderRadius: "5px 5px 5px 5px"
+              }}
+            />
+          </Grid>
+          <Grid item>
+            <TextField
+              id={name}
+              label={this.splitAroundUppercase(name)}
+              className={classes.textField}
+              value={this.state.name}
+              onChange={this.handleChange(`${name}`)}
+            />
+          </Grid>
+        </Grid>
+      </div>
+    );
+  };
+
+  // Takes a string, like 'hasJournalsColor', and makes it 'Has Journal Color', split around capitals and with the first character uppercase
+  splitAroundUppercase = title => {
+    for (let i = 0; i < title.length; i++) {
+      if (title[i] === title[i].toUpperCase()) {
+        title = title.slice(0, i) + " " + title.slice(i);
+        i += 2;
+      }
+    }
+    title = title[0].toUpperCase() + title.slice(1);
+    return title;
+  };
+
   render() {
+    console.log(this.props.colors);
     const { classes } = this.props;
 
     return (

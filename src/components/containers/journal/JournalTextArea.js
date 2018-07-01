@@ -20,7 +20,8 @@ const styles = theme => ({
     paddingBottom: 16,
     marginTop: theme.spacing.unit,
     marginLeft: theme.spacing.unit * 2,
-    marginRight: theme.spacing.unit * 2
+    marginRight: theme.spacing.unit * 2,
+    maxHeight: `${window.innerHeight}` - 400 + "px"
   }),
   title: theme.mixins.gutters({
     marginTop: theme.spacing.unit * 3
@@ -110,7 +111,7 @@ class TextFields extends React.Component {
     }
   };
 
-  renderSubmitButton = () => {
+  renderSubmitButton = colors => {
     if (this.props.currentUser) {
       return this.state.emptySubmit ? (
         <Button
@@ -129,7 +130,10 @@ class TextFields extends React.Component {
       ) : (
         <Button
           variant="contained"
-          color="primary"
+          style={{
+            color: colors.buttonTextColor,
+            backgroundColor: colors.buttonBackgroundColor
+          }}
           className={this.props.classes.submitButton}
           onClick={() =>
             this.postJournalEntry(
@@ -145,7 +149,10 @@ class TextFields extends React.Component {
       return (
         <Button
           variant="contained"
-          color="primary"
+          style={{
+            color: colors.buttonTextColor,
+            backgroundColor: colors.buttonBackgroundColor
+          }}
           className={this.props.classes.submitButton}
           onClick={() =>
             this.props.openLoginDrawer(
@@ -154,13 +161,14 @@ class TextFields extends React.Component {
               this.state.textArea
             )}
         >
-          Signup to save Journal
+          Signup to Save Journal
         </Button>
       );
     }
   };
 
   render() {
+    const colors = this.props.store.getState().colors;
     const { classes } = this.props;
 
     return (
@@ -182,7 +190,7 @@ class TextFields extends React.Component {
           <Input
             id="multiline-text-area"
             multiline
-            rows="30"
+            rows="50"
             value={this.state.textArea}
             onChange={this.handleChange("textArea")}
             fullWidth={true}
@@ -192,9 +200,13 @@ class TextFields extends React.Component {
           />
         </Paper>
         <div style={{ display: "flex" }}>
-          {this.renderSubmitButton()}
+          {this.renderSubmitButton(colors)}
 
-          <div style={{ flex: 5 }} />
+          {this.props.currentUser ? (
+            <div style={{ flex: 5 }} />
+          ) : (
+            <div style={{ flex: 3 }} />
+          )}
         </div>
       </div>
     );

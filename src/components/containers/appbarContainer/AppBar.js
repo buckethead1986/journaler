@@ -68,7 +68,6 @@ class SimpleAppBar extends React.Component {
 
   render() {
     const { classes, colors } = this.props;
-    // const { value } = this.state;
     let text;
     if (this.props.currentUser.length !== 0) {
       text = `Welcome, ${this.props.currentUser.username}`;
@@ -81,6 +80,12 @@ class SimpleAppBar extends React.Component {
           <Typography variant="title" style={{ flex: 6 }}>
             {text}
           </Typography>
+          {this.renderButton(
+            "New Journal",
+            this.props.newJournalLink,
+            classes,
+            colors
+          )}
           {this.renderButton(
             "Settings",
             this.props.openSettingsDrawer,

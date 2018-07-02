@@ -47,7 +47,6 @@ class App extends Component {
 
   //checks colors and updates User API with color settings, then rerenders tabs
   changeColorSettings = (e, colorsObject) => {
-    console.log(colorsObject);
     e.preventDefault();
     let checkedColors = checkColorCodes(colorsObject, this.state.colors);
 
@@ -67,6 +66,18 @@ class App extends Component {
         );
       }
     );
+  };
+
+  journalStatsLink = () => {
+    this.props.history.push(`/journaler/${this.state.currentUser.id}/stats`);
+  };
+
+  journalEditLink = () => {
+    this.props.history.push(`/journaler/${this.state.currentUser.id}/edit`);
+  };
+
+  newJournalLink = () => {
+    this.props.history.push(`/journaler/${this.state.currentUser.id}`);
   };
 
   //posts settings object to API.
@@ -255,6 +266,7 @@ class App extends Component {
           changeShownJournalValue={this.changeShownJournalValue}
           loginOrLogoutButton={this.loginOrLogoutButton}
           colors={this.state.colors}
+          newJournalLink={this.newJournalLink}
         />
         <LoginDrawer
           store={this.props.store}
@@ -290,7 +302,6 @@ class App extends Component {
         {this.state.currentUser.length !== 0 &&
         this.state.tabContainer.length !== 0 ? (
           <Route
-            exact
             path="/journaler/:id"
             render={() => {
               return (
@@ -307,6 +318,8 @@ class App extends Component {
                   textArea={this.state.textArea}
                   colors={this.state.colors}
                   deleteJournal={this.deleteJournal}
+                  journalStatsLink={this.journalStatsLink}
+                  journalEditLink={this.journalEditLink}
                 />
               );
             }}

@@ -14,6 +14,8 @@ const JournalTabs = props => {
         date={journal[3]}
         deleteJournal={props.deleteJournal}
         shownJournalValue={props.shownJournalValue}
+        journalStatsLink={props.journalStatsLink}
+        journalEditLink={props.journalEditLink}
       />
     );
   });

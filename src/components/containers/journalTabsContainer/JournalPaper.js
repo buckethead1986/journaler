@@ -2,15 +2,14 @@ import React from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
-// import Tab from "@material-ui/core/Tab";
 import Paper from "@material-ui/core/Paper";
-// import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import IconButton from "@material-ui/core/IconButton";
 import ZoomOutMap from "@material-ui/icons/ZoomOutMap";
 import StarBorder from "@material-ui/icons/StarBorder";
 import Star from "@material-ui/icons/Star";
 import Clear from "@material-ui/icons/Clear";
+import Create from "@material-ui/icons/Create";
 
 const styles = theme => ({
   root: theme.mixins.gutters({
@@ -27,12 +26,12 @@ const styles = theme => ({
 
 class PaperSheet extends React.Component {
   state = {
-    fullSize: false
+    isExpanded: false
   };
 
-  toggleSize = () => {
+  toggleExpanded = () => {
     this.setState(prevState => {
-      return { fullSize: !prevState.fullSize };
+      return { isExpanded: !prevState.isExpanded };
     });
   };
 
@@ -63,15 +62,55 @@ class PaperSheet extends React.Component {
     return text;
   };
 
+  callDelete = () => {
+    this.props.deleteJournal(this.props.id, this.props.shownJournalValue);
+  };
+
+  callFavorite = () => {
+    console.log("favorite");
+  };
+
+  createIconButtonsList = isLargeJournal => {
+    return (
+      <Grid container>
+        <Grid item style={{ flex: 8 }}>
+          <Typography variant="headline" component="h3">
+            {this.props.title}
+          </Typography>
+        </Grid>
+        {this.createIconButton("Delete", Clear, this.callDelete)}
+        {this.createIconButton("Favorite", StarBorder, this.callFavorite)}
+        {this.createIconButton("Stats", Star, this.props.journalStatsLink)}
+        {this.createIconButton("Edit", Create, this.props.journalEditLink)}
+        {this.createExpandButton(isLargeJournal)}
+      </Grid>
+    );
+  };
+
+  //template for rendering iconButtons on each JournalPaper. 'type' is just for human readability
+  createIconButton = (type, icon, callbackFunction) => {
+    let IconTagName = icon;
+
+    return (
+      <Grid item style={{ flex: 1 }}>
+        <IconButton
+          style={{ height: "32px", width: "32px" }}
+          onClick={() => callbackFunction()}
+        >
+          <IconTagName />
+        </IconButton>
+      </Grid>
+    );
+  };
+
   //action button, toggles journalPaper size between truncated and full size. Renders a blank space on journals that are too short, to maintain spacing.
   createExpandButton = largeJournal => {
     if (largeJournal) {
       return (
         <Grid item style={{ flex: 0 }}>
           <IconButton
-            disabled={largeJournal ? false : true}
             style={{ height: "32px", width: "32px" }}
-            onClick={() => this.toggleSize()}
+            onClick={() => this.toggleExpanded()}
           >
             <ZoomOutMap />
           </IconButton>
@@ -81,124 +120,52 @@ class PaperSheet extends React.Component {
       return (
         <Grid item style={{ flex: 0 }}>
           <IconButton
-            disabled={largeJournal ? false : true}
             style={{ height: "32px", width: "32px" }}
+            disabled={true}
           />
         </Grid>
       );
     }
   };
 
-  //toggles favorite-ness of journals
-  createFavoriteButton = () => {
-    return (
-      <Grid item style={{ flex: 1 }}>
-        <IconButton
-          style={{ height: "32px", width: "32px" }}
-          onClick={() => console.log("createFavoriteButton Clicked")}
-        >
-          <StarBorder />
-        </IconButton>
-      </Grid>
-    );
-  };
-
-  //deletes a journal
-  createDeleteButton = () => {
-    return (
-      <Grid item style={{ flex: 1 }}>
-        <IconButton
-          style={{ height: "32px", width: "32px" }}
-          onClick={() =>
-            this.props.deleteJournal(
-              this.props.id,
-              this.props.shownJournalValue
-            )}
-        >
-          <Clear />
-        </IconButton>
-      </Grid>
-    );
-  };
-
-  toggleableJournals = () => {
-    if (!this.state.fullSize) {
-      return (
-        <div>
-          <Paper className={this.props.classes.root} elevation={2}>
-            <Grid container>
-              <Grid item style={{ flex: 8 }}>
-                <Typography variant="headline" component="h3">
-                  {this.props.title}
-                </Typography>
-              </Grid>
-              {this.createDeleteButton()}
-              {this.createFavoriteButton()}
-              {this.createExpandButton(true)}
-            </Grid>
-            <Typography component="h3">
-              {this.reformatJsonDataWithLineBreaks(
-                this.truncateBasedOnHowManyLineBreaks(
-                  this.props.content.slice(0, 500) + "..."
-                )
-              )}
-            </Typography>
-          </Paper>
-        </div>
-      );
-    } else {
-      return (
-        <div>
-          <Paper className={this.props.classes.root} elevation={2}>
-            <Grid container>
-              <Grid item style={{ flex: 8 }}>
-                <Typography variant="headline" component="h3">
-                  {this.props.title}
-                </Typography>
-              </Grid>
-              {this.createDeleteButton()}
-              {this.createFavoriteButton()}
-              {this.createExpandButton(true)}
-            </Grid>
-            <Typography component="h3">
-              {this.reformatJsonDataWithLineBreaks(this.props.content)}
-            </Typography>
-          </Paper>
-        </div>
-      );
-    }
-  };
-
-  createUntoggleableJournal = () => {
+  renderJournals = (isLargeJournal, journalContent) => {
     return (
       <div>
         <Paper className={this.props.classes.root} elevation={2}>
-          <Grid container>
-            <Grid item style={{ flex: 8 }}>
-              <Typography variant="headline" component="h3">
-                {this.props.title}
-              </Typography>
-            </Grid>
-            {this.createDeleteButton()}
-            {this.createFavoriteButton()}
-            {this.createExpandButton(false)}
-          </Grid>
+          {this.createIconButtonsList(isLargeJournal)}
           <Typography component="h3">
-            {this.reformatJsonDataWithLineBreaks(
-              this.truncateBasedOnHowManyLineBreaks(this.props.content)
-            )}
+            {this.reformatJsonDataWithLineBreaks(journalContent)}
           </Typography>
         </Paper>
       </div>
     );
   };
 
+  createExpandableJournal = () => {
+    if (!this.state.isExpanded) {
+      return this.renderJournals(
+        true,
+        this.truncateBasedOnHowManyLineBreaks(
+          this.props.content.slice(0, 500) + "..."
+        )
+      );
+    } else {
+      return this.renderJournals(true, this.props.content);
+    }
+  };
+
+  createStaticJournal = () => {
+    return this.renderJournals(
+      false,
+      this.truncateBasedOnHowManyLineBreaks(this.props.content)
+    );
+  };
+
   render() {
-    // const { classes } = this.props;
     return this.props.content.length > 500 ||
       this.props.content.split("\n").length > 3
-      ? this.toggleableJournals()
-      : this.createUntoggleableJournal();
+      ? this.createExpandableJournal()
+      : this.createStaticJournal();
   }
 }
 

@@ -1,10 +1,11 @@
 import React from "react";
+import { Route } from "react-router-dom";
 import Grid from "@material-ui/core/Grid";
 import { withStyles } from "@material-ui/core/styles";
 import JournalTabs from "./JournalTabs";
 import JournalTextArea from "../newJournalContainer/JournalTextArea";
 import Typography from "@material-ui/core/Typography";
-// import Paper from "@material-ui/core/Paper";
+import Button from "@material-ui/core/Button";
 import { renderHelpPage } from "../tutorial/TutorialText";
 
 const styles = theme => ({
@@ -16,8 +17,14 @@ const styles = theme => ({
     marginRight: theme.spacing.unit
   }),
   typography: {
-    marginTop: theme.spacing.unit * 3
+    marginTop: theme.spacing.unit * 3,
+    marginBottom: theme.spacing.unit
   }
+  // loginButton: {
+  // margin: theme.spacing.unit,
+  // marginRight: theme.spacing.unit * 2
+  // flex: 0
+  // }
 });
 
 class TabCreator extends React.Component {
@@ -49,6 +56,8 @@ class TabCreator extends React.Component {
               tabContainer={this.props.tabContainer}
               shownJournalValue={this.props.shownJournalValue}
               deleteJournal={this.props.deleteJournal}
+              journalStatsLink={this.props.journalStatsLink}
+              journalEditLink={this.props.journalEditLink}
             />
           </Grid>
         );
@@ -79,7 +88,33 @@ class TabCreator extends React.Component {
     }
   };
 
+  //toggles message based on path ending. normal, journal edit, or journal stats.
+  renderMessage = url => {
+    let message = "Write a new journal";
+    let path = window.location.href.split("/")[
+      window.location.href.split("/").length - 1
+    ];
+    if (path === "stats") {
+      message = "Journal Stats";
+    } else if (path === "edit") {
+      message = "Edit a Journal";
+    }
+    return (
+      <Typography
+        variant="headline"
+        component="h3"
+        style={{
+          textAlign: "center",
+          color: this.props.colors.headlineColor
+        }}
+      >
+        {message}
+      </Typography>
+    );
+  };
+
   //renders the journaling area.  Slightly smaller if noone is loged in, to account for explanation text from 'renderHelpPage'
+  //alters content based on route path, between new journal, journal stats, and journal edit.
   renderJournalTextArea = classes => {
     let size = 7;
     if (!this.props.currentUser) {
@@ -87,25 +122,49 @@ class TabCreator extends React.Component {
     }
     return (
       <Grid item xs={size} className={classes.typography}>
-        <Typography
-          variant="headline"
-          component="h3"
-          style={{
-            textAlign: "center",
-            color: this.props.colors.headlineColor
+        {this.renderMessage()}
+        <Route
+          exact
+          path="/journaler/:id"
+          render={() => {
+            return (
+              <JournalTextArea
+                store={this.props.store}
+                currentUser={this.props.currentUser}
+                fetchJournals={this.props.fetchJournals}
+                openLoginDrawer={this.props.openLoginDrawer}
+                pullJournalContent={this.props.pullJournalContent}
+                textTitle={this.props.textTitle}
+                textArea={this.props.textArea}
+                colors={this.props.colors}
+              />
+            );
           }}
-        >
-          Write a new journal
-        </Typography>
-        <JournalTextArea
-          store={this.props.store}
-          currentUser={this.props.currentUser}
-          fetchJournals={this.props.fetchJournals}
-          openLoginDrawer={this.props.openLoginDrawer}
-          pullJournalContent={this.props.pullJournalContent}
-          textTitle={this.props.textTitle}
-          textArea={this.props.textArea}
-          colors={this.props.colors}
+        />
+        <Route
+          exact
+          path="/journaler/:id/stats"
+          render={() => {
+            return <div>'stats'</div>;
+          }}
+        />
+        <Route
+          exact
+          path="/journaler/:id/edit"
+          render={() => {
+            return (
+              <JournalTextArea
+                store={this.props.store}
+                currentUser={this.props.currentUser}
+                fetchJournals={this.props.fetchJournals}
+                openLoginDrawer={this.props.openLoginDrawer}
+                pullJournalContent={this.props.pullJournalContent}
+                textTitle={this.props.textTitle}
+                textArea={this.props.textArea}
+                colors={this.props.colors}
+              />
+            );
+          }}
         />
       </Grid>
     );

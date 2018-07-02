@@ -1,10 +1,10 @@
 import React, { Component } from "react";
 import { Route, withRouter } from "react-router-dom";
-import AppBar from "./components/containers/AppBar";
+import AppBar from "./components/containers/appbarContainer/AppBar";
 import LoginDrawer from "./components/containers/login/LoginDrawer";
 import SettingsDrawer from "./components/containers/settings/SettingsDrawer";
-import JournalTextArea from "./components/containers/journal/JournalTextArea";
-import TabCreator from "./components/containers/journalTabs/TabCreator";
+// import JournalTextArea from "./components/containers/journalContainer/JournalTextArea";
+import TabCreator from "./components/containers/journalTabsContainer/TabCreator";
 import { renderTabsHelper } from "./components/containers/RenderTabsHelper";
 import { checkColorCodes } from "./components/containers/Helper";
 
@@ -47,6 +47,7 @@ class App extends Component {
 
   //checks colors and updates User API with color settings, then rerenders tabs
   changeColorSettings = (e, colorsObject) => {
+    console.log(colorsObject);
     e.preventDefault();
     let checkedColors = checkColorCodes(colorsObject, this.state.colors);
 
@@ -68,6 +69,7 @@ class App extends Component {
     );
   };
 
+  //posts settings object to API.
   postSettingsToAPI = colorsObject => {
     fetch(`${url}/users/${this.state.currentUser.id}`, {
       method: "PATCH",
@@ -144,7 +146,7 @@ class App extends Component {
       });
   };
 
-  deleteJournal = id => {
+  deleteJournal = (id, shownJournalValue) => {
     fetch(`${url}/journals/${id}`, {
       method: "DELETE",
       headers: {
@@ -159,7 +161,8 @@ class App extends Component {
             return journal.user_id === this.state.currentUser.id;
           })
         )
-      );
+      )
+      .then(() => this.changeShownJournalValue(shownJournalValue));
   };
 
   setJournalStateAndRenderTabs = json => {
@@ -197,13 +200,7 @@ class App extends Component {
         users: [],
         textTitle: "",
         textArea: "",
-        colors: {
-          hasJournalsColor: "#33cc00",
-          noJournalsColor: "#33cc00",
-          buttonTextColor: "white",
-          buttonBackgroundColor: "#3F51B5",
-          backgroundColor: "white"
-        }
+        colors: this.props.store.getState().defaultColorTheme
       },
       () => {
         this.props.store.dispatch({ type: "RESET_COLORS" });

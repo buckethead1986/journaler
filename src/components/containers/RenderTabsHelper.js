@@ -1,12 +1,12 @@
 import React from "react";
-import { withStyles } from "@material-ui/core/styles";
-import AppBar from "@material-ui/core/AppBar";
-import Tabs from "@material-ui/core/Tabs";
+// import { withStyles } from "@material-ui/core/styles";
+// import AppBar from "@material-ui/core/AppBar";
+// import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
-import Typography from "@material-ui/core/Typography";
+// import Typography from "@material-ui/core/Typography";
 import CheckBoxOutline from "@material-ui/icons/CheckBoxOutlineBlank";
 import CheckBox from "@material-ui/icons/CheckBox";
-import JournalPaper from "./journalTabs/JournalPaper";
+// import JournalPaper from "./journalTabs/JournalPaper";
 import { daysInEachMonth, getMonthWord, getFullMonthWord } from "./Helper";
 
 let tabs; //array of tab data
@@ -112,10 +112,10 @@ export function renderTabsHelper(
 
   let year = date.getFullYear();
   let month = date.getMonth();
-  let monthWord = getMonthWord(month);
+  // let monthWord = getMonthWord(month);
   let previousYear = year;
   let previousMonth = month - 1;
-  let previousMonthWord = getMonthWord(previousMonth);
+  // let previousMonthWord = getMonthWord(previousMonth);
   let previousMonthLength = daysInEachMonth(
     date.getMonth() - 1,
     date.getFullYear()
@@ -124,7 +124,7 @@ export function renderTabsHelper(
   if (month === 0) {
     previousYear--;
     previousMonth = 11;
-    previousMonthWord = "Dec";
+    // previousMonthWord = "Dec";
     previousMonthLength = 31;
   }
 
@@ -167,8 +167,10 @@ export function renderTabsHelper(
 const shiftJournalIndex = (year, month, date, journals) => {
   //year
   while (
-    parseInt(journals[journalIndex].created_at.split("T")[0].split("-")[0]) !==
-      year &&
+    parseInt(
+      journals[journalIndex].created_at.split("T")[0].split("-")[0],
+      10
+    ) !== year &&
     journalIndex > 0
   ) {
     journalIndex--;
@@ -178,7 +180,8 @@ const shiftJournalIndex = (year, month, date, journals) => {
   while (
     //This breaks if all journals are in months previous to the one. This works if the month is july, and its counting down from dec, but not dec => july
     parseInt(
-      journals[journalIndex].created_at.split("T")[0].split("-")[1] - 1
+      journals[journalIndex].created_at.split("T")[0].split("-")[1] - 1,
+      10
     ) !== month &&
     journalIndex > 0
   ) {
@@ -187,8 +190,10 @@ const shiftJournalIndex = (year, month, date, journals) => {
 
   //days in the future of chosen date
   while (
-    parseInt(journals[journalIndex].created_at.split("T")[0].split("-")[2]) >
-      date.getDate() &&
+    parseInt(
+      journals[journalIndex].created_at.split("T")[0].split("-")[2],
+      10
+    ) > date.getDate() &&
     journalIndex > 0
   ) {
     journalIndex--;
@@ -200,8 +205,10 @@ const shiftJournalIndex = (year, month, date, journals) => {
 const renderTabsDateCheck = (i, year, month, journals, colors) => {
   if (
     journalIndex >= 0 &&
-    parseInt(journals[journalIndex].created_at.split("T")[0].split("-")[2]) ===
-      i
+    parseInt(
+      journals[journalIndex].created_at.split("T")[0].split("-")[2],
+      10
+    ) === i
   ) {
     renderJournalTabView(i, month, journals, colors);
   } else {
@@ -234,8 +241,10 @@ const checkForAdditionalTabContainerData = (i, array, month, journals) => {
 
   if (
     journalIndex >= 0 &&
-    parseInt(journals[journalIndex].created_at.split("T")[0].split("-")[2]) ===
-      i
+    parseInt(
+      journals[journalIndex].created_at.split("T")[0].split("-")[2],
+      10
+    ) === i
   ) {
     checkForAdditionalTabContainerData(i, array, month, journals);
   } else {

@@ -6,8 +6,8 @@ import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
 import Drawer from "@material-ui/core/Drawer";
 import Button from "@material-ui/core/Button";
-import List from "@material-ui/core/List";
-import Divider from "@material-ui/core/Divider";
+// import List from "@material-ui/core/List";
+// import Divider from "@material-ui/core/Divider";
 
 const styles = theme => ({
   list: {
@@ -79,7 +79,8 @@ class TemporaryDrawer extends React.Component {
       noJournalsColor: "#33cc00",
       buttonTextColor: "white",
       buttonBackgroundColor: "#3F51B5",
-      backgroundColor: "white"
+      backgroundColor: "white",
+      headlineColor: "black"
     };
     const body = {
       username: this.state.username,

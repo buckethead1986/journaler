@@ -2,9 +2,9 @@ import React from "react";
 import Grid from "@material-ui/core/Grid";
 import { withStyles } from "@material-ui/core/styles";
 import JournalTabs from "./JournalTabs";
-import JournalTextArea from "../journal/JournalTextArea";
+import JournalTextArea from "../newJournalContainer/JournalTextArea";
 import Typography from "@material-ui/core/Typography";
-import Paper from "@material-ui/core/Paper";
+// import Paper from "@material-ui/core/Paper";
 import { renderHelpPage } from "../tutorial/TutorialText";
 
 const styles = theme => ({
@@ -21,7 +21,7 @@ const styles = theme => ({
 });
 
 class TabCreator extends React.Component {
-  renderJournalsOrBlank = () => {
+  renderJournalsOrBlank = classes => {
     let dateMessage;
     if (this.props.currentUser) {
       //checks if the user has written journals on this date, if so, renders them as individual JournalPaper, through JournalTabs
@@ -30,11 +30,14 @@ class TabCreator extends React.Component {
           this.props.shownJournalValue
         ].date}`;
         return (
-          <Grid item xs={5} className={this.props.classes.typography}>
+          <Grid item xs={5} className={classes.typography}>
             <Typography
               variant="headline"
               component="h3"
-              style={{ textAlign: "center" }}
+              style={{
+                textAlign: "center",
+                color: this.props.colors.headlineColor
+              }}
             >
               {dateMessage}
             </Typography>
@@ -55,11 +58,14 @@ class TabCreator extends React.Component {
           this.props.shownJournalValue
         ].date}`;
         return (
-          <Grid item xs={5} className={this.props.classes.typography}>
+          <Grid item xs={5} className={classes.typography}>
             <Typography
               variant="headline"
               component="h3"
-              style={{ textAlign: "center" }}
+              style={{
+                textAlign: "center",
+                color: this.props.colors.headlineColor
+              }}
             >
               {dateMessage}
             </Typography>
@@ -69,24 +75,25 @@ class TabCreator extends React.Component {
       //if no user is logged in, renders the welcome/explanation text
       //this was a ton of text, so I exported it to a helper function
     } else {
-      {
-        return renderHelpPage(this.props);
-      }
+      return renderHelpPage(this.props);
     }
   };
 
   //renders the journaling area.  Slightly smaller if noone is loged in, to account for explanation text from 'renderHelpPage'
-  renderJournalTextArea = () => {
+  renderJournalTextArea = classes => {
     let size = 7;
     if (!this.props.currentUser) {
       size = 6;
     }
     return (
-      <Grid item xs={size} className={this.props.classes.typography}>
+      <Grid item xs={size} className={classes.typography}>
         <Typography
           variant="headline"
           component="h3"
-          style={{ textAlign: "center" }}
+          style={{
+            textAlign: "center",
+            color: this.props.colors.headlineColor
+          }}
         >
           Write a new journal
         </Typography>
@@ -108,8 +115,8 @@ class TabCreator extends React.Component {
     const { classes } = this.props;
     return (
       <Grid container wrap="nowrap" spacing={0}>
-        {this.renderJournalsOrBlank()}
-        {this.renderJournalTextArea()}
+        {this.renderJournalsOrBlank(classes)}
+        {this.renderJournalTextArea(classes)}
       </Grid>
     );
   }

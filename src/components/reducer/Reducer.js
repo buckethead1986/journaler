@@ -8,12 +8,13 @@ export default function reducer(
     // shownJournalValue: 0
     // textArea: "",
     // textTitle: ""
-    colors: {
+    defaultColorTheme: {
       hasJournalsColor: "#33cc00",
       noJournalsColor: "#33cc00",
       buttonTextColor: "white",
       buttonBackgroundColor: "#3F51B5",
-      backgroundColor: "white"
+      backgroundColor: "white",
+      headlineColor: "black"
     }
   },
   action
@@ -28,7 +29,8 @@ export default function reducer(
           noJournalsColor: "#33cc00",
           buttonTextColor: "white",
           buttonBackgroundColor: "#3F51B5",
-          backgroundColor: "white"
+          backgroundColor: "white",
+          headlineColor: "black"
         }
       });
     // case "ADD_TEXT_TITLE":

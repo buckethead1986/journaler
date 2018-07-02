@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
-import Button from "@material-ui/core/Button";
+// import Button from "@material-ui/core/Button";
 import Select from "@material-ui/core/Select";
 import Input from "@material-ui/core/Input";
 import InputLabel from "@material-ui/core/InputLabel";
@@ -26,13 +26,22 @@ const styles = theme => ({
 });
 
 const themes = {
-  default: {
-    hasJournalsColor: "#33cc00",
-    noJournalsColor: "#33cc00",
-    buttonTextColor: "white",
-    buttonBackgroundColor: "#3F51B5",
-    backgroundColor: "white"
-  }
+  // default: {
+  //   hasJournalsColor: "#33cc00",
+  //   noJournalsColor: "#33cc00",
+  //   buttonTextColor: "white",
+  //   buttonBackgroundColor: "#3F51B5",
+  //   backgroundColor: "white",
+  //   headlineColor: "black"
+  // }
+  // whiteLightning: {
+  //   hasJournalsColor: "white",
+  //   noJournalsColor: "white",
+  //   buttonTextColor: "white",
+  //   buttonBackgroundColor: "white",
+  //   backgroundColor: "white",
+  //   headlineColor: "white"
+  // }
 };
 
 class SimpleSelect extends React.Component {
@@ -44,8 +53,11 @@ class SimpleSelect extends React.Component {
     let result;
     switch (event.target.value) {
       case "default":
-        result = themes.default;
+        result = this.props.store.getState().defaultColorTheme;
         break;
+      // case "whiteLightning":
+      //   result = themes.whiteLightning;
+      //   break;
       default:
         result = this.props.colors;
         break;
@@ -73,7 +85,7 @@ class SimpleSelect extends React.Component {
                 <em>None</em>
               </MenuItem>
               <MenuItem value={"default"}>Default</MenuItem>
-              <MenuItem value={20}>Twenty</MenuItem>
+              <MenuItem value={"whiteLightning"}>White Lightning</MenuItem>
               <MenuItem value={30}>Thirty</MenuItem>
             </Select>
           </FormControl>

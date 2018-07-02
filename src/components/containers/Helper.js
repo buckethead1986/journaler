@@ -67,6 +67,7 @@ export function daysInEachMonth(month, year) {
       days = 31;
       break;
     case 1:
+      //leap years through 2028
       if (year === 2020 || year === 2024 || year === 2028) {
         days = 29;
       } else {
@@ -78,6 +79,7 @@ export function daysInEachMonth(month, year) {
       break;
     case 3:
       days = 30;
+      break;
     case 4:
       days = 31;
       break;
@@ -113,16 +115,16 @@ export function checkColorCodes(colorsObject, colors) {
   let checkedColorCodes = Object.assign({}, colorsObject);
 
   for (let item in colorsObject) {
-    let trueFalse = false;
+    let isValidColorCode = false;
     if (colorsObject[item][0] === "#") {
       let isOk = /(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i.test(colorsObject[item]); //hex check
       if (isOk) {
-        trueFalse = true;
+        isValidColorCode = true;
       }
     } else if (colorsObject[item].slice(0, 3).toLowerCase() === "rgb") {
       //rgb check
       if (checkRgb(colorsObject[item])) {
-        trueFalse = true;
+        isValidColorCode = true;
       }
     } else {
       switch (colorsObject[item].toLowerCase()) { //normal color words check
@@ -145,14 +147,14 @@ export function checkColorCodes(colorsObject, colors) {
         case "silver":
         case "violet":
         case "white":
-          trueFalse = true;
+          isValidColorCode = true;
           break;
         default:
-          trueFalse = false;
+          isValidColorCode = false;
           break;
       }
     }
-    if (!trueFalse) {
+    if (!isValidColorCode) {
       checkedColorCodes[item] = colors[item];
     }
   }

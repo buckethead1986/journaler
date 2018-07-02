@@ -6,7 +6,7 @@ import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
 import Drawer from "@material-ui/core/Drawer";
 import Button from "@material-ui/core/Button";
-import List from "@material-ui/core/List";
+// import List from "@material-ui/core/List";
 import Divider from "@material-ui/core/Divider";
 import CheckBoxOutlineBlank from "@material-ui/icons/CheckBoxOutlineBlank";
 import CheckBox from "@material-ui/icons/CheckBox";
@@ -38,11 +38,8 @@ const styles = theme => ({
 class SettingsDrawer extends React.Component {
   state = {
     right: false,
-    hasJournalsColor: "",
-    noJournalsColor: "",
-    buttonTextColor: "",
-    buttonBackgroundColor: "",
-    backgroundColor: "",
+
+    colors: {},
     selectionSettings: {}
   };
 
@@ -50,18 +47,16 @@ class SettingsDrawer extends React.Component {
     if (nextProps.settingsDrawerOpen !== this.props.settingsDrawerOpen) {
       this.setState({
         right: nextProps.settingsDrawerOpen,
-        hasJournalsColor: nextProps.colors.hasJournalsColor,
-        noJournalsColor: nextProps.colors.noJournalsColor,
-        buttonTextColor: nextProps.colors.buttonTextColor,
-        buttonBackgroundColor: nextProps.colors.buttonBackgroundColor,
-        backgroundColor: nextProps.colors.backgroundColor
+        colors: nextProps.colors
       });
     }
   }
 
   handleChange = name => event => {
+    let newColorsState = Object.assign({}, this.state.colors);
+    newColorsState[`${name}`] = event.target.value;
     this.setState({
-      [name]: event.target.value
+      colors: newColorsState
     });
   };
 
@@ -70,6 +65,8 @@ class SettingsDrawer extends React.Component {
     this.setState({ selectionSettings });
   };
 
+  //renders the settings drawer.  2 forms, one a selection dropdown for preset color themes (SettingsSelector),
+  //the other has multiple text fields for various color changes. renderIconColorChangeForm and renderColorChangeForm are the templates for these fields.
   renderSettingsDrawer = (classes, colors) => {
     return (
       <div>
@@ -82,6 +79,7 @@ class SettingsDrawer extends React.Component {
               this.props.changeColorSettings(e, this.state.selectionSettings)}
           >
             <SettingsSelector
+              store={this.props.store}
               handleSelectorChange={this.handleSelectorChange}
               colors={this.props.colors}
             />
@@ -110,24 +108,22 @@ class SettingsDrawer extends React.Component {
             className={classes.container}
             noValidate
             autoComplete="off"
-            onSubmit={e =>
-              this.props.changeColorSettings(e, {
-                hasJournalsColor: this.state.hasJournalsColor,
-                noJournalsColor: this.state.noJournalsColor,
-                buttonTextColor: this.state.buttonTextColor,
-                buttonBackgroundColor: this.state.buttonBackgroundColor,
-                backgroundColor: this.state.backgroundColor
-              })}
+            onSubmit={e => this.props.changeColorSettings(e, this.state.colors)}
           >
-            {this.renderIconTemplate(classes, "hasJournalsColor", CheckBox)}
-            {this.renderIconTemplate(
+            {this.renderIconColorChangeForm(
+              classes,
+              "hasJournalsColor",
+              CheckBox
+            )}
+            {this.renderIconColorChangeForm(
               classes,
               "noJournalsColor",
               CheckBoxOutlineBlank
             )}
-            {this.renderColorTemplate(classes, "buttonTextColor")}
-            {this.renderColorTemplate(classes, "buttonBackgroundColor")}
-            {this.renderColorTemplate(classes, "backgroundColor")}
+            {this.renderColorChangeForm(classes, "buttonTextColor")}
+            {this.renderColorChangeForm(classes, "buttonBackgroundColor")}
+            {this.renderColorChangeForm(classes, "backgroundColor")}
+            {this.renderColorChangeForm(classes, "headlineColor")}
             <Button
               variant="raised"
               style={{
@@ -144,20 +140,20 @@ class SettingsDrawer extends React.Component {
     );
   };
 
-  renderIconTemplate = (classes, name, icon) => {
+  renderIconColorChangeForm = (classes, name, icon) => {
     const IconTagName = icon;
     return (
       <div className={classes.margin}>
         <Grid container spacing={8} alignItems="flex-end">
           <Grid item>
-            <IconTagName style={{ color: this.state[name] }} />
+            <IconTagName style={{ color: this.state.colors[name] }} />
           </Grid>
           <Grid item>
             <TextField
               id={name}
               label={this.splitAroundUppercase(name)}
               className={classes.textField}
-              value={this.state.name}
+              value={this.state.colors.name}
               onChange={this.handleChange(`${name}`)}
             />
           </Grid>
@@ -166,14 +162,14 @@ class SettingsDrawer extends React.Component {
     );
   };
 
-  renderColorTemplate = (classes, name) => {
+  renderColorChangeForm = (classes, name) => {
     return (
       <div className={classes.margin}>
         <Grid container spacing={8} alignItems="flex-end">
           <Grid item>
             <div
               style={{
-                backgroundColor: this.state[name],
+                backgroundColor: this.state.colors[name],
                 height: "25px",
                 width: "25px",
                 border: "2px solid black",
@@ -186,7 +182,7 @@ class SettingsDrawer extends React.Component {
               id={name}
               label={this.splitAroundUppercase(name)}
               className={classes.textField}
-              value={this.state.name}
+              value={this.state.colors.name}
               onChange={this.handleChange(`${name}`)}
             />
           </Grid>

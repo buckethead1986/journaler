@@ -2,16 +2,15 @@ import React from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
-import Tab from "@material-ui/core/Tab";
+// import Tab from "@material-ui/core/Tab";
 import Paper from "@material-ui/core/Paper";
-import Button from "@material-ui/core/Button";
+// import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import IconButton from "@material-ui/core/IconButton";
 import ZoomOutMap from "@material-ui/icons/ZoomOutMap";
 import StarBorder from "@material-ui/icons/StarBorder";
 import Star from "@material-ui/icons/Star";
 import Clear from "@material-ui/icons/Clear";
-import Tooltip from "@material-ui/core/Tooltip";
 
 const styles = theme => ({
   root: theme.mixins.gutters({
@@ -28,17 +27,18 @@ const styles = theme => ({
 
 class PaperSheet extends React.Component {
   state = {
-    fullSize: false
+    isFullSize: false,
+    isFavorite: false
   };
 
   toggleSize = () => {
     this.setState(prevState => {
-      return { fullSize: !prevState.fullSize };
+      return { isFullSize: !prevState.isFullSize };
     });
   };
 
   //This reformats the json data, which removes line breaks, back into text that looks like what the user input.
-  parse = text => {
+  reformatJsonDataWithLineBreaks = text => {
     text = text.split("\n").map((text, index) => <p key={index}>{text}</p>); //works on weird arrow rails renders
     return text;
   };
@@ -48,7 +48,7 @@ class PaperSheet extends React.Component {
   //I arbitrarily chose 4 line breaks.  Split the text around line breaks, iterate through 4 times,
   //find the index of a line break, slice the text at that index, and cumulatively add up the indeces to get the index for the 4th line break
   //If you know of a good method that does 'Check if the resulting div is X height or larger. If so, truncate the text inside', let me know.
-  splitForNewLines = text => {
+  truncateBasedOnHowManyLineBreaks = text => {
     if (text.split("\n").length > 4) {
       let index = 0;
       let cumulativeIndex = 0;
@@ -64,8 +64,8 @@ class PaperSheet extends React.Component {
     return text;
   };
 
-  //action button, toggles journalPaper size between truncated and full size. Renders a blank space on journals that are too short.
-  sizeIncreaseButton = largeJournal => {
+  //action button, toggles journalPaper size between truncated and full size. Renders a blank space on journals that are too short, to maintain spacing.
+  createExpandButton = largeJournal => {
     if (largeJournal) {
       return (
         <Grid item style={{ flex: 0 }}>
@@ -91,26 +91,30 @@ class PaperSheet extends React.Component {
   };
 
   //toggles favorite-ness of journals
-  favoriteButton = () => {
+  createFavoriteButton = () => {
     return (
       <Grid item style={{ flex: 1 }}>
         <IconButton
           style={{ height: "32px", width: "32px" }}
-          onClick={() => console.log("favoriteButton Clicked")}
+          onClick={() => console.log("createFavoriteButton Clicked")}
         >
-          <StarBorder />
+          {this.state.isFavorite<StarBorder />}
         </IconButton>
       </Grid>
     );
   };
 
   //deletes a journal
-  deleteButton = () => {
+  createDeleteButton = () => {
     return (
       <Grid item style={{ flex: 1 }}>
         <IconButton
           style={{ height: "32px", width: "32px" }}
-          onClick={() => this.props.deleteJournal(this.props.id)}
+          onClick={() =>
+            this.props.deleteJournal(
+              this.props.id,
+              this.props.shownJournalValue
+            )}
         >
           <Clear />
         </IconButton>
@@ -119,7 +123,7 @@ class PaperSheet extends React.Component {
   };
 
   toggleableJournals = () => {
-    if (!this.state.fullSize) {
+    if (!this.state.isFullSize) {
       return (
         <div>
           <Paper className={this.props.classes.root} elevation={2}>
@@ -129,14 +133,15 @@ class PaperSheet extends React.Component {
                   {this.props.title}
                 </Typography>
               </Grid>
-
-              {this.deleteButton()}
-              {this.favoriteButton()}
-              {this.sizeIncreaseButton(true)}
+              {this.createDeleteButton()}
+              {this.createFavoriteButton()}
+              {this.createExpandButton(true)}
             </Grid>
             <Typography component="h3">
-              {this.parse(
-                this.splitForNewLines(this.props.content.slice(0, 500) + "...")
+              {this.reformatJsonDataWithLineBreaks(
+                this.truncateBasedOnHowManyLineBreaks(
+                  this.props.content.slice(0, 500) + "..."
+                )
               )}
             </Typography>
           </Paper>
@@ -152,12 +157,12 @@ class PaperSheet extends React.Component {
                   {this.props.title}
                 </Typography>
               </Grid>
-              {this.deleteButton()}
-              {this.favoriteButton()}
-              {this.sizeIncreaseButton(true)}
+              {this.createDeleteButton()}
+              {this.createFavoriteButton()}
+              {this.createExpandButton(true)}
             </Grid>
             <Typography component="h3">
-              {this.parse(this.props.content)}
+              {this.reformatJsonDataWithLineBreaks(this.props.content)}
             </Typography>
           </Paper>
         </div>
@@ -165,7 +170,7 @@ class PaperSheet extends React.Component {
     }
   };
 
-  smallUntoggleableJournals = () => {
+  createUntoggleableJournal = () => {
     return (
       <div>
         <Paper className={this.props.classes.root} elevation={2}>
@@ -175,12 +180,14 @@ class PaperSheet extends React.Component {
                 {this.props.title}
               </Typography>
             </Grid>
-            {this.deleteButton()}
-            {this.favoriteButton()}
-            {this.sizeIncreaseButton(false)}
+            {this.createDeleteButton()}
+            {this.createFavoriteButton()}
+            {this.createExpandButton(false)}
           </Grid>
           <Typography component="h3">
-            {this.parse(this.splitForNewLines(this.props.content))}
+            {this.reformatJsonDataWithLineBreaks(
+              this.truncateBasedOnHowManyLineBreaks(this.props.content)
+            )}
           </Typography>
         </Paper>
       </div>
@@ -192,7 +199,7 @@ class PaperSheet extends React.Component {
     return this.props.content.length > 500 ||
       this.props.content.split("\n").length > 3
       ? this.toggleableJournals()
-      : this.smallUntoggleableJournals();
+      : this.createUntoggleableJournal();
   }
 }
 

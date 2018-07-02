@@ -86,7 +86,7 @@ class TemporaryDrawer extends React.Component {
       password: this.state.password,
       settings: JSON.stringify(settings)
     };
-    fetch(`${this.props.url}/users`, {
+    fetch(`${this.props.store.getState().url}/users`, {
       method: "POST",
       headers: headers,
       body: JSON.stringify({ user: body })
@@ -113,7 +113,7 @@ class TemporaryDrawer extends React.Component {
       username: this.state.username,
       password: this.state.password
     };
-    fetch(`${this.props.url}/auth`, {
+    fetch(`${this.props.store.getState().url}/auth`, {
       method: "POST",
       headers: headers,
       body: JSON.stringify(body)

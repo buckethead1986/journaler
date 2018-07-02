@@ -39,13 +39,13 @@ class TabCreator extends React.Component {
               {dateMessage}
             </Typography>
             <JournalTabs
-              url={this.props.url}
               date={this.props.date}
               store={this.props.store}
               currentUser={this.props.currentUser}
               journals={this.props.journals}
               tabContainer={this.props.tabContainer}
               shownJournalValue={this.props.shownJournalValue}
+              deleteJournal={this.props.deleteJournal}
             />
           </Grid>
         );
@@ -91,7 +91,6 @@ class TabCreator extends React.Component {
           Write a new journal
         </Typography>
         <JournalTextArea
-          url={this.props.url}
           store={this.props.store}
           currentUser={this.props.currentUser}
           fetchJournals={this.props.fetchJournals}

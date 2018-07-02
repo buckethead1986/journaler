@@ -140,21 +140,43 @@ class App extends Component {
     fetch(`${url}/users/${this.state.currentUser.id}`)
       .then(res => res.json())
       .then(json => {
-        this.setState(
-          {
-            journals: this.sortJournals(json.journals)
-          },
-          () => {
-            renderTabsHelper(
-              this.state.journals,
-              this.props.store,
-              new Date(),
-              this.setTabAndTabContainerState,
-              this.state.colors
-            );
-          }
-        );
+        this.setJournalStateAndRenderTabs(json.journals);
       });
+  };
+
+  deleteJournal = id => {
+    fetch(`${url}/journals/${id}`, {
+      method: "DELETE",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    })
+      .then(res => res.json())
+      .then(json =>
+        this.setJournalStateAndRenderTabs(
+          json.filter(journal => {
+            return journal.user_id === this.state.currentUser.id;
+          })
+        )
+      );
+  };
+
+  setJournalStateAndRenderTabs = json => {
+    this.setState(
+      {
+        journals: this.sortJournals(json)
+      },
+      () => {
+        renderTabsHelper(
+          this.state.journals,
+          this.props.store,
+          new Date(),
+          this.setTabAndTabContainerState,
+          this.state.colors
+        );
+      }
+    );
   };
 
   //simple sort function to make sure journals are sorted in chronological order. Rails API was sometimes misordering items.
@@ -226,7 +248,6 @@ class App extends Component {
         }}
       >
         <AppBar
-          url={url}
           store={this.props.store}
           currentUser={this.state.currentUser}
           logoutLink={this.logoutLink}
@@ -239,7 +260,6 @@ class App extends Component {
           colors={this.state.colors}
         />
         <LoginDrawer
-          url={url}
           store={this.props.store}
           loginDrawerOpen={this.state.loginDrawerOpen}
           openLoginDrawer={this.openLoginDrawer}
@@ -247,7 +267,6 @@ class App extends Component {
           fromHomePage={this.state.fromHomePage}
         />
         <SettingsDrawer
-          url={url}
           store={this.props.store}
           settingsDrawerOpen={this.state.settingsDrawerOpen}
           openSettingsDrawer={this.openSettingsDrawer}
@@ -260,7 +279,6 @@ class App extends Component {
           render={() => {
             return (
               <TabCreator
-                url={url}
                 store={this.props.store}
                 loginDrawerOpen={this.state.loginDrawerOpen}
                 openLoginDrawer={this.openLoginDrawer}
@@ -280,7 +298,6 @@ class App extends Component {
             render={() => {
               return (
                 <TabCreator
-                  url={url}
                   date={date}
                   store={this.props.store}
                   currentUser={this.state.currentUser}
@@ -292,6 +309,7 @@ class App extends Component {
                   textTitle={this.state.textTitle}
                   textArea={this.state.textArea}
                   colors={this.state.colors}
+                  deleteJournal={this.deleteJournal}
                 />
               );
             }}

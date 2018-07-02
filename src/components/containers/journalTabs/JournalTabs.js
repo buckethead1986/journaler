@@ -8,9 +8,11 @@ const JournalTabs = props => {
     return (
       <JournalPaper
         key={journal[0]}
+        id={journal[0]}
         title={journal[1]}
         content={journal[2]}
         date={journal[3]}
+        deleteJournal={props.deleteJournal}
       />
     );
   });

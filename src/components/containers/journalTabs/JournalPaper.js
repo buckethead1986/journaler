@@ -8,6 +8,10 @@ import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import IconButton from "@material-ui/core/IconButton";
 import ZoomOutMap from "@material-ui/icons/ZoomOutMap";
+import StarBorder from "@material-ui/icons/StarBorder";
+import Star from "@material-ui/icons/Star";
+import Clear from "@material-ui/icons/Clear";
+import Tooltip from "@material-ui/core/Tooltip";
 
 const styles = theme => ({
   root: theme.mixins.gutters({
@@ -60,6 +64,60 @@ class PaperSheet extends React.Component {
     return text;
   };
 
+  //action button, toggles journalPaper size between truncated and full size. Renders a blank space on journals that are too short.
+  sizeIncreaseButton = largeJournal => {
+    if (largeJournal) {
+      return (
+        <Grid item style={{ flex: 0 }}>
+          <IconButton
+            disabled={largeJournal ? false : true}
+            style={{ height: "32px", width: "32px" }}
+            onClick={() => this.toggleSize()}
+          >
+            <ZoomOutMap />
+          </IconButton>
+        </Grid>
+      );
+    } else {
+      return (
+        <Grid item style={{ flex: 0 }}>
+          <IconButton
+            disabled={largeJournal ? false : true}
+            style={{ height: "32px", width: "32px" }}
+          />
+        </Grid>
+      );
+    }
+  };
+
+  //toggles favorite-ness of journals
+  favoriteButton = () => {
+    return (
+      <Grid item style={{ flex: 1 }}>
+        <IconButton
+          style={{ height: "32px", width: "32px" }}
+          onClick={() => console.log("favoriteButton Clicked")}
+        >
+          <StarBorder />
+        </IconButton>
+      </Grid>
+    );
+  };
+
+  //deletes a journal
+  deleteButton = () => {
+    return (
+      <Grid item style={{ flex: 1 }}>
+        <IconButton
+          style={{ height: "32px", width: "32px" }}
+          onClick={() => this.props.deleteJournal(this.props.id)}
+        >
+          <Clear />
+        </IconButton>
+      </Grid>
+    );
+  };
+
   toggleableJournals = () => {
     if (!this.state.fullSize) {
       return (
@@ -71,14 +129,10 @@ class PaperSheet extends React.Component {
                   {this.props.title}
                 </Typography>
               </Grid>
-              <Grid item style={{ flex: 0 }}>
-                <IconButton
-                  style={{ height: "32px", width: "32px" }}
-                  onClick={() => this.toggleSize()}
-                >
-                  <ZoomOutMap />
-                </IconButton>
-              </Grid>
+
+              {this.deleteButton()}
+              {this.favoriteButton()}
+              {this.sizeIncreaseButton(true)}
             </Grid>
             <Typography component="h3">
               {this.parse(
@@ -98,14 +152,9 @@ class PaperSheet extends React.Component {
                   {this.props.title}
                 </Typography>
               </Grid>
-              <Grid item style={{ flex: 0 }}>
-                <IconButton
-                  style={{ height: "32px", width: "32px" }}
-                  onClick={() => this.toggleSize()}
-                >
-                  <ZoomOutMap />
-                </IconButton>
-              </Grid>
+              {this.deleteButton()}
+              {this.favoriteButton()}
+              {this.sizeIncreaseButton(true)}
             </Grid>
             <Typography component="h3">
               {this.parse(this.props.content)}
@@ -117,14 +166,19 @@ class PaperSheet extends React.Component {
   };
 
   smallUntoggleableJournals = () => {
-    // console.log(this.props.content);
-    // debugger;
     return (
       <div>
         <Paper className={this.props.classes.root} elevation={2}>
-          <Typography variant="headline" component="h3">
-            {this.props.title}
-          </Typography>
+          <Grid container>
+            <Grid item style={{ flex: 8 }}>
+              <Typography variant="headline" component="h3">
+                {this.props.title}
+              </Typography>
+            </Grid>
+            {this.deleteButton()}
+            {this.favoriteButton()}
+            {this.sizeIncreaseButton(false)}
+          </Grid>
           <Typography component="h3">
             {this.parse(this.splitForNewLines(this.props.content))}
           </Typography>

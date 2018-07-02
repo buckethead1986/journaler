@@ -62,7 +62,7 @@ class TextFields extends React.Component {
           journal: { user_id, title, content }
         };
       }
-      fetch(`${this.props.url}/journals`, {
+      fetch(`${this.props.store.getState().url}/journals`, {
         method: "POST",
         headers: headers,
         body: JSON.stringify(body)
@@ -189,7 +189,7 @@ class TextFields extends React.Component {
           <Input
             id="multiline-text-area"
             multiline
-            rows="50"
+            rows="30"
             value={this.state.textArea}
             onChange={this.handleChange("textArea")}
             fullWidth={true}

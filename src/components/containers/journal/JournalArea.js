@@ -23,10 +23,7 @@ class PaperSheet extends React.Component {
       <div>
         <Paper className={classes.root} elevation={4}>
           <Typography variant="headline" component="h3">
-            <JournalTextArea
-              url={this.props.url}
-              currentUser={this.props.currentUser}
-            />
+            <JournalTextArea currentUser={this.props.currentUser} />
           </Typography>
         </Paper>
       </div>

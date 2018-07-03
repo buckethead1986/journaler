@@ -7,6 +7,7 @@ import JournalTextArea from "../newJournalContainer/JournalTextArea";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import { renderHelpPage } from "../tutorial/TutorialText";
+import { getFullMonthWord } from "../Helper";
 
 const styles = theme => ({
   root: theme.mixins.gutters({
@@ -89,15 +90,18 @@ class TabCreator extends React.Component {
   };
 
   //toggles message based on path ending. normal, journal edit, or journal stats.
-  renderMessage = url => {
+  renderMessage = () => {
     let message = "Write a new journal";
     let path = window.location.href.split("/")[
       window.location.href.split("/").length - 1
     ];
+
     if (path === "stats") {
       message = "Journal Stats";
     } else if (path === "edit") {
-      message = "Edit a Journal";
+      message = `Edit Journal from ${getFullMonthWord(
+        this.props.date.getMonth()
+      )} ${this.props.date.getDate()}`;
     }
     return (
       <Typography
@@ -125,15 +129,15 @@ class TabCreator extends React.Component {
         {this.renderMessage()}
         <Route
           exact
-          path="/journaler/:id"
+          path="/journaler"
           render={() => {
             return (
               <JournalTextArea
                 store={this.props.store}
-                currentUser={this.props.currentUser}
-                fetchJournals={this.props.fetchJournals}
                 openLoginDrawer={this.props.openLoginDrawer}
-                pullJournalContent={this.props.pullJournalContent}
+                setTextAreaAndCallAFunction={
+                  this.props.setTextAreaAndCallAFunction
+                }
                 textTitle={this.props.textTitle}
                 textArea={this.props.textArea}
                 colors={this.props.colors}
@@ -143,14 +147,7 @@ class TabCreator extends React.Component {
         />
         <Route
           exact
-          path="/journaler/:id/stats"
-          render={() => {
-            return <div>'stats'</div>;
-          }}
-        />
-        <Route
-          exact
-          path="/journaler/:id/edit"
+          path="/journaler/:id/new"
           render={() => {
             return (
               <JournalTextArea
@@ -158,10 +155,42 @@ class TabCreator extends React.Component {
                 currentUser={this.props.currentUser}
                 fetchJournals={this.props.fetchJournals}
                 openLoginDrawer={this.props.openLoginDrawer}
-                pullJournalContent={this.props.pullJournalContent}
+                setTextAreaAndCallAFunction={
+                  this.props.setTextAreaAndCallAFunction
+                }
                 textTitle={this.props.textTitle}
                 textArea={this.props.textArea}
                 colors={this.props.colors}
+              />
+            );
+          }}
+        />
+        <Route
+          exact
+          path="/journaler/:id/:id/stats"
+          render={() => {
+            return <div>'stats'</div>;
+          }}
+        />
+        <Route
+          exact
+          path="/journaler/:id/:id/edit"
+          render={() => {
+            return (
+              <JournalTextArea
+                store={this.props.store}
+                currentUser={this.props.currentUser}
+                fetchJournals={this.props.fetchJournals}
+                shownJournalValue={this.props.shownJournalValue}
+                openLoginDrawer={this.props.openLoginDrawer}
+                setTextAreaAndCallAFunction={
+                  this.props.setTextAreaAndCallAFunction
+                }
+                journalId={this.props.journalId}
+                textTitle={this.props.textTitle}
+                textArea={this.props.textArea}
+                colors={this.props.colors}
+                edit={true}
               />
             );
           }}

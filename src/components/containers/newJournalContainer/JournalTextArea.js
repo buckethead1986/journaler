@@ -39,9 +39,19 @@ class TextFields extends React.Component {
     this.state = {
       textTitle: props.textTitle || "",
       textArea: props.textArea || "",
-      hasContent: false,
+      hasContent: props.edit || false,
       emptySubmit: false
     };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.textArea !== this.props.textArea) {
+      this.setState({
+        textTitle: nextProps.textTitle,
+        textArea: nextProps.textArea,
+        hasContent: true
+      });
+    }
   }
 
   //Posts Journal entry to API.  If the title is blank, changes it to 'Untitled', then calls fetchJournals to fetch updated journals list for this user.
@@ -82,6 +92,53 @@ class TextFields extends React.Component {
     }
   };
 
+  //this can be refactored into postJournalEntry
+  editJournalEntry = (user_id, title, content, id) => {
+    // console.log(
+    //   "edit journal entry",
+    //   user_id,
+    //   title,
+    //   content,
+    //   this.props.journalId
+    // );
+    if (this.state.hasContent) {
+      const headers = {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      };
+      let body;
+      if (this.state.textTitle === "") {
+        body = {
+          journal: { user_id, title: "Untitled", content, id }
+        };
+      } else {
+        body = {
+          journal: { user_id, title, content, id }
+        };
+      }
+      fetch(
+        `${this.props.store.getState().url}/journals/${this.props.journalId}`,
+        {
+          method: "PATCH",
+          headers: headers,
+          body: JSON.stringify(body)
+        }
+      )
+        .then(res => res.json())
+        .then(() =>
+          this.setState({
+            textTitle: "",
+            textArea: ""
+          })
+        )
+        .then(() => this.props.fetchJournals(this.props.shownJournalValue));
+    } else {
+      this.setState({
+        emptySubmit: true
+      });
+    }
+  };
+
   handleChange = name => event => {
     this.setState(
       {
@@ -89,9 +146,11 @@ class TextFields extends React.Component {
       },
       () => {
         this.checkForContent();
-        this.props.pullJournalContent(
+        this.props.setTextAreaAndCallAFunction(
           this.state.textTitle,
-          this.state.textArea
+          this.state.textArea,
+          this.props.journalId || "",
+          {}
         );
       }
     );
@@ -135,14 +194,22 @@ class TextFields extends React.Component {
             backgroundColor: colors.buttonBackgroundColor
           }}
           className={this.props.classes.submitButton}
-          onClick={() =>
-            this.postJournalEntry(
-              this.props.currentUser.id,
-              this.state.textTitle,
-              this.state.textArea
-            )}
+          onClick={() => {
+            this.props.edit
+              ? this.editJournalEntry(
+                  this.props.currentUser.id,
+                  this.state.textTitle,
+                  this.state.textArea,
+                  this.props.journalId
+                )
+              : this.postJournalEntry(
+                  this.props.currentUser.id,
+                  this.state.textTitle,
+                  this.state.textArea
+                );
+          }}
         >
-          Submit
+          {this.props.edit ? "Edit Journal" : "Submit"}
         </Button>
       );
     } else {

@@ -23,6 +23,7 @@ class App extends Component {
     fromHomePage: false,
     textTitle: "",
     textArea: "",
+    journalId: "",
     colors: {}
   };
 
@@ -43,6 +44,7 @@ class App extends Component {
           this.props.history.push("/journaler");
         }
       });
+    this.setState({ colors: this.props.store.getState().defaultColorTheme });
   }
 
   //checks colors and updates User API with color settings, then rerenders tabs
@@ -68,16 +70,47 @@ class App extends Component {
     );
   };
 
-  journalStatsLink = () => {
-    this.props.history.push(`/journaler/${this.state.currentUser.id}/stats`);
+  journalStatsLink = id => {
+    this.props.history.push(
+      `/journaler/${this.state.currentUser.id}/${id}/stats`
+    );
   };
 
-  journalEditLink = () => {
-    this.props.history.push(`/journaler/${this.state.currentUser.id}/edit`);
+  journalEditLink = id => {
+    let journal = this.state.journals.filter(journal => journal.id === id)[0];
+    this.setTextAreaAndCallAFunction(
+      journal.title,
+      journal.content,
+      id,
+      this.props.history.push(
+        `/journaler/${this.state.currentUser.id}/${id}/edit`
+      )
+    );
   };
 
   newJournalLink = () => {
-    this.props.history.push(`/journaler/${this.state.currentUser.id}`);
+    this.setTextAreaAndCallAFunction(
+      "",
+      "",
+      "",
+      this.props.history.push(`/journaler/${this.state.currentUser.id}/new`)
+    );
+  };
+
+  setTextAreaAndCallAFunction = (
+    textTitle,
+    textArea,
+    journalId,
+    callbackFunction
+  ) => {
+    this.setState(
+      {
+        textTitle,
+        textArea,
+        journalId
+      },
+      () => callbackFunction
+    );
   };
 
   //posts settings object to API.
@@ -143,18 +176,21 @@ class App extends Component {
               );
             })
             .then(() =>
-              this.props.history.push(`/journaler/${this.state.currentUser.id}`)
+              this.props.history.push(
+                `/journaler/${this.state.currentUser.id}/new`
+              )
             )
         )
       );
   };
 
-  fetchJournals = () => {
+  fetchJournals = (shownJournalValue = 29) => {
     fetch(`${url}/users/${this.state.currentUser.id}`)
       .then(res => res.json())
       .then(json => {
         this.setJournalStateAndRenderTabs(json.journals);
-      });
+      })
+      .then(() => this.changeShownJournalValue(shownJournalValue));
   };
 
   deleteJournal = (id, shownJournalValue) => {
@@ -222,12 +258,15 @@ class App extends Component {
   };
 
   //retains content already written in journal area if you log in or sign up.
-  pullJournalContent = (textTitle, textArea) => {
-    this.setState({
-      textTitle,
-      textArea
-    });
-  };
+  // pullJournalContent = (textTitle, textArea) => {
+  //   this.setState(
+  //     {
+  //       textTitle,
+  //       textArea
+  //     },
+  //     () => {}
+  //   );
+  // };
 
   //toggles the login drawer open and closed.  Begins on signup section if its opened from the 'signup to save journal' button.
   openLoginDrawer = (fromHomePage = false) => {
@@ -291,7 +330,7 @@ class App extends Component {
                 store={this.props.store}
                 loginDrawerOpen={this.state.loginDrawerOpen}
                 openLoginDrawer={this.openLoginDrawer}
-                pullJournalContent={this.pullJournalContent}
+                setTextAreaAndCallAFunction={this.setTextAreaAndCallAFunction}
                 textTitle={this.state.textTitle}
                 textArea={this.state.textArea}
                 colors={this.state.colors}
@@ -313,13 +352,15 @@ class App extends Component {
                   fetchJournals={this.fetchJournals}
                   tabContainer={this.state.tabContainer}
                   shownJournalValue={this.state.shownJournalValue}
-                  pullJournalContent={this.pullJournalContent}
+                  setTextAreaAndCallAFunction={this.setTextAreaAndCallAFunction}
                   textTitle={this.state.textTitle}
                   textArea={this.state.textArea}
                   colors={this.state.colors}
                   deleteJournal={this.deleteJournal}
                   journalStatsLink={this.journalStatsLink}
                   journalEditLink={this.journalEditLink}
+                  journalId={this.state.journalId}
+                  newJournalLink={this.newJournalLink}
                 />
               );
             }}

@@ -70,6 +70,13 @@ class PaperSheet extends React.Component {
     console.log("favorite");
   };
 
+  callJournalStatsLink = () => {
+    this.props.journalStatsLink(this.props.id);
+  };
+  callJournalEditLink = () => {
+    this.props.journalEditLink(this.props.id);
+  };
+
   createIconButtonsList = isLargeJournal => {
     return (
       <Grid container>
@@ -80,8 +87,8 @@ class PaperSheet extends React.Component {
         </Grid>
         {this.createIconButton("Delete", Clear, this.callDelete)}
         {this.createIconButton("Favorite", StarBorder, this.callFavorite)}
-        {this.createIconButton("Stats", Star, this.props.journalStatsLink)}
-        {this.createIconButton("Edit", Create, this.props.journalEditLink)}
+        {this.createIconButton("Stats", Star, this.callJournalStatsLink)}
+        {this.createIconButton("Edit", Create, this.callJournalEditLink)}
         {this.createExpandButton(isLargeJournal)}
       </Grid>
     );

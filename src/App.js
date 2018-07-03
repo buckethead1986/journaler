@@ -135,6 +135,7 @@ class App extends Component {
   };
 
   setTabAndTabContainerState = (tabs, tabContainer, shownJournalValue) => {
+    console.log(shownJournalValue);
     this.setState({ tabs, tabContainer, shownJournalValue });
   };
 
@@ -193,7 +194,8 @@ class App extends Component {
       .then(() => {
         this.setTextAreaAndCallAFunction("", "", "", {});
         this.changeShownJournalValue(shownJournalValue);
-      });
+      })
+      .then(() => this.newJournalLink());
   };
 
   deleteJournal = (id, shownJournalValue) => {

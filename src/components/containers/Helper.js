@@ -167,3 +167,26 @@ function checkRgb(rgb) {
     return true;
   }
 }
+
+//Theres a bug with javascript date objects coming from rails/mongo databases, calling 'getMonth or .getDate on the .created_at attribute returns undefined.
+//Theres a workaround, but it requires jQuery and moment. For this one date parsing, this is simnpler.
+export function returnParsedDate(journals, journalId) {
+  let date;
+  let month;
+  let journal = journals.filter(journal => journal.id === journalId)[0];
+  if (journal) {
+    let journalCreation = journal.created_at.split("T")[0].split("-");
+
+    month = getFullMonthWord(parseInt(journalCreation[1].slice(1) - 1));
+    date = removeZeroFromBeginning(journalCreation[2]);
+  }
+  return `${month} ${date}`;
+}
+
+//aesthetic, turns 01 into 1 for 'July 1'
+function removeZeroFromBeginning(item) {
+  if (item[0] === "0") {
+    item = item.slice(1);
+  }
+  return item;
+}

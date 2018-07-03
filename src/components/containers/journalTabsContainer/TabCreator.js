@@ -7,7 +7,7 @@ import JournalTextArea from "../newJournalContainer/JournalTextArea";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import { renderHelpPage } from "../tutorial/TutorialText";
-import { getFullMonthWord } from "../Helper";
+import { getFullMonthWord, returnParsedDate } from "../Helper";
 
 const styles = theme => ({
   root: theme.mixins.gutters({
@@ -91,7 +91,7 @@ class TabCreator extends React.Component {
 
   //toggles message based on path ending. normal, journal edit, or journal stats.
   renderMessage = () => {
-    console.log(this.props.tabContainer[this.props.shownJournalValue].date);
+    let date = returnParsedDate(this.props.journals, this.props.journalId);
     let message = "Write a new journal";
     let path = window.location.href.split("/")[
       window.location.href.split("/").length - 1
@@ -100,7 +100,7 @@ class TabCreator extends React.Component {
     if (path === "stats") {
       message = "Journal Stats";
     } else if (path === "edit") {
-      message = `Edit Journal`;
+      message = `Edit Journal from ${date}`;
     }
     return (
       <Typography

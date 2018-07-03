@@ -10,6 +10,7 @@ import StarBorder from "@material-ui/icons/StarBorder";
 import Star from "@material-ui/icons/Star";
 import Clear from "@material-ui/icons/Clear";
 import Create from "@material-ui/icons/Create";
+import ReactTooltip from "react-tooltip";
 
 const styles = theme => ({
   root: theme.mixins.gutters({
@@ -90,6 +91,7 @@ class PaperSheet extends React.Component {
         {this.createIconButton("Stats", Star, this.callJournalStatsLink)}
         {this.createIconButton("Edit", Create, this.callJournalEditLink)}
         {this.createExpandButton(isLargeJournal)}
+        <ReactTooltip type="light" border={true} effect="solid" />
       </Grid>
     );
   };
@@ -104,7 +106,7 @@ class PaperSheet extends React.Component {
           style={{ height: "32px", width: "32px" }}
           onClick={() => callbackFunction()}
         >
-          <IconTagName />
+          <IconTagName data-tip={type} />
         </IconButton>
       </Grid>
     );
@@ -119,7 +121,7 @@ class PaperSheet extends React.Component {
             style={{ height: "32px", width: "32px" }}
             onClick={() => this.toggleExpanded()}
           >
-            <ZoomOutMap />
+            <ZoomOutMap data-tip="Expand" />
           </IconButton>
         </Grid>
       );
@@ -135,7 +137,7 @@ class PaperSheet extends React.Component {
     }
   };
 
-  renderJournals = (isLargeJournal, journalContent) => {
+  renderJournal = (isLargeJournal, journalContent) => {
     return (
       <div>
         <Paper className={this.props.classes.root} elevation={2}>
@@ -150,19 +152,19 @@ class PaperSheet extends React.Component {
 
   createExpandableJournal = () => {
     if (!this.state.isExpanded) {
-      return this.renderJournals(
+      return this.renderJournal(
         true,
         this.truncateBasedOnHowManyLineBreaks(
           this.props.content.slice(0, 500) + "..."
         )
       );
     } else {
-      return this.renderJournals(true, this.props.content);
+      return this.renderJournal(true, this.props.content);
     }
   };
 
   createStaticJournal = () => {
-    return this.renderJournals(
+    return this.renderJournal(
       false,
       this.truncateBasedOnHowManyLineBreaks(this.props.content)
     );

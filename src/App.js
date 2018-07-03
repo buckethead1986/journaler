@@ -3,7 +3,6 @@ import { Route, withRouter } from "react-router-dom";
 import AppBar from "./components/containers/appbarContainer/AppBar";
 import LoginDrawer from "./components/containers/login/LoginDrawer";
 import SettingsDrawer from "./components/containers/settings/SettingsDrawer";
-// import JournalTextArea from "./components/containers/journalContainer/JournalTextArea";
 import TabCreator from "./components/containers/journalTabsContainer/TabCreator";
 import { renderTabsHelper } from "./components/containers/RenderTabsHelper";
 import { checkColorCodes } from "./components/containers/Helper";
@@ -51,6 +50,7 @@ class App extends Component {
   changeColorSettings = (e, colorsObject) => {
     e.preventDefault();
     let checkedColors = checkColorCodes(colorsObject, this.state.colors);
+    console.log(colorsObject, checkedColors);
 
     this.postSettingsToAPI(checkedColors);
     this.setState(
@@ -70,20 +70,14 @@ class App extends Component {
     );
   };
 
-  journalStatsLink = id => {
-    this.props.history.push(
-      `/journaler/${this.state.currentUser.id}/${id}/stats`
-    );
-  };
-
-  journalEditLink = id => {
+  journalEditOrStatsLink = (id, type) => {
     let journal = this.state.journals.filter(journal => journal.id === id)[0];
     this.setTextAreaAndCallAFunction(
       journal.title,
       journal.content,
       id,
       this.props.history.push(
-        `/journaler/${this.state.currentUser.id}/${id}/edit`
+        `/journaler/${this.state.currentUser.id}/${id}/${type}`
       )
     );
   };
@@ -135,7 +129,6 @@ class App extends Component {
   };
 
   setTabAndTabContainerState = (tabs, tabContainer, shownJournalValue) => {
-    console.log(shownJournalValue);
     this.setState({ tabs, tabContainer, shownJournalValue });
   };
 
@@ -295,7 +288,7 @@ class App extends Component {
     return (
       <div
         style={{
-          backgroundColor: this.state.colors.backgroundColor,
+          backgroundColor: this.state.colors.background,
           height: "100vh"
         }}
       >
@@ -362,8 +355,7 @@ class App extends Component {
                   textArea={this.state.textArea}
                   colors={this.state.colors}
                   deleteJournal={this.deleteJournal}
-                  journalStatsLink={this.journalStatsLink}
-                  journalEditLink={this.journalEditLink}
+                  journalEditOrStatsLink={this.journalEditOrStatsLink}
                   journalId={this.state.journalId}
                   newJournalLink={this.newJournalLink}
                 />

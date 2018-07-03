@@ -12,10 +12,10 @@ const JournalTabs = props => {
         title={journal[1]}
         content={journal[2]}
         date={journal[3]}
+        colors={props.colors}
         deleteJournal={props.deleteJournal}
         shownJournalValue={props.shownJournalValue}
-        journalStatsLink={props.journalStatsLink}
-        journalEditLink={props.journalEditLink}
+        journalEditOrStatsLink={props.journalEditOrStatsLink}
       />
     );
   });

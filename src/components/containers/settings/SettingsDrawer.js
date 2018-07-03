@@ -6,10 +6,11 @@ import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
 import Drawer from "@material-ui/core/Drawer";
 import Button from "@material-ui/core/Button";
-// import List from "@material-ui/core/List";
 import Divider from "@material-ui/core/Divider";
 import CheckBoxOutlineBlank from "@material-ui/icons/CheckBoxOutlineBlank";
 import CheckBox from "@material-ui/icons/CheckBox";
+import Mood from "@material-ui/icons/Mood";
+import Star from "@material-ui/icons/Star";
 import SettingsSelector from "./SettingsSelector";
 
 const styles = theme => ({
@@ -38,7 +39,6 @@ const styles = theme => ({
 class SettingsDrawer extends React.Component {
   state = {
     right: false,
-
     colors: {},
     selectionSettings: {}
   };
@@ -52,6 +52,7 @@ class SettingsDrawer extends React.Component {
     }
   }
 
+  //updates state for deeply nested attributes
   handleChange = name => event => {
     let newColorsState = Object.assign({}, this.state.colors);
     newColorsState[`${name}`] = event.target.value;
@@ -87,8 +88,8 @@ class SettingsDrawer extends React.Component {
             <Button
               variant="raised"
               style={{
-                color: colors.buttonTextColor,
-                backgroundColor: colors.buttonBackgroundColor
+                color: colors.buttonText,
+                backgroundColor: colors.buttonBackground
               }}
               type="submit"
             >
@@ -110,25 +111,31 @@ class SettingsDrawer extends React.Component {
             autoComplete="off"
             onSubmit={e => this.props.changeColorSettings(e, this.state.colors)}
           >
+            {this.renderIconColorChangeForm(classes, "hasJournals", CheckBox)}
             {this.renderIconColorChangeForm(
               classes,
-              "hasJournalsColor",
-              CheckBox
+              "reachedWordCountGoal",
+              Star
             )}
             {this.renderIconColorChangeForm(
               classes,
-              "noJournalsColor",
+              "noJournals",
               CheckBoxOutlineBlank
             )}
-            {this.renderColorChangeForm(classes, "buttonTextColor")}
-            {this.renderColorChangeForm(classes, "buttonBackgroundColor")}
-            {this.renderColorChangeForm(classes, "backgroundColor")}
-            {this.renderColorChangeForm(classes, "headlineColor")}
+            {this.renderIconColorChangeForm(
+              classes,
+              "favoriteIconButton",
+              Mood
+            )}
+            {this.renderColorChangeForm(classes, "buttonText")}
+            {this.renderColorChangeForm(classes, "buttonBackground")}
+            {this.renderColorChangeForm(classes, "background")}
+            {this.renderColorChangeForm(classes, "headline")}
             <Button
               variant="raised"
               style={{
-                color: colors.buttonTextColor,
-                backgroundColor: colors.buttonBackgroundColor
+                color: colors.buttonText,
+                backgroundColor: colors.buttonBackground
               }}
               type="submit"
             >

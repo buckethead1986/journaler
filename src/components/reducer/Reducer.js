@@ -9,29 +9,42 @@ export default function reducer(
     // textArea: "",
     // textTitle: ""
     defaultColorTheme: {
-      hasJournalsColor: "#33cc00",
-      noJournalsColor: "#33cc00",
-      buttonTextColor: "white",
-      buttonBackgroundColor: "#3F51B5",
-      backgroundColor: "white",
-      headlineColor: "black"
+      hasJournals: "#33cc00",
+      noJournals: "#33cc00",
+      buttonText: "white",
+      buttonBackground: "#3F51B5",
+      background: "white",
+      headline: "black",
+      reachedWordCountGoal: "magenta",
+      deleteIconButton: "grey",
+      favoriteIconButton: "red",
+      statsIconButton: "grey",
+      editIconButton: "grey",
+      expandIconButton: "grey"
+    },
+    greyscale: {
+      hasJournals: "black",
+      noJournals: "grey",
+      buttonText: "white",
+      buttonBackground: "black",
+      background: "grey",
+      headline: "black",
+      reachedWordCountGoal: "black",
+      deleteIconButton: "grey",
+      favoriteIconButton: "black",
+      statsIconButton: "grey",
+      editIconButton: "grey",
+      expandIconButton: "grey"
     }
   },
   action
 ) {
   switch (action.type) {
-    case "SUBMIT_COLOR":
-      return Object.assign({}, state, { colors: action.payload });
+    // case "SUBMIT_COLOR":
+    //   return Object.assign({}, state, { colors: action.payload });
     case "RESET_COLORS":
       return Object.assign({}, state, {
-        colors: {
-          hasJournalsColor: "#33cc00",
-          noJournalsColor: "#33cc00",
-          buttonTextColor: "white",
-          buttonBackgroundColor: "#3F51B5",
-          backgroundColor: "white",
-          headlineColor: "black"
-        }
+        colors: state.defaultColorTheme
       });
     // case "ADD_TEXT_TITLE":
     //   return Object.assign({}, state, { textTitle: action.payload });

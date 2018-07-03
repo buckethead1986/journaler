@@ -176,7 +176,6 @@ export function returnParsedDate(journals, journalId) {
   let journal = journals.filter(journal => journal.id === journalId)[0];
   if (journal) {
     let journalCreation = journal.created_at.split("T")[0].split("-");
-
     month = getFullMonthWord(parseInt(journalCreation[1].slice(1) - 1));
     date = removeZeroFromBeginning(journalCreation[2]);
   }

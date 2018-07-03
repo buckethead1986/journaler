@@ -6,8 +6,6 @@ import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
 import Drawer from "@material-ui/core/Drawer";
 import Button from "@material-ui/core/Button";
-// import List from "@material-ui/core/List";
-// import Divider from "@material-ui/core/Divider";
 
 const styles = theme => ({
   list: {
@@ -74,14 +72,7 @@ class TemporaryDrawer extends React.Component {
       Accept: "application/json",
       "Content-Type": "application/json"
     };
-    const settings = {
-      hasJournalsColor: "#33cc00",
-      noJournalsColor: "#33cc00",
-      buttonTextColor: "white",
-      buttonBackgroundColor: "#3F51B5",
-      backgroundColor: "white",
-      headlineColor: "black"
-    };
+    const settings = this.props.store.getState().defaultColorTheme;
     const body = {
       username: this.state.username,
       password: this.state.password,

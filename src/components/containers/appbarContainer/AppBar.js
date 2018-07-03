@@ -5,10 +5,9 @@ import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
-// import LoginDrawer from "../login/LoginDrawer";
 import Divider from "@material-ui/core/Divider";
 import Tabs from "@material-ui/core/Tabs";
-// import Tab from "@material-ui/core/Tab";
+import { renderButton } from "../CreateButtonHelper";
 
 const styles = theme => ({
   root: {
@@ -19,7 +18,7 @@ const styles = theme => ({
   loginButton: {
     margin: theme.spacing.unit,
     marginRight: theme.spacing.unit * 2,
-    flex: 0
+    flex: 1
   },
   flex: {
     flex: 1
@@ -34,10 +33,6 @@ const styles = theme => ({
 });
 
 class SimpleAppBar extends React.Component {
-  // state = {
-  //   value: 0
-  // };
-
   componentWillReceiveProps(nextProps) {
     if (this.props.tabs.length !== nextProps.tabs.length) {
       this.props.changeShownJournalValue(nextProps.tabs.length - 1);
@@ -48,23 +43,23 @@ class SimpleAppBar extends React.Component {
     this.props.changeShownJournalValue(value);
   };
 
-  renderButton = (text, callbackFunction, classes, colors) => {
-    return (
-      <Button
-        variant="contained"
-        style={{
-          color: colors.buttonTextColor || "default",
-          backgroundColor: colors.buttonBackgroundColor || "default"
-        }}
-        className={classes.loginButton}
-        onClick={() => callbackFunction()}
-        disableRipple={true}
-        disableFocusRipple={true}
-      >
-        {text}
-      </Button>
-    );
-  };
+  // renderButton = (text, callbackFunction, classes, colors) => {
+  //   return (
+  //     <Button
+  //       variant="contained"
+  //       style={{
+  //         color: colors.buttonText || "default",
+  //         backgroundColor: colors.buttonBackground || "default"
+  //       }}
+  //       className={classes.loginButton}
+  //       onClick={() => callbackFunction()}
+  //       disableRipple={true}
+  //       disableFocusRipple={true}
+  //     >
+  //       {text}
+  //     </Button>
+  //   );
+  // };
 
   render() {
     const { classes, colors } = this.props;
@@ -77,22 +72,22 @@ class SimpleAppBar extends React.Component {
     return this.props.currentUser.length !== 0 ? (
       <AppBar position="static" color="default">
         <Toolbar>
-          <Typography variant="title" style={{ flex: 6 }}>
+          <Typography variant="title" style={{ flex: 10 }}>
             {text}
           </Typography>
-          {this.renderButton(
+          {renderButton(
             "New Journal",
             this.props.newJournalLink,
             classes,
             colors
           )}
-          {this.renderButton(
+          {renderButton(
             "Settings",
             this.props.openSettingsDrawer,
             classes,
             colors
           )}
-          {this.renderButton("Logout", this.props.logoutLink, classes, colors)}
+          {renderButton("Logout", this.props.logoutLink, classes, colors)}
         </Toolbar>
         <Divider />
         <Tabs
@@ -116,12 +111,7 @@ class SimpleAppBar extends React.Component {
           <Typography variant="title" color="inherit" style={{ flex: 6 }}>
             {text}
           </Typography>
-          {this.renderButton(
-            "Login",
-            this.props.openLoginDrawer,
-            classes,
-            colors
-          )}
+          {renderButton("Login", this.props.openLoginDrawer, classes, colors)}
         </Toolbar>
       </AppBar>
     );

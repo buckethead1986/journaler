@@ -6,6 +6,7 @@ import Paper from "@material-ui/core/Paper";
 // import TextField from "@material-ui/core/TextField";
 import Input from "@material-ui/core/Input";
 import Button from "@material-ui/core/Button";
+import { renderButton } from "../CreateButtonHelper";
 
 const styles = theme => ({
   submitButton: {
@@ -190,8 +191,8 @@ class TextFields extends React.Component {
         <Button
           variant="contained"
           style={{
-            color: colors.buttonTextColor,
-            backgroundColor: colors.buttonBackgroundColor
+            color: colors.buttonText,
+            backgroundColor: colors.buttonBackground
           }}
           className={this.props.classes.submitButton}
           onClick={() => {
@@ -217,8 +218,8 @@ class TextFields extends React.Component {
         <Button
           variant="contained"
           style={{
-            color: colors.buttonTextColor,
-            backgroundColor: colors.buttonBackgroundColor
+            color: colors.buttonText,
+            backgroundColor: colors.buttonBackground
           }}
           className={this.props.classes.submitButton}
           onClick={() =>

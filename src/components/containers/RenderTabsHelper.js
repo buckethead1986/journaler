@@ -6,6 +6,7 @@ import Tab from "@material-ui/core/Tab";
 // import Typography from "@material-ui/core/Typography";
 import CheckBoxOutline from "@material-ui/icons/CheckBoxOutlineBlank";
 import CheckBox from "@material-ui/icons/CheckBox";
+import Star from "@material-ui/icons/Star";
 // import JournalPaper from "./journalTabs/JournalPaper";
 import { daysInEachMonth, getMonthWord, getFullMonthWord } from "./Helper";
 
@@ -37,7 +38,7 @@ const styles = {
     borderBottom: "1px solid #e8e8e8"
   },
   tabsIndicator: {
-    backgroundColor: "#1890ff"
+    // backgroundColor: "#1890ff"
   },
   tabSelected: {},
   // root: {
@@ -68,16 +69,16 @@ const styles = {
       '"Segoe UI Emoji"',
       '"Segoe UI Symbol"'
     ].join(","),
-    "&:hover": {
-      color: "#40a9ff",
-      opacity: 1
-    },
+    // "&:hover": {
+    //   color: "#40a9ff",
+    //   opacity: 1
+    // },
     "&$tabSelected": {
-      color: "#1890ff"
+      // color: "#1890ff"
       // fontWeight: theme.typography.fontWeightMedium
     },
     "&:focus": {
-      color: "#40a9ff"
+      // color: "#40a9ff"
     }
   }
   // typography: {
@@ -217,21 +218,28 @@ const renderTabsDateCheck = (i, year, month, journals, colors) => {
 };
 
 const renderJournalTabView = (i, month, journals, colors) => {
-  tabs.unshift(
-    <Tab
-      key={`${getMonthWord(month)} ${i}`}
-      style={styles.tabRoot}
-      label={`${getMonthWord(month)} ${i}`}
-      icon={<CheckBox style={{ color: colors.hasJournalsColor }} />}
-    />
-  );
+  // console.log(journals);
+  // tabs.unshift(
+  //   <Tab
+  //     key={`${getMonthWord(month)} ${i}`}
+  //     style={styles.tabRoot}
+  //     label={`${getMonthWord(month)} ${i}`}
+  //     icon={<CheckBox style={{ color: colors.hasJournals }} />}
+  //   />
+  // );
   let array = [];
-  checkForAdditionalTabContainerData(i, array, month, journals);
+  checkForAdditionalTabContainerData(i, array, month, journals, colors);
 };
 
 //constructs an array of all journals for a given day, then assigns it to tabContainer[valueCounter]["journal"]. If there are no journals for a day,
 //the 'journal' key never gets created. That key is used in a conditional in 'journalTabs/TabCreator'
-const checkForAdditionalTabContainerData = (i, array, month, journals) => {
+const checkForAdditionalTabContainerData = (
+  i,
+  array,
+  month,
+  journals,
+  colors
+) => {
   array.push([
     journals[journalIndex].id,
     journals[journalIndex].title,
@@ -246,8 +254,28 @@ const checkForAdditionalTabContainerData = (i, array, month, journals) => {
       10
     ) === i
   ) {
-    checkForAdditionalTabContainerData(i, array, month, journals);
+    checkForAdditionalTabContainerData(i, array, month, journals, colors);
   } else {
+    let count = 0;
+    let colorResult = colors.hasJournals;
+    let IconTagName = CheckBox;
+    for (let journal of array) {
+      let words = journal[2].split(" ").length;
+      count += words;
+      if (count >= 750) {
+        colorResult = colors.reachedWordCountGoal;
+        IconTagName = Star;
+      }
+    }
+    // debugger;
+    tabs.unshift(
+      <Tab
+        key={`${getMonthWord(month)} ${i}`}
+        style={styles.tabRoot}
+        label={`${getMonthWord(month)} ${i}`}
+        icon={<IconTagName style={{ color: colorResult }} />}
+      />
+    );
     tabContainer[valueCounter] = {};
     tabContainer[valueCounter]["journal"] = array;
     tabContainer[valueCounter]["date"] = `${getFullMonthWord(month)} ${i}`;
@@ -262,7 +290,7 @@ const renderBlankTabView = (i, month, colors) => {
       key={`${getMonthWord(month)} ${i}`}
       style={styles.tabRoot}
       label={`${getMonthWord(month)} ${i}`}
-      icon={<CheckBoxOutline style={{ color: colors.noJournalsColor }} />}
+      icon={<CheckBoxOutline style={{ color: colors.noJournals }} />}
     />
   );
   tabContainer[valueCounter] = {};

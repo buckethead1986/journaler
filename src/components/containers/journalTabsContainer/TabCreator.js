@@ -3,6 +3,7 @@ import { Route } from "react-router-dom";
 import Grid from "@material-ui/core/Grid";
 import { withStyles } from "@material-ui/core/styles";
 import JournalTabs from "./JournalTabs";
+import JournalStats from "../statsContainer/JournalStats";
 import JournalTextArea from "../newJournalContainer/JournalTextArea";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
@@ -21,11 +22,6 @@ const styles = theme => ({
     marginTop: theme.spacing.unit * 3,
     marginBottom: theme.spacing.unit
   }
-  // loginButton: {
-  // margin: theme.spacing.unit,
-  // marginRight: theme.spacing.unit * 2
-  // flex: 0
-  // }
 });
 
 class TabCreator extends React.Component {
@@ -44,7 +40,7 @@ class TabCreator extends React.Component {
               component="h3"
               style={{
                 textAlign: "center",
-                color: this.props.colors.headlineColor
+                color: this.props.colors.headline
               }}
             >
               {dateMessage}
@@ -52,13 +48,13 @@ class TabCreator extends React.Component {
             <JournalTabs
               date={this.props.date}
               store={this.props.store}
+              colors={this.props.colors}
               currentUser={this.props.currentUser}
               journals={this.props.journals}
               tabContainer={this.props.tabContainer}
               shownJournalValue={this.props.shownJournalValue}
               deleteJournal={this.props.deleteJournal}
-              journalStatsLink={this.props.journalStatsLink}
-              journalEditLink={this.props.journalEditLink}
+              journalEditOrStatsLink={this.props.journalEditOrStatsLink}
             />
           </Grid>
         );
@@ -74,7 +70,7 @@ class TabCreator extends React.Component {
               component="h3"
               style={{
                 textAlign: "center",
-                color: this.props.colors.headlineColor
+                color: this.props.colors.headline
               }}
             >
               {dateMessage}
@@ -91,16 +87,18 @@ class TabCreator extends React.Component {
 
   //toggles message based on path ending. normal, journal edit, or journal stats.
   renderMessage = () => {
-    let date = returnParsedDate(this.props.journals, this.props.journalId);
     let message = "Write a new journal";
-    let path = window.location.href.split("/")[
-      window.location.href.split("/").length - 1
-    ];
 
-    if (path === "stats") {
-      message = "Journal Stats";
-    } else if (path === "edit") {
-      message = `Edit Journal from ${date}`;
+    if (this.props.currentUser) {
+      let path = window.location.href.split("/")[
+        window.location.href.split("/").length - 1
+      ];
+      let date = returnParsedDate(this.props.journals, this.props.journalId);
+      if (path === "stats") {
+        message = `Journal Stats from ${date}`;
+      } else if (path === "edit") {
+        message = `Edit Journal from ${date}`;
+      }
     }
     return (
       <Typography
@@ -108,7 +106,7 @@ class TabCreator extends React.Component {
         component="h3"
         style={{
           textAlign: "center",
-          color: this.props.colors.headlineColor
+          color: this.props.colors.headline
         }}
       >
         {message}
@@ -168,7 +166,7 @@ class TabCreator extends React.Component {
           exact
           path="/journaler/:id/:id/stats"
           render={() => {
-            return <div>'stats'</div>;
+            return <JournalStats />;
           }}
         />
         <Route

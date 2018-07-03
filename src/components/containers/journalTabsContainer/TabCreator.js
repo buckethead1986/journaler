@@ -91,6 +91,7 @@ class TabCreator extends React.Component {
 
   //toggles message based on path ending. normal, journal edit, or journal stats.
   renderMessage = () => {
+    console.log(this.props.tabContainer[this.props.shownJournalValue].date);
     let message = "Write a new journal";
     let path = window.location.href.split("/")[
       window.location.href.split("/").length - 1
@@ -99,9 +100,7 @@ class TabCreator extends React.Component {
     if (path === "stats") {
       message = "Journal Stats";
     } else if (path === "edit") {
-      message = `Edit Journal from ${getFullMonthWord(
-        this.props.date.getMonth()
-      )} ${this.props.date.getDate()}`;
+      message = `Edit Journal`;
     }
     return (
       <Typography

@@ -190,7 +190,10 @@ class App extends Component {
       .then(json => {
         this.setJournalStateAndRenderTabs(json.journals);
       })
-      .then(() => this.changeShownJournalValue(shownJournalValue));
+      .then(() => {
+        this.setTextAreaAndCallAFunction("", "", "", {});
+        this.changeShownJournalValue(shownJournalValue);
+      });
   };
 
   deleteJournal = (id, shownJournalValue) => {

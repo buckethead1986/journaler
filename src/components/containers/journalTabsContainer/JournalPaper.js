@@ -10,10 +10,6 @@ import StarBorder from "@material-ui/icons/StarBorder";
 import Star from "@material-ui/icons/Star";
 import Clear from "@material-ui/icons/Clear";
 import Edit from "@material-ui/icons/Edit";
-// import InsertChart from "@material-ui/icons/InsertChart";
-// import PanoramaFishEye from "@material-ui/icons/PanoramaFishEye";
-// import Mood from "@material-ui/icons/Mood";
-
 import ReactTooltip from "react-tooltip";
 
 const styles = theme => ({

@@ -1,6 +1,7 @@
 export default function reducer(
   state = {
     url: "http://localhost:3001/api/v1",
+    date: "",
     // users: [],
     // loggedInUser: [] #33cc00
     // tabs: [],
@@ -13,7 +14,7 @@ export default function reducer(
       // noJournals: "#33cc00",
       buttonText: "white",
       buttonColor: "#3F51B5",
-      background: "white",
+      background: "#DCDCDC",
       // headline: "black",
       // reachedWordCountGoal: "#33cc00",
       wordCountGoal: 750
@@ -47,6 +48,8 @@ export default function reducer(
       return Object.assign({}, state, {
         colors: state.defaultSettings
       });
+    case "SET_DATE":
+      return Object.assign({}, state, { date: action.payload });
     // case "ADD_TEXT_TITLE":
     //   return Object.assign({}, state, { textTitle: action.payload });
     // case "ADD_TEXT_AREA":

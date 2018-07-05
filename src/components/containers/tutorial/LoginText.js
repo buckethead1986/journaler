@@ -1,10 +1,25 @@
 import React from "react";
 import { Typography, Paper, Grid } from "@material-ui/core";
+import { withStyles } from "@material-ui/core/styles";
 
-export function renderHelpPage(props) {
+const styles = theme => ({
+  root: theme.mixins.gutters({
+    paddingTop: 16,
+    paddingBottom: 16,
+    margin: theme.spacing.unit * 2,
+    marginTop: theme.spacing.unit * 3,
+    marginRight: theme.spacing.unit
+  }),
+  typography: {
+    marginTop: theme.spacing.unit * 3,
+    marginBottom: theme.spacing.unit
+  }
+});
+
+const LoginText = props => {
   let dateMessage = "Welcome to Journaler";
   return (
-    <Grid item xs={6} className={props.classes.typography}>
+    <Grid item xs={5} className={props.classes.typography}>
       <Typography
         variant="headline"
         component="h3"
@@ -15,14 +30,15 @@ export function renderHelpPage(props) {
       <Paper className={props.classes.root} elevation={4}>
         <Typography variant="headline">What is Journaler?</Typography>
         <Typography variant="subheading">
-          Journaler is a platform for daily journaling. It's not a blog (yet),
-          because it's meant for you to write, for YOU.
+          Journaler is a platform for daily journaling. See daily writing
+          streaks, search old journals, and identify common themes in your
+          writing.
         </Typography>
         <Typography variant="subheading">
-          Blogs are a way for you to write TO other people, which always struck
-          me as a bit pompous. Journaler is an area to get your thoughts down,
-          for you. There's no way for other users to see your journals, so don't
-          worry if what you write today is a bit weird!
+          To get started, just start writing to the right. If you'd like to save
+          any work, login (upper right) or sign up as a new user (at the
+          bottom). Don't worry, anything you've already written will stick
+          around.
         </Typography>
       </Paper>
       <Paper className={props.classes.root} elevation={4}>
@@ -62,33 +78,8 @@ export function renderHelpPage(props) {
           </li>
         </ul>
       </Paper>
-      <Paper className={props.classes.root} elevation={4}>
-        <Typography variant="headline">
-          How? Just start writing to the right
-        </Typography>
-        <Typography variant="subheading" />
-        <Typography variant="subheading">
-          If you want to save a journal (don't worry, any current progress will
-          be saved), see metrics, or change the color scheme, login in the upper
-          right. Then:
-        </Typography>
-        <ul>
-          <li>
-            <Typography variant="subheading">
-              The last 30 days will be shown at the top of the page. Click on a
-              day to see everything you wrote that day, and metrics for those
-              journals
-            </Typography>
-          </li>
-          <li>
-            <Typography variant="subheading">
-              Select 'Settings' in the upper right to change colors/format.
-              Proper colors (rgb, hex, 'purple', etc) will immediately change
-              the sample icon. 'Submit' to save settings.
-            </Typography>
-          </li>
-        </ul>
-      </Paper>
     </Grid>
   );
-}
+};
+
+export default withStyles(styles)(LoginText);

@@ -6,10 +6,9 @@ import JournalTabs from "./JournalTabs";
 import JournalStats from "../statsContainer/JournalStats";
 import JournalTextArea from "../newJournalContainer/JournalTextArea";
 import Typography from "@material-ui/core/Typography";
-import Button from "@material-ui/core/Button";
 import HelpPageText from "../tutorial/HelpPageText";
-import { renderHelpPage } from "../tutorial/TutorialText";
-import { getFullMonthWord, returnParsedDate } from "../Helper";
+import LoginText from "../tutorial/LoginText";
+import { returnParsedDate } from "../Helper";
 
 const styles = theme => ({
   root: theme.mixins.gutters({
@@ -106,9 +105,8 @@ class TabCreator extends React.Component {
         }
       }
       //if no user is logged in, renders the welcome/explanation text
-      //this was a ton of text, so I exported it to a helper function
     } else {
-      return renderHelpPage(this.props);
+      return <LoginText />;
     }
   };
 
@@ -148,7 +146,7 @@ class TabCreator extends React.Component {
   //alters content based on route path, between new journal, journal stats, and journal edit.
   renderJournalTextArea = classes => {
     let size = 7;
-    if (this.props.isHelpPage || !this.props.currentUser) {
+    if (this.props.isHelpPage) {
       size = 6;
     }
     return (

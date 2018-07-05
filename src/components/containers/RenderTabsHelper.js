@@ -1,25 +1,14 @@
 import React from "react";
-// import { withStyles } from "@material-ui/core/styles";
-// import AppBar from "@material-ui/core/AppBar";
-// import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
-// import Typography from "@material-ui/core/Typography";
-// import CheckBoxOutline from "@material-ui/icons/CheckBoxOutlineBlank";
-// import CheckBox from "@material-ui/icons/CheckBox";
-// import Star from "@material-ui/icons/Star";
-// import CropSquare from "@material-ui/icons/CropSquare";
-// import Brightness1 from "@material-ui/icons/Brightness1";
-// import Mood from "@material-ui/icons/Mood";
 import RadioButtonUnchecked from "@material-ui/icons/RadioButtonUnchecked";
 import CheckCircle from "@material-ui/icons/CheckCircle";
 import Favorite from "@material-ui/icons/Favorite";
-// import JournalPaper from "./journalTabs/JournalPaper";
 import { daysInEachMonth, getMonthWord, getFullMonthWord } from "./Helper";
 
-let tabs; //array of tab data
-let tabContainer; //data displayed for specific tabs
-let journalIndex; //location in journals array
-let valueCounter; //links tab click to which tabContainer is displayed
+let tabs;
+let tabContainer;
+let journalIndex;
+let valueCounter;
 
 const styles = {
   // root: {
@@ -87,11 +76,11 @@ const styles = {
       // color: "#40a9ff"
     }
   }
-  // typography: {
-  //   padding: theme.spacing.unit * 3
-  // }
 };
 
+//renderTabsHelper accepts data and updates state with 'tabs' and 'tabContainer'. tabs is the container for the
+//scrollable tab component in the appbar, and renders the past 30 days from whatever start date is picked (altering the icon based on content written on each day).
+//tabContainer is a corresponding array of all journal data from those 30 days.
 export function renderTabsHelper(
   journals,
   store,
@@ -99,30 +88,15 @@ export function renderTabsHelper(
   setTabAndTabContainerState,
   colors
 ) {
-  // console.log(colors);
-  // let colors2 = store.getState().colors;
-  // console.log(colors2);
   tabs = [];
   tabContainer = [];
   valueCounter = 29;
-
-  //upon created, add a 'date created attribute' for sorting over. 'yearmonthdayhourminutesecond' just for sorting purposes
-  // componentDidMount() {
-  //   // journals = this.props.journals;
-  //   journalIndex = this.props.journals.length - 1;
-  //   tabs = [];
-  //   this.setState({ journals: this.props.journals }, () => this.renderTabs());
-  //   // this.renderTabs();
-  // }
-
   journalIndex = journals.length - 1;
 
   let year = date.getFullYear();
   let month = date.getMonth();
-  // let monthWord = getMonthWord(month);
   let previousYear = year;
   let previousMonth = month - 1;
-  // let previousMonthWord = getMonthWord(previousMonth);
   let previousMonthLength = daysInEachMonth(
     date.getMonth() - 1,
     date.getFullYear()
@@ -131,37 +105,31 @@ export function renderTabsHelper(
   if (month === 0) {
     previousYear--;
     previousMonth = 11;
-    // previousMonthWord = "Dec";
     previousMonthLength = 31;
   }
-
+  // let newDate = new Date();
+  // console.log(newDate.getMonth());
+  // newDate.setMonth(2);
+  // console.log(newDate.getMonth());
+  // date.setMonth(5);
+  // console.log(journals, month, date);
+  //
   // //test data
   // year = 2018;
-  // month = 0;
+  // month = 5;
   // previousYear = 2017;
-  // previousMonth = 11;
-  // monthWord = "THING";
-  // previousMonthWord = "bacon";
+  // previousMonth = 4;
   // previousMonthLength = 31;
-  // console.log("before shiftjournalindex", tabs, journalIndex, journals.length);
-
-  //
-
-  //shiftjournalindex currently breaks if there are no journals entries for the current month. //does it still?
-
-  //
 
   //shift journalIndex to chosen startDate. This is code for a stetch goal, currently there isnt a way to shift the tab start date.
   if (journalIndex >= 0) {
     shiftJournalIndex(year, month, date, journals);
   }
 
-  // console.log("before first loop", tabs, journalIndex);
   //adding journal entries for this month from todays date, counting backwards
   for (let i = date.getDate(); i > 0; i--) {
     renderTabsDateCheck(i, year, month, journals, colors);
   }
-  // console.log("before second loop", tabs, journalIndex);
   let count = 30 - tabs.length;
   //'tabs' length is all the days of the current month, now adding journal entries in the previous month, up to 30 total
   for (let i = previousMonthLength, j = 0; j < count; i--, j++) {
@@ -183,7 +151,6 @@ const shiftJournalIndex = (year, month, date, journals) => {
     journalIndex--;
   }
   //month
-
   while (
     //This breaks if all journals are in months previous to the one. This works if the month is july, and its counting down from dec, but not dec => july
     parseInt(
@@ -194,7 +161,6 @@ const shiftJournalIndex = (year, month, date, journals) => {
   ) {
     journalIndex--;
   }
-
   //days in the future of chosen date
   while (
     parseInt(
@@ -224,15 +190,6 @@ const renderTabsDateCheck = (i, year, month, journals, colors) => {
 };
 
 const renderJournalTabView = (i, month, journals, colors) => {
-  // console.log(journals);
-  // tabs.unshift(
-  //   <Tab
-  //     key={`${getMonthWord(month)} ${i}`}
-  //     style={styles.tabRoot}
-  //     label={`${getMonthWord(month)} ${i}`}
-  //     icon={<CheckBox style={{ color: colors.tabColor }} />}
-  //   />
-  // );
   let array = [];
   checkForAdditionalTabContainerData(i, array, month, journals, colors);
 };
@@ -262,7 +219,6 @@ const checkForAdditionalTabContainerData = (
   ) {
     checkForAdditionalTabContainerData(i, array, month, journals, colors);
   } else {
-    console.log(colors.wordCountGoal, colors.wordCountGoal > 10);
     let count = 0;
     let IconTagName = CheckCircle;
     for (let journal of array) {

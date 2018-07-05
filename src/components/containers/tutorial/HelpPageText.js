@@ -6,10 +6,7 @@ import {
   Grid,
   TextField,
   Button,
-  FormControl,
-  InputLabel,
-  InputAdornment,
-  Input
+  InputAdornment
 } from "@material-ui/core";
 import RadioButtonUnchecked from "@material-ui/icons/RadioButtonUnchecked";
 import CheckCircle from "@material-ui/icons/CheckCircle";
@@ -164,10 +161,10 @@ class HelpPage extends React.Component {
         }}
       >
         <Grid container spacing={0} alignItems="flex-end">
+          {this.renderWordCountChangeInput(classes)}
           {this.renderTabColorChangeInput(classes)}
           {this.renderColorChangeInput(classes, "buttonColor")}
           {this.renderColorChangeInput(classes, "background")}
-          {this.renderWordCountChangeInput(classes)}
           <Grid container spacing={0}>
             <Grid item xs={6}>
               <Button
@@ -305,8 +302,8 @@ class HelpPage extends React.Component {
             I want to change my word count goal
           </Typography>
           <Typography variant="subheading">
-            No problem. Change it here, or change some website colors (hex, rgb,
-            'purple', etc)
+            No problem. Change it here, or change some website colors (accepts
+            hex, rgb, 'purple', etc)
           </Typography>
           <Typography variant="subheading" />
           {this.renderForm(classes, colors)}

@@ -2,12 +2,9 @@ import React, { Component } from "react";
 import { Route, withRouter } from "react-router-dom";
 import AppBar from "./components/containers/appbarContainer/AppBar";
 import LoginDrawer from "./components/containers/login/LoginDrawer";
-import SettingsDrawer from "./components/containers/settings/SettingsDrawer";
 import TabCreator from "./components/containers/journalTabsContainer/TabCreator";
 import { renderTabsHelper } from "./components/containers/RenderTabsHelper";
 import { checkColorCodes } from "./components/containers/Helper";
-
-const url = "http://localhost:3001/api/v1";
 
 class App extends Component {
   state = {
@@ -17,7 +14,6 @@ class App extends Component {
     tabs: [],
     tabContainer: [],
     shownJournalValue: 0,
-    settingsDrawerOpen: false,
     loginDrawerOpen: false,
     fromHomePage: false,
     textTitle: "",
@@ -29,7 +25,7 @@ class App extends Component {
 
   //redirects to '/journaler' unless localstorage token is authorized.
   componentDidMount() {
-    fetch(`${url}/current_user`, {
+    fetch(`${this.props.store.getState().url}/current_user`, {
       headers: {
         "content-type": "application/json",
         accept: "application/json",
@@ -43,7 +39,10 @@ class App extends Component {
         } else {
           this.props.history.push("/journaler");
         }
-      });
+      })
+      .then(() =>
+        this.props.store.dispatch({ type: "SET_DATE", payload: new Date() })
+      );
     this.setState({ colors: this.props.store.getState().defaultSettings });
   }
 
@@ -61,7 +60,7 @@ class App extends Component {
         renderTabsHelper(
           this.state.journals,
           this.props.store,
-          new Date(),
+          this.props.store.getState().date,
           this.setTabAndTabContainerState,
           this.state.colors
         );
@@ -121,19 +120,22 @@ class App extends Component {
 
   //posts settings object to API.
   postSettingsToAPI = colorsObject => {
-    fetch(`${url}/users/${this.state.currentUser.id}`, {
-      method: "PATCH",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        user: {
-          id: this.state.currentUser.id,
-          settings: JSON.stringify(colorsObject)
-        }
-      })
-    });
+    fetch(
+      `${this.props.store.getState().url}/users/${this.state.currentUser.id}`,
+      {
+        method: "PATCH",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          user: {
+            id: this.state.currentUser.id,
+            settings: JSON.stringify(colorsObject)
+          }
+        })
+      }
+    );
   };
 
   changeShownJournalValue = value => {
@@ -145,11 +147,11 @@ class App extends Component {
   };
 
   fetchUsersAndCurrentUser = () => {
-    fetch(`${url}/users`)
+    fetch(`${this.props.store.getState().url}/users`)
       .then(res => res.json())
       .then(json =>
         this.setState({ users: json }, () =>
-          fetch(`${url}/current_user`, {
+          fetch(`${this.props.store.getState().url}/current_user`, {
             headers: {
               "content-type": "application/json",
               accept: "application/json",
@@ -174,7 +176,7 @@ class App extends Component {
                   renderTabsHelper(
                     this.state.journals,
                     this.props.store,
-                    new Date(),
+                    this.props.store.getState().date,
                     this.setTabAndTabContainerState,
                     this.state.colors
                   );
@@ -191,7 +193,9 @@ class App extends Component {
   };
 
   fetchJournals = (shownJournalValue = 29) => {
-    fetch(`${url}/users/${this.state.currentUser.id}`)
+    fetch(
+      `${this.props.store.getState().url}/users/${this.state.currentUser.id}`
+    )
       .then(res => res.json())
       .then(json => {
         this.setJournalStateAndRenderTabs(json.journals);
@@ -204,7 +208,7 @@ class App extends Component {
   };
 
   deleteJournal = (id, shownJournalValue) => {
-    fetch(`${url}/journals/${id}`, {
+    fetch(`${this.props.store.getState().url}/journals/${id}`, {
       method: "DELETE",
       headers: {
         Accept: "application/json",
@@ -232,7 +236,7 @@ class App extends Component {
         renderTabsHelper(
           this.state.journals,
           this.props.store,
-          new Date(),
+          this.props.store.getState().date,
           this.setTabAndTabContainerState,
           this.state.colors
         );
@@ -268,17 +272,6 @@ class App extends Component {
     );
   };
 
-  //retains content already written in journal area if you log in or sign up.
-  // pullJournalContent = (textTitle, textArea) => {
-  //   this.setState(
-  //     {
-  //       textTitle,
-  //       textArea
-  //     },
-  //     () => {}
-  //   );
-  // };
-
   //toggles the login drawer open and closed.  Begins on signup section if its opened from the 'signup to save journal' button.
   openLoginDrawer = (fromHomePage = false) => {
     this.setState(prevState => {
@@ -289,15 +282,7 @@ class App extends Component {
     });
   };
 
-  //toggles settings drawer open and closed
-  openSettingsDrawer = () => {
-    this.setState(prevState => {
-      return { settingsDrawerOpen: !prevState.settingsDrawerOpen };
-    });
-  };
-
   render() {
-    let date = new Date(); //move to state, allows rerender of tabs based on date (date.setDate(newdate)
     return (
       <div
         style={{
@@ -310,7 +295,6 @@ class App extends Component {
           currentUser={this.state.currentUser}
           logoutLink={this.logoutLink}
           openLoginDrawer={this.openLoginDrawer}
-          openSettingsDrawer={this.openSettingsDrawer}
           tabs={this.state.tabs}
           shownJournalValue={this.state.shownJournalValue}
           changeShownJournalValue={this.changeShownJournalValue}
@@ -326,13 +310,7 @@ class App extends Component {
           fetchUsersAndCurrentUser={this.fetchUsersAndCurrentUser}
           fromHomePage={this.state.fromHomePage}
         />
-        <SettingsDrawer
-          store={this.props.store}
-          settingsDrawerOpen={this.state.settingsDrawerOpen}
-          openSettingsDrawer={this.openSettingsDrawer}
-          changeColorSettings={this.changeColorSettings}
-          colors={this.state.colors}
-        />
+
         <Route
           exact
           path="/journaler"
@@ -359,7 +337,6 @@ class App extends Component {
               return (
                 <TabCreator
                   isHelpPage={this.state.isHelpPage}
-                  date={date}
                   store={this.props.store}
                   currentUser={this.state.currentUser}
                   journals={this.state.journals}

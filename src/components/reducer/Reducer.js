@@ -2,40 +2,41 @@ export default function reducer(
   state = {
     url: "http://localhost:3001/api/v1",
     // users: [],
-    // loggedInUser: []
+    // loggedInUser: [] #33cc00
     // tabs: [],
-    // tabContainer: {},
-    // shownJournalValue: 0
+    // tabContainer: {}, #1b36eb
+    // shownJournalValue: 0 #007FFF
     // textArea: "",
     // textTitle: ""
-    defaultColorTheme: {
-      hasJournals: "#33cc00",
-      noJournals: "#33cc00",
+    defaultSettings: {
+      tabColor: "#33cc00",
+      // noJournals: "#33cc00",
       buttonText: "white",
-      buttonBackground: "#3F51B5",
+      buttonColor: "#3F51B5",
       background: "white",
-      headline: "black",
-      reachedWordCountGoal: "magenta",
-      deleteIconButton: "grey",
-      favoriteIconButton: "red",
-      statsIconButton: "grey",
-      editIconButton: "grey",
-      expandIconButton: "grey"
-    },
-    greyscale: {
-      hasJournals: "black",
-      noJournals: "grey",
-      buttonText: "white",
-      buttonBackground: "black",
-      background: "grey",
-      headline: "black",
-      reachedWordCountGoal: "black",
-      deleteIconButton: "grey",
-      favoriteIconButton: "black",
-      statsIconButton: "grey",
-      editIconButton: "grey",
-      expandIconButton: "grey"
+      // headline: "black",
+      // reachedWordCountGoal: "#33cc00",
+      wordCountGoal: 750
+      // deleteIconButton: "grey",
+      // favoriteIconButton: "red",
+      // statsIconButton: "grey",
+      // editIconButton: "grey",
+      // expandIconButton: "grey"
     }
+    // greyscale: {
+    //   hasJournals: "black",
+    //   tabColor: "grey",
+    //   buttonText: "white",
+    //   buttonColor: "black",
+    //   background: "grey",
+    //   headline: "black",
+    //   reachedWordCountGoal: "black",
+    //   deleteIconButton: "grey",
+    //   favoriteIconButton: "black",
+    //   statsIconButton: "grey",
+    //   editIconButton: "grey",
+    //   expandIconButton: "grey"
+    // }
   },
   action
 ) {
@@ -44,7 +45,7 @@ export default function reducer(
     //   return Object.assign({}, state, { colors: action.payload });
     case "RESET_COLORS":
       return Object.assign({}, state, {
-        colors: state.defaultColorTheme
+        colors: state.defaultSettings
       });
     // case "ADD_TEXT_TITLE":
     //   return Object.assign({}, state, { textTitle: action.payload });

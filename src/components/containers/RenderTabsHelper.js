@@ -4,9 +4,15 @@ import React from "react";
 // import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 // import Typography from "@material-ui/core/Typography";
-import CheckBoxOutline from "@material-ui/icons/CheckBoxOutlineBlank";
-import CheckBox from "@material-ui/icons/CheckBox";
-import Star from "@material-ui/icons/Star";
+// import CheckBoxOutline from "@material-ui/icons/CheckBoxOutlineBlank";
+// import CheckBox from "@material-ui/icons/CheckBox";
+// import Star from "@material-ui/icons/Star";
+// import CropSquare from "@material-ui/icons/CropSquare";
+// import Brightness1 from "@material-ui/icons/Brightness1";
+// import Mood from "@material-ui/icons/Mood";
+import RadioButtonUnchecked from "@material-ui/icons/RadioButtonUnchecked";
+import CheckCircle from "@material-ui/icons/CheckCircle";
+import Favorite from "@material-ui/icons/Favorite";
 // import JournalPaper from "./journalTabs/JournalPaper";
 import { daysInEachMonth, getMonthWord, getFullMonthWord } from "./Helper";
 
@@ -33,10 +39,10 @@ const styles = {
   //     color: "#40a9ff"
   //   }
   // },
-  tabsRoot: {
-    // borderTop: "1px solid #e8e8e8",
-    borderBottom: "1px solid #e8e8e8"
-  },
+  // tabsRoot: {
+  //   // borderTop: "1px solid #e8e8e8",
+  //   borderBottom: "1px solid #e8e8e8"
+  // },
   tabsIndicator: {
     // backgroundColor: "#1890ff"
   },
@@ -224,7 +230,7 @@ const renderJournalTabView = (i, month, journals, colors) => {
   //     key={`${getMonthWord(month)} ${i}`}
   //     style={styles.tabRoot}
   //     label={`${getMonthWord(month)} ${i}`}
-  //     icon={<CheckBox style={{ color: colors.hasJournals }} />}
+  //     icon={<CheckBox style={{ color: colors.tabColor }} />}
   //   />
   // );
   let array = [];
@@ -256,24 +262,22 @@ const checkForAdditionalTabContainerData = (
   ) {
     checkForAdditionalTabContainerData(i, array, month, journals, colors);
   } else {
+    console.log(colors.wordCountGoal, colors.wordCountGoal > 10);
     let count = 0;
-    let colorResult = colors.hasJournals;
-    let IconTagName = CheckBox;
+    let IconTagName = CheckCircle;
     for (let journal of array) {
       let words = journal[2].split(" ").length;
       count += words;
-      if (count >= 750) {
-        colorResult = colors.reachedWordCountGoal;
-        IconTagName = Star;
+      if (count >= colors.wordCountGoal) {
+        IconTagName = Favorite;
       }
     }
-    // debugger;
     tabs.unshift(
       <Tab
         key={`${getMonthWord(month)} ${i}`}
         style={styles.tabRoot}
         label={`${getMonthWord(month)} ${i}`}
-        icon={<IconTagName style={{ color: colorResult }} />}
+        icon={<IconTagName style={{ color: colors.tabColor }} />}
       />
     );
     tabContainer[valueCounter] = {};
@@ -290,11 +294,10 @@ const renderBlankTabView = (i, month, colors) => {
       key={`${getMonthWord(month)} ${i}`}
       style={styles.tabRoot}
       label={`${getMonthWord(month)} ${i}`}
-      icon={<CheckBoxOutline style={{ color: colors.noJournals }} />}
+      icon={<RadioButtonUnchecked style={{ color: colors.tabColor }} />}
     />
   );
   tabContainer[valueCounter] = {};
-
   tabContainer[valueCounter]["date"] = `${getFullMonthWord(month)} ${i}`;
 
   valueCounter--;

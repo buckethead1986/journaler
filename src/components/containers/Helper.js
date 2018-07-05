@@ -112,50 +112,55 @@ export function daysInEachMonth(month, year) {
 }
 //checks that the color input is a valid hex code, rgb, or normal color word.  If not, resets to previous color.
 export function checkColorCodes(colorsObject, colors) {
+  console.log(colorsObject, colors);
   let checkedColorCodes = Object.assign({}, colorsObject);
 
   for (let item in colorsObject) {
-    let isValidColorCode = false;
-    if (colorsObject[item][0] === "#") {
-      let isOk = /(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i.test(colorsObject[item]); //hex check
-      if (isOk) {
-        isValidColorCode = true;
-      }
-    } else if (colorsObject[item].slice(0, 3).toLowerCase() === "rgb") {
-      //rgb check
-      if (checkRgb(colorsObject[item])) {
-        isValidColorCode = true;
-      }
-    } else {
-      switch (colorsObject[item].toLowerCase()) { //normal color words check
-        case "red":
-        case "orange":
-        case "yellow":
-        case "green":
-        case "blue":
-        case "purple":
-        case "black":
-        case "brown":
-        case "gold":
-        case "grey":
-        case "gray":
-        case "indigo":
-        case "maroon":
-        case "magenta":
-        case "navy":
-        case "pink":
-        case "silver":
-        case "violet":
-        case "white":
+    if (item !== "wordCountGoal") {
+      let isValidColorCode = false;
+      if (colorsObject[item][0] === "#") {
+        let isOk = /(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i.test(
+          colorsObject[item]
+        ); //hex check
+        if (isOk) {
           isValidColorCode = true;
-          break;
-        default:
-          isValidColorCode = false;
-          break;
+        }
+      } else if (colorsObject[item].slice(0, 3).toLowerCase() === "rgb") {
+        //rgb check
+        if (checkRgb(colorsObject[item])) {
+          isValidColorCode = true;
+        }
+      } else {
+        switch (colorsObject[item].toLowerCase()) { //normal color words check
+          case "red":
+          case "orange":
+          case "yellow":
+          case "green":
+          case "blue":
+          case "purple":
+          case "black":
+          case "brown":
+          case "gold":
+          case "grey":
+          case "gray":
+          case "indigo":
+          case "maroon":
+          case "magenta":
+          case "navy":
+          case "pink":
+          case "silver":
+          case "violet":
+          case "white":
+            isValidColorCode = true;
+            break;
+          default:
+            isValidColorCode = false;
+            break;
+        }
       }
-    }
-    if (!isValidColorCode) {
-      checkedColorCodes[item] = colors[item];
+      if (!isValidColorCode) {
+        checkedColorCodes[item] = colors[item];
+      }
     }
   }
   return checkedColorCodes;
@@ -178,8 +183,10 @@ export function returnParsedDate(journals, journalId) {
     let journalCreation = journal.created_at.split("T")[0].split("-");
     month = getFullMonthWord(parseInt(journalCreation[1].slice(1) - 1));
     date = removeZeroFromBeginning(journalCreation[2]);
+    return ` from ${month} ${date}`;
+  } else {
+    return "";
   }
-  return `${month} ${date}`;
 }
 
 //aesthetic, turns 01 into 1 for 'July 1'

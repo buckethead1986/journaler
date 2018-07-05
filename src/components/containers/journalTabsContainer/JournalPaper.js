@@ -10,9 +10,10 @@ import StarBorder from "@material-ui/icons/StarBorder";
 import Star from "@material-ui/icons/Star";
 import Clear from "@material-ui/icons/Clear";
 import Edit from "@material-ui/icons/Edit";
-import InsertChart from "@material-ui/icons/InsertChart";
-import PanoramaFishEye from "@material-ui/icons/PanoramaFishEye";
-import Mood from "@material-ui/icons/Mood";
+// import InsertChart from "@material-ui/icons/InsertChart";
+// import PanoramaFishEye from "@material-ui/icons/PanoramaFishEye";
+// import Mood from "@material-ui/icons/Mood";
+
 import ReactTooltip from "react-tooltip";
 
 const styles = theme => ({
@@ -30,8 +31,8 @@ const styles = theme => ({
 
 class PaperSheet extends React.Component {
   state = {
-    isExpanded: false,
-    isFavorite: false
+    isExpanded: false
+    // isFavorite: false
   };
 
   toggleExpanded = () => {
@@ -71,21 +72,21 @@ class PaperSheet extends React.Component {
     this.props.deleteJournal(this.props.id, this.props.shownJournalValue);
   };
 
-  callFavorite = () => {
-    console.log("favorite");
-    this.setState(prevState => {
-      return { isFavorite: !prevState.isFavorite };
-    });
-  };
+  // callFavorite = () => {
+  //   this.setState(prevState => {
+  //     return { isFavorite: !prevState.isFavorite };
+  //   });
+  // };
 
-  callJournalStatsLink = () => {
-    this.props.journalEditOrStatsLink(this.props.id, "stats");
-  };
+  // callJournalStatsLink = () => {
+  //   this.props.journalEditOrStatsLink(this.props.id, "stats");
+  // };
+
   callJournalEditLink = () => {
     this.props.journalEditOrStatsLink(this.props.id, "edit");
   };
 
-  createIconButtonsList = isLargeJournal => {
+  createIconButtonsList = (isLargeJournal, help = false) => {
     return (
       <Grid container>
         <Grid item style={{ flex: 8 }}>
@@ -93,28 +94,16 @@ class PaperSheet extends React.Component {
             {this.props.title}
           </Typography>
         </Grid>
-        {this.createIconButton("Delete", Clear, this.callDelete, "grey")}
-        {this.createIconButton(
-          "Favorite",
-          this.state.isFavorite ? Mood : PanoramaFishEye,
-          this.callFavorite,
-          this.state.isFavorite ? this.props.colors.favoriteIconButton : "grey"
-        )}
-        {this.createIconButton(
-          "Stats",
-          InsertChart,
-          this.callJournalStatsLink,
-          "grey"
-        )}
-        {this.createIconButton("Edit", Edit, this.callJournalEditLink, "grey")}
-        {this.createExpandButton(isLargeJournal, "grey")}
+        {this.createIconButton("Delete", Clear, this.callDelete, help)}
+        {this.createIconButton("Edit", Edit, this.callJournalEditLink, help)}
+        {this.createExpandButton(isLargeJournal, help)}
         <ReactTooltip type="light" border={true} effect="solid" />
       </Grid>
     );
   };
 
   //template for rendering iconButtons on each JournalPaper. 'type' is just for human readability
-  createIconButton = (type, icon, callbackFunction, color) => {
+  createIconButton = (type, icon, callbackFunction, help) => {
     let IconTagName = icon;
 
     return (
@@ -122,21 +111,23 @@ class PaperSheet extends React.Component {
         <IconButton
           style={{ height: "32px", width: "32px" }}
           onClick={() => callbackFunction()}
+          disabled={help ? true : false}
         >
-          <IconTagName data-tip={type} style={{ color: color }} />
+          <IconTagName data-tip={type} />
         </IconButton>
       </Grid>
     );
   };
 
   //action button, toggles journalPaper size between truncated and full size. Renders a blank space on journals that are too short, to maintain spacing.
-  createExpandButton = (largeJournal, color) => {
+  createExpandButton = (largeJournal, color, help) => {
     if (largeJournal) {
       return (
         <Grid item style={{ flex: 0 }}>
           <IconButton
             style={{ height: "32px", width: "32px", color }}
             onClick={() => this.toggleExpanded()}
+            disabled={help ? true : false}
           >
             <ZoomOutMap data-tip="Expand" />
           </IconButton>

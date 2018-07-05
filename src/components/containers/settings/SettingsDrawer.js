@@ -89,7 +89,7 @@ class SettingsDrawer extends React.Component {
               variant="raised"
               style={{
                 color: colors.buttonText,
-                backgroundColor: colors.buttonBackground
+                backgroundColor: colors.buttonColor
               }}
               type="submit"
             >
@@ -111,7 +111,7 @@ class SettingsDrawer extends React.Component {
             autoComplete="off"
             onSubmit={e => this.props.changeColorSettings(e, this.state.colors)}
           >
-            {this.renderIconColorChangeForm(classes, "hasJournals", CheckBox)}
+            {this.renderIconColorChangeForm(classes, "tabColor", CheckBox)}
             {this.renderIconColorChangeForm(
               classes,
               "reachedWordCountGoal",
@@ -128,14 +128,14 @@ class SettingsDrawer extends React.Component {
               Mood
             )}
             {this.renderColorChangeForm(classes, "buttonText")}
-            {this.renderColorChangeForm(classes, "buttonBackground")}
+            {this.renderColorChangeForm(classes, "buttonColor")}
             {this.renderColorChangeForm(classes, "background")}
             {this.renderColorChangeForm(classes, "headline")}
             <Button
               variant="raised"
               style={{
                 color: colors.buttonText,
-                backgroundColor: colors.buttonBackground
+                backgroundColor: colors.buttonColor
               }}
               type="submit"
             >
@@ -198,7 +198,7 @@ class SettingsDrawer extends React.Component {
     );
   };
 
-  // Takes a string, like 'hasJournalsColor', and makes it 'Has Journal Color', split around capitals and with the first character uppercase
+  // Takes a string, like 'tabColor', and makes it 'Has Journal Color', split around capitals and with the first character uppercase
   splitAroundUppercase = title => {
     for (let i = 0; i < title.length; i++) {
       if (title[i] === title[i].toUpperCase()) {

@@ -192,7 +192,7 @@ class TextFields extends React.Component {
           variant="contained"
           style={{
             color: colors.buttonText,
-            backgroundColor: colors.buttonBackground
+            backgroundColor: colors.buttonColor
           }}
           className={this.props.classes.submitButton}
           onClick={() => {
@@ -219,7 +219,7 @@ class TextFields extends React.Component {
           variant="contained"
           style={{
             color: colors.buttonText,
-            backgroundColor: colors.buttonBackground
+            backgroundColor: colors.buttonColor
           }}
           className={this.props.classes.submitButton}
           onClick={() =>

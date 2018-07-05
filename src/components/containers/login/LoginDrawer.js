@@ -72,7 +72,7 @@ class TemporaryDrawer extends React.Component {
       Accept: "application/json",
       "Content-Type": "application/json"
     };
-    const settings = this.props.store.getState().defaultColorTheme;
+    const settings = this.props.store.getState().defaultSettings;
     const body = {
       username: this.state.username,
       password: this.state.password,

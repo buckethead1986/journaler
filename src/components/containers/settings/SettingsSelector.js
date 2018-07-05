@@ -33,11 +33,11 @@ class SimpleSelect extends React.Component {
     let result;
     switch (event.target.value) {
       case "default":
-        result = this.props.store.getState().defaultColorTheme;
+        result = this.props.store.getState().defaultSettings;
         break;
-      case "greyscale":
-        result = this.props.store.getState().greyscale;
-        break;
+      // case "greyscale":
+      //   result = this.props.store.getState().greyscale;
+      //   break;
       default:
         result = this.props.colors;
         break;

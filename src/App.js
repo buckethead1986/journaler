@@ -23,7 +23,8 @@ class App extends Component {
     textTitle: "",
     textArea: "",
     journalId: "",
-    colors: {}
+    colors: {},
+    isHelpPage: false
   };
 
   //redirects to '/journaler' unless localstorage token is authorized.
@@ -43,14 +44,13 @@ class App extends Component {
           this.props.history.push("/journaler");
         }
       });
-    this.setState({ colors: this.props.store.getState().defaultColorTheme });
+    this.setState({ colors: this.props.store.getState().defaultSettings });
   }
 
   //checks colors and updates User API with color settings, then rerenders tabs
   changeColorSettings = (e, colorsObject) => {
     e.preventDefault();
     let checkedColors = checkColorCodes(colorsObject, this.state.colors);
-    console.log(colorsObject, checkedColors);
 
     this.postSettingsToAPI(checkedColors);
     this.setState(
@@ -58,7 +58,6 @@ class App extends Component {
         colors: checkedColors
       },
       () => {
-        this.openSettingsDrawer();
         renderTabsHelper(
           this.state.journals,
           this.props.store,
@@ -83,12 +82,25 @@ class App extends Component {
   };
 
   newJournalLink = () => {
-    this.setTextAreaAndCallAFunction(
-      "",
-      "",
-      "",
-      this.props.history.push(`/journaler/${this.state.currentUser.id}/new`)
-    );
+    this.setState({ isHelpPage: false }, () => {
+      this.setTextAreaAndCallAFunction(
+        "",
+        "",
+        "",
+        this.props.history.push(`/journaler/${this.state.currentUser.id}/new`)
+      );
+    });
+  };
+
+  helpPageLink = () => {
+    this.setState({ isHelpPage: true }, () => {
+      this.setTextAreaAndCallAFunction(
+        this.state.textTitle,
+        this.state.textArea,
+        "",
+        this.props.history.push(`/journaler/help`)
+      );
+    });
   };
 
   setTextAreaAndCallAFunction = (
@@ -125,7 +137,7 @@ class App extends Component {
   };
 
   changeShownJournalValue = value => {
-    this.setState({ shownJournalValue: value });
+    this.setState({ shownJournalValue: value, isHelpPage: false });
   };
 
   setTabAndTabContainerState = (tabs, tabContainer, shownJournalValue) => {
@@ -207,6 +219,7 @@ class App extends Component {
           })
         )
       )
+      .then(() => this.newJournalLink())
       .then(() => this.changeShownJournalValue(shownJournalValue));
   };
 
@@ -245,7 +258,7 @@ class App extends Component {
         users: [],
         textTitle: "",
         textArea: "",
-        colors: this.props.store.getState().defaultColorTheme
+        colors: this.props.store.getState().defaultSettings
       },
       () => {
         this.props.store.dispatch({ type: "RESET_COLORS" });
@@ -304,6 +317,7 @@ class App extends Component {
           loginOrLogoutButton={this.loginOrLogoutButton}
           colors={this.state.colors}
           newJournalLink={this.newJournalLink}
+          helpPageLink={this.helpPageLink}
         />
         <LoginDrawer
           store={this.props.store}
@@ -336,6 +350,7 @@ class App extends Component {
             );
           }}
         />
+
         {this.state.currentUser.length !== 0 &&
         this.state.tabContainer.length !== 0 ? (
           <Route
@@ -343,6 +358,7 @@ class App extends Component {
             render={() => {
               return (
                 <TabCreator
+                  isHelpPage={this.state.isHelpPage}
                   date={date}
                   store={this.props.store}
                   currentUser={this.state.currentUser}
@@ -350,6 +366,7 @@ class App extends Component {
                   fetchJournals={this.fetchJournals}
                   tabContainer={this.state.tabContainer}
                   shownJournalValue={this.state.shownJournalValue}
+                  changeColorSettings={this.changeColorSettings}
                   setTextAreaAndCallAFunction={this.setTextAreaAndCallAFunction}
                   textTitle={this.state.textTitle}
                   textArea={this.state.textArea}

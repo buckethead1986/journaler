@@ -7,7 +7,6 @@ import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import Divider from "@material-ui/core/Divider";
 import Tabs from "@material-ui/core/Tabs";
-import { renderButton } from "../CreateButtonHelper";
 
 const styles = theme => ({
   root: {
@@ -43,23 +42,23 @@ class SimpleAppBar extends React.Component {
     this.props.changeShownJournalValue(value);
   };
 
-  // renderButton = (text, callbackFunction, classes, colors) => {
-  //   return (
-  //     <Button
-  //       variant="contained"
-  //       style={{
-  //         color: colors.buttonText || "default",
-  //         backgroundColor: colors.buttonBackground || "default"
-  //       }}
-  //       className={classes.loginButton}
-  //       onClick={() => callbackFunction()}
-  //       disableRipple={true}
-  //       disableFocusRipple={true}
-  //     >
-  //       {text}
-  //     </Button>
-  //   );
-  // };
+  renderButton = (text, callbackFunction, classes, colors) => {
+    return (
+      <Button
+        variant="contained"
+        style={{
+          color: colors.buttonText || "default",
+          backgroundColor: colors.buttonColor || "default"
+        }}
+        className={classes.loginButton}
+        onClick={() => callbackFunction()}
+        disableRipple={true}
+        disableFocusRipple={true}
+      >
+        {text}
+      </Button>
+    );
+  };
 
   render() {
     const { classes, colors } = this.props;
@@ -75,19 +74,14 @@ class SimpleAppBar extends React.Component {
           <Typography variant="title" style={{ flex: 10 }}>
             {text}
           </Typography>
-          {renderButton(
+          {this.renderButton(
             "New Journal",
             this.props.newJournalLink,
             classes,
             colors
           )}
-          {renderButton(
-            "Settings",
-            this.props.openSettingsDrawer,
-            classes,
-            colors
-          )}
-          {renderButton("Logout", this.props.logoutLink, classes, colors)}
+          {this.renderButton("Help", this.props.helpPageLink, classes, colors)}
+          {this.renderButton("Logout", this.props.logoutLink, classes, colors)}
         </Toolbar>
         <Divider />
         <Tabs
@@ -111,7 +105,12 @@ class SimpleAppBar extends React.Component {
           <Typography variant="title" color="inherit" style={{ flex: 6 }}>
             {text}
           </Typography>
-          {renderButton("Login", this.props.openLoginDrawer, classes, colors)}
+          {this.renderButton(
+            "Login",
+            this.props.openLoginDrawer,
+            classes,
+            colors
+          )}
         </Toolbar>
       </AppBar>
     );

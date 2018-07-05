@@ -7,6 +7,7 @@ import JournalStats from "../statsContainer/JournalStats";
 import JournalTextArea from "../newJournalContainer/JournalTextArea";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
+import HelpPageText from "../tutorial/HelpPageText";
 import { renderHelpPage } from "../tutorial/TutorialText";
 import { getFullMonthWord, returnParsedDate } from "../Helper";
 
@@ -28,13 +29,10 @@ class TabCreator extends React.Component {
   renderJournalsOrBlank = classes => {
     let dateMessage;
     if (this.props.currentUser) {
-      //checks if the user has written journals on this date, if so, renders them as individual JournalPaper, through JournalTabs
-      if ("journal" in this.props.tabContainer[this.props.shownJournalValue]) {
-        dateMessage = `Journals written on ${this.props.tabContainer[
-          this.props.shownJournalValue
-        ].date}`;
+      if (this.props.isHelpPage) {
+        dateMessage = "Journaler Help";
         return (
-          <Grid item xs={5} className={classes.typography}>
+          <Grid item xs={6} className={classes.typography}>
             <Typography
               variant="headline"
               component="h3"
@@ -45,38 +43,67 @@ class TabCreator extends React.Component {
             >
               {dateMessage}
             </Typography>
-            <JournalTabs
-              date={this.props.date}
+            <HelpPageText
               store={this.props.store}
               colors={this.props.colors}
-              currentUser={this.props.currentUser}
-              journals={this.props.journals}
-              tabContainer={this.props.tabContainer}
-              shownJournalValue={this.props.shownJournalValue}
-              deleteJournal={this.props.deleteJournal}
-              journalEditOrStatsLink={this.props.journalEditOrStatsLink}
+              changeColorSettings={this.props.changeColorSettings}
             />
           </Grid>
         );
-        //if no journals written, renders nothing
       } else {
-        dateMessage = `No Journals written on ${this.props.tabContainer[
-          this.props.shownJournalValue
-        ].date}`;
-        return (
-          <Grid item xs={5} className={classes.typography}>
-            <Typography
-              variant="headline"
-              component="h3"
-              style={{
-                textAlign: "center",
-                color: this.props.colors.headline
-              }}
-            >
-              {dateMessage}
-            </Typography>
-          </Grid>
-        );
+        //checks if the user has written journals on this date, if so, renders them as individual JournalPaper, through JournalTabs
+        if (
+          "journal" in this.props.tabContainer[this.props.shownJournalValue]
+        ) {
+          dateMessage = `Journals written on ${this.props.tabContainer[
+            this.props.shownJournalValue
+          ].date}`;
+
+          return (
+            <Grid item xs={5} className={classes.typography}>
+              <Typography
+                variant="headline"
+                component="h3"
+                style={{
+                  textAlign: "center",
+                  color: this.props.colors.headline
+                }}
+              >
+                {dateMessage}
+              </Typography>
+              <JournalTabs
+                date={this.props.date}
+                store={this.props.store}
+                colors={this.props.colors}
+                currentUser={this.props.currentUser}
+                journals={this.props.journals}
+                tabContainer={this.props.tabContainer}
+                shownJournalValue={this.props.shownJournalValue}
+                deleteJournal={this.props.deleteJournal}
+                journalEditOrStatsLink={this.props.journalEditOrStatsLink}
+              />
+            </Grid>
+          );
+          //if no journals written, renders nothing
+        } else {
+          dateMessage = `No Journals written on ${this.props.tabContainer[
+            this.props.shownJournalValue
+          ].date}`;
+          return (
+            <Grid item xs={5} className={classes.typography}>
+              <Typography
+                variant="headline"
+                component="h3"
+                style={{
+                  textAlign: "center",
+                  color: this.props.colors.headline
+                }}
+              >
+                {dateMessage}
+              </Typography>
+            </Grid>
+          );
+        }
       }
       //if no user is logged in, renders the welcome/explanation text
       //this was a ton of text, so I exported it to a helper function
@@ -88,16 +115,19 @@ class TabCreator extends React.Component {
   //toggles message based on path ending. normal, journal edit, or journal stats.
   renderMessage = () => {
     let message = "Write a new journal";
-
+    let urlPath = window.location.href.split("/")[
+      window.location.href.split("/").length - 1
+    ];
     if (this.props.currentUser) {
-      let path = window.location.href.split("/")[
-        window.location.href.split("/").length - 1
-      ];
       let date = returnParsedDate(this.props.journals, this.props.journalId);
-      if (path === "stats") {
-        message = `Journal Stats from ${date}`;
-      } else if (path === "edit") {
-        message = `Edit Journal from ${date}`;
+      if (this.props.isHelpPage) {
+        message = "New Journal";
+      } else {
+        if (urlPath === "stats") {
+          message = `Journal Stats ${date}`;
+        } else if (urlPath === "edit") {
+          message = `Edit Journal ${date}`;
+        }
       }
     }
     return (
@@ -118,7 +148,7 @@ class TabCreator extends React.Component {
   //alters content based on route path, between new journal, journal stats, and journal edit.
   renderJournalTextArea = classes => {
     let size = 7;
-    if (!this.props.currentUser) {
+    if (this.props.isHelpPage || !this.props.currentUser) {
       size = 6;
     }
     return (
@@ -131,6 +161,26 @@ class TabCreator extends React.Component {
             return (
               <JournalTextArea
                 store={this.props.store}
+                openLoginDrawer={this.props.openLoginDrawer}
+                setTextAreaAndCallAFunction={
+                  this.props.setTextAreaAndCallAFunction
+                }
+                textTitle={this.props.textTitle}
+                textArea={this.props.textArea}
+                colors={this.props.colors}
+              />
+            );
+          }}
+        />
+        <Route
+          exact
+          path="/journaler/help"
+          render={() => {
+            return (
+              <JournalTextArea
+                store={this.props.store}
+                currentUser={this.props.currentUser}
+                fetchJournals={this.props.fetchJournals}
                 openLoginDrawer={this.props.openLoginDrawer}
                 setTextAreaAndCallAFunction={
                   this.props.setTextAreaAndCallAFunction
@@ -198,6 +248,7 @@ class TabCreator extends React.Component {
 
   render() {
     const { classes } = this.props;
+
     return (
       <Grid container wrap="nowrap" spacing={0}>
         {this.renderJournalsOrBlank(classes)}

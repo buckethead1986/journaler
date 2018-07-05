@@ -7,7 +7,7 @@ export function renderButton(text, callbackFunction, classes, colors) {
       variant="contained"
       style={{
         color: colors.buttonText || "default",
-        backgroundColor: colors.buttonBackground || "default"
+        backgroundColor: colors.buttonColor || "default"
       }}
       className={classes.loginButton}
       onClick={() => callbackFunction()}

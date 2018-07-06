@@ -1,6 +1,5 @@
 Check out the app here: https://journaler.herokuapp.com
 
-
 ## Overview
 
 Journaler is a front-end React application to give people a simple way to keep a journal. Past journals are accessible and searchable (by date, keywords, and, soon, themes). Users can set a daily word count goal, and quickly identify how often they write a journal, and hit their goals.

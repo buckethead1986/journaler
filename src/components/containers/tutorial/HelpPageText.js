@@ -56,11 +56,24 @@ class HelpPage extends React.Component {
 
   //updates state for deeply nested attributes
   handleChange = name => event => {
+    let value = event.target.value;
+    if (name === "wordCountGoal") {
+      value = this.checkForNegativesAndNaN(name, parseInt(value));
+    }
+
     let newColorsState = Object.assign({}, this.state.colors);
-    newColorsState[`${name}`] = event.target.value;
+    newColorsState[`${name}`] = value;
     this.setState({
       colors: newColorsState
     });
+  };
+
+  checkForNegativesAndNaN = (name, value) => {
+    if (value < 0 || isNaN(value)) {
+      return this.state.colors.wordCountGoal;
+    } else {
+      return value;
+    }
   };
 
   splitAroundUppercase = title => {
@@ -162,6 +175,8 @@ class HelpPage extends React.Component {
                   color: colors.buttonText,
                   backgroundColor: colors.buttonColor
                 }}
+                disableRipple={true}
+                disableFocusRipple={true}
                 type="submit"
               >
                 Submit Settings
@@ -170,15 +185,17 @@ class HelpPage extends React.Component {
             <Grid item xs={6}>
               <Button
                 variant="raised"
+                style={{
+                  color: colors.buttonText,
+                  backgroundColor: colors.buttonColor
+                }}
+                disableRipple={true}
+                disableFocusRipple={true}
                 onClick={e =>
                   this.props.changeColorSettings(
                     e,
                     this.props.store.getState().defaultSettings
                   )}
-                style={{
-                  color: colors.buttonText,
-                  backgroundColor: colors.buttonColor
-                }}
               >
                 Reset to default
               </Button>

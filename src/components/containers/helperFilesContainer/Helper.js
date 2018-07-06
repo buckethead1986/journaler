@@ -112,7 +112,6 @@ export function daysInEachMonth(month, year) {
 }
 //checks that the color input is a valid hex code, rgb, or normal color word.  If not, resets to previous color.
 export function checkColorCodes(colorsObject, colors) {
-  console.log(colorsObject, colors);
   let checkedColorCodes = Object.assign({}, colorsObject);
 
   for (let item in colorsObject) {

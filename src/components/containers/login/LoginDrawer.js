@@ -55,6 +55,18 @@ class TemporaryDrawer extends React.Component {
     }
   }
 
+  //switches login and signup forms, and clears username/password state
+  toggleSignup = () => {
+    this.setState(prevState => {
+      return {
+        signup: !prevState.signup,
+        username: "",
+        password: "",
+        loginError: false
+      };
+    });
+  };
+
   handleChange = name => event => {
     this.setState({
       [name]: event.target.value
@@ -268,18 +280,6 @@ class TemporaryDrawer extends React.Component {
       );
     }
     return loginOrSignupForm;
-  };
-
-  //switches login and signup forms, and clears username/password state
-  toggleSignup = () => {
-    this.setState(prevState => {
-      return {
-        signup: !prevState.signup,
-        username: "",
-        password: "",
-        loginError: false
-      };
-    });
   };
 
   render() {

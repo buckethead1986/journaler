@@ -59,7 +59,6 @@ class App extends Component {
       () => {
         renderTabsHelper(
           this.state.journals,
-          this.props.store,
           this.props.store.getState().date,
           this.setTabAndTabContainerState,
           this.state.colors
@@ -175,7 +174,6 @@ class App extends Component {
                 () => {
                   renderTabsHelper(
                     this.state.journals,
-                    this.props.store,
                     this.props.store.getState().date,
                     this.setTabAndTabContainerState,
                     this.state.colors
@@ -235,7 +233,6 @@ class App extends Component {
       () => {
         renderTabsHelper(
           this.state.journals,
-          this.props.store,
           this.props.store.getState().date,
           this.setTabAndTabContainerState,
           this.state.colors

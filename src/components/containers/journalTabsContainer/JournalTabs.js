@@ -2,10 +2,6 @@ import React from "react";
 import JournalPaper from "./JournalPaper";
 
 const JournalTabs = props => {
-  console.log(
-    props.tabContainer[props.shownJournalValue],
-    props.shownJournalValue
-  );
   let mappedJournals = props.tabContainer[
     props.shownJournalValue
   ].journal.map(journal => {

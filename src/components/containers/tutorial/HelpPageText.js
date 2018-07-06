@@ -8,11 +8,11 @@ import {
   Button,
   InputAdornment
 } from "@material-ui/core";
+import Edit from "@material-ui/icons/Edit";
+import Clear from "@material-ui/icons/Clear";
 import RadioButtonUnchecked from "@material-ui/icons/RadioButtonUnchecked";
 import CheckCircle from "@material-ui/icons/CheckCircle";
-import Clear from "@material-ui/icons/Clear";
 import ZoomOutMap from "@material-ui/icons/ZoomOutMap";
-import Edit from "@material-ui/icons/Edit";
 import Favorite from "@material-ui/icons/Favorite";
 
 const styles = theme => ({
@@ -54,7 +54,9 @@ const styles = theme => ({
 
 class HelpPage extends React.Component {
   state = {
-    colors: {}
+    colors: {},
+    wordCountGoal:
+      this.props.store.getState().defaultSettings.wordCountGoal || ""
   };
 
   componentWillReceiveProps(nextProps) {
@@ -140,7 +142,8 @@ class HelpPage extends React.Component {
           className={classes.inputField}
           style={{ height: "25px" }}
           id="word-count-goal"
-          placeholder="Word Count Goal"
+          placeholder={`Current goal: ${this.props.store.getState()
+            .defaultSettings.wordCountGoal}`}
           onChange={this.handleChange("wordCountGoal")}
         />
       </Grid>

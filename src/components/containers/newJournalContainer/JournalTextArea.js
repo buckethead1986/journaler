@@ -2,8 +2,6 @@ import React from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
-// import MenuItem from "@material-ui/core/MenuItem";
-// import TextField from "@material-ui/core/TextField";
 import Input from "@material-ui/core/Input";
 import Button from "@material-ui/core/Button";
 import { renderButton } from "../CreateButtonHelper";
@@ -40,24 +38,31 @@ class TextFields extends React.Component {
     this.state = {
       textTitle: props.textTitle || "",
       textArea: props.textArea || "",
-      hasContent: props.edit || false,
+      hasContent: true,
       emptySubmit: false
     };
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.textArea !== this.props.textArea) {
+    if (nextProps.textArea !== "") {
       this.setState({
         textTitle: nextProps.textTitle,
         textArea: nextProps.textArea,
         hasContent: true
       });
+    } else {
+      this.setState({
+        textTitle: nextProps.textTitle,
+        textArea: nextProps.textArea,
+        hasContent: false
+      });
     }
   }
 
-  //Posts Journal entry to API.  If the title is blank, changes it to 'Untitled', then calls fetchJournals to fetch updated journals list for this user.
-  //emptySubmit is a check for content not to be blank.  If a submit is attempted with no content, it fails and the submit button is modified.
-  postJournalEntry = (user_id, title, content) => {
+  //Combo post/edit API request for Journal entries.  The fetch url, method type, and callback function are slightly different between the two.
+  //If the title is blank, changes it to 'Untitled', then calls fetchJournals to fetch updated journals list for this user.
+  //'emptySubmit' is a check for content not to be blank.  If a submit is attempted with no content, it fails and the submit button is modified.
+  postOrEditJournalEntry = (user_id, title, content, method, id = "") => {
     if (this.state.hasContent) {
       const headers = {
         Accept: "application/json",
@@ -73,8 +78,8 @@ class TextFields extends React.Component {
           journal: { user_id, title, content }
         };
       }
-      fetch(`${this.props.store.getState().url}/journals`, {
-        method: "POST",
+      fetch(`${this.props.store.getState().url}/journals${id}`, {
+        method: method,
         headers: headers,
         body: JSON.stringify(body)
       })
@@ -85,54 +90,11 @@ class TextFields extends React.Component {
             textArea: ""
           })
         )
-        .then(() => this.props.fetchJournals());
-    } else {
-      this.setState({
-        emptySubmit: true
-      });
-    }
-  };
-
-  //this can be refactored into postJournalEntry
-  editJournalEntry = (user_id, title, content, id) => {
-    // console.log(
-    //   "edit journal entry",
-    //   user_id,
-    //   title,
-    //   content,
-    //   this.props.journalId
-    // );
-    if (this.state.hasContent) {
-      const headers = {
-        Accept: "application/json",
-        "Content-Type": "application/json"
-      };
-      let body;
-      if (this.state.textTitle === "") {
-        body = {
-          journal: { user_id, title: "Untitled", content, id }
-        };
-      } else {
-        body = {
-          journal: { user_id, title, content, id }
-        };
-      }
-      fetch(
-        `${this.props.store.getState().url}/journals/${this.props.journalId}`,
-        {
-          method: "PATCH",
-          headers: headers,
-          body: JSON.stringify(body)
-        }
-      )
-        .then(res => res.json())
-        .then(() =>
-          this.setState({
-            textTitle: "",
-            textArea: ""
-          })
-        )
-        .then(() => this.props.fetchJournals(this.props.shownJournalValue));
+        .then(() => {
+          method === "POST"
+            ? this.props.fetchJournals()
+            : this.props.fetchJournals(this.props.shownJournalValue);
+        });
     } else {
       this.setState({
         emptySubmit: true
@@ -179,10 +141,11 @@ class TextFields extends React.Component {
           color="secondary"
           className={this.props.classes.submitButton}
           onClick={() =>
-            this.postJournalEntry(
+            this.postOrEditJournalEntry(
               this.props.currentUser.id,
               this.state.textTitle,
-              this.state.textArea
+              this.state.textArea,
+              "POST"
             )}
         >
           Content required!
@@ -197,16 +160,18 @@ class TextFields extends React.Component {
           className={this.props.classes.submitButton}
           onClick={() => {
             this.props.edit
-              ? this.editJournalEntry(
+              ? this.postOrEditJournalEntry(
                   this.props.currentUser.id,
                   this.state.textTitle,
                   this.state.textArea,
-                  this.props.journalId
+                  "PATCH",
+                  `/${this.props.journalId}`
                 )
-              : this.postJournalEntry(
+              : this.postOrEditJournalEntry(
                   this.props.currentUser.id,
                   this.state.textTitle,
-                  this.state.textArea
+                  this.state.textArea,
+                  "POST"
                 );
           }}
         >

@@ -11,47 +11,9 @@ let journalIndex;
 let valueCounter;
 
 const styles = {
-  // root: {
-  //   flexGrow: 1,
-  //   backgroundColor: theme.palette.background.paper
-  // },
-  // tabRoot: {
-  //   textTransform: "initial",
-  //   minWidth: 50,
-  //   // fontWeight: theme.typography.fontWeightRegular,
-  //   // marginRight: theme.spacing.unit * 4
-  //   "&$tabSelected": {
-  //     color: "#1890ff",
-  //     fontWeight: theme.typography.fontWeightMedium
-  //   },
-  //   "&:focus": {
-  //     color: "#40a9ff"
-  //   }
-  // },
-  // tabsRoot: {
-  //   // borderTop: "1px solid #e8e8e8",
-  //   borderBottom: "1px solid #e8e8e8"
-  // },
-  tabsIndicator: {
-    // backgroundColor: "#1890ff"
-  },
-  tabSelected: {},
-  // root: {
-  //   flexGrow: 1,
-  //   backgroundColor: theme.palette.background.paper
-  // },
-  // tabsRoot: {
-  //   borderBottom: '1px solid #e8e8e8',
-  // },
-  // tabsIndicator: {
-  //   backgroundColor: "#1890ff"
-  // },
   tabRoot: {
     textTransform: "initial",
     minWidth: 50,
-
-    // fontWeight: theme.typography.fontWeightRegular,
-    // marginRight: theme.spacing.unit * 4,
     fontFamily: [
       "-apple-system",
       "BlinkMacSystemFont",
@@ -63,27 +25,16 @@ const styles = {
       '"Apple Color Emoji"',
       '"Segoe UI Emoji"',
       '"Segoe UI Symbol"'
-    ].join(","),
-    // "&:hover": {
-    //   color: "#40a9ff",
-    //   opacity: 1
-    // },
-    "&$tabSelected": {
-      // color: "#1890ff"
-      // fontWeight: theme.typography.fontWeightMedium
-    },
-    "&:focus": {
-      // color: "#40a9ff"
-    }
+    ].join(",")
   }
 };
 
-//renderTabsHelper accepts data and updates state with 'tabs' and 'tabContainer'. tabs is the container for the
-//scrollable tab component in the appbar, and renders the past 30 days from whatever start date is picked (altering the icon based on content written on each day).
+//renderTabsHelper accepts data and updates state with 'tabs' and 'tabContainer'. tabs is the container for the scrollable tab
+//component in the appbar, and renders the past 30 days from whatever start date is picked (altering the icon based on if content was
+//written that day, and if the total words written that day exceeds the word count goal.
 //tabContainer is a corresponding array of all journal data from those 30 days.
 export function renderTabsHelper(
   journals,
-  store,
   date,
   setTabAndTabContainerState,
   colors
@@ -95,81 +46,79 @@ export function renderTabsHelper(
 
   let year = date.getFullYear();
   let month = date.getMonth();
-  let previousYear = year;
+  let previousYear = year; //for january -> december transtitions
   let previousMonth = month - 1;
-  let previousMonthLength = daysInEachMonth(
-    date.getMonth() - 1,
-    date.getFullYear()
-  );
+  let previousMonthLength = daysInEachMonth(date.getMonth() - 1, year);
+
   //For January to December transition
   if (month === 0) {
     previousYear--;
     previousMonth = 11;
     previousMonthLength = 31;
   }
-  // let newDate = new Date();
-  // console.log(newDate.getMonth());
-  // newDate.setMonth(2);
-  // console.log(newDate.getMonth());
-  // date.setMonth(5);
-  // console.log(journals, month, date);
-  //
-  // //test data
-  // year = 2018;
-  // month = 5;
-  // previousYear = 2017;
-  // previousMonth = 4;
-  // previousMonthLength = 31;
 
-  //shift journalIndex to chosen startDate. This is code for a stetch goal, currently there isnt a way to shift the tab start date.
-  if (journalIndex >= 0) {
-    shiftJournalIndex(year, month, date, journals);
-  }
+  shiftJournalIndexBasedOnStartDate(year, month, date, journals);
 
-  //adding journal entries for this month from todays date, counting backwards
   for (let i = date.getDate(); i > 0; i--) {
-    renderTabsDateCheck(i, year, month, journals, colors);
+    {
+      journals[journalIndex]
+        ? renderTabsDateCheck(i, year, month, journals, colors)
+        : renderBlankTabView(i, month, colors);
+    }
   }
-  let count = 30 - tabs.length;
-  //'tabs' length is all the days of the current month, now adding journal entries in the previous month, up to 30 total
+
+  let count = 30 - tabs.length; //to keep 'tabs' length at 30, regardless of start date
   for (let i = previousMonthLength, j = 0; j < count; i--, j++) {
-    renderTabsDateCheck(i, previousYear, previousMonth, journals, colors);
+    {
+      journals[journalIndex]
+        ? renderTabsDateCheck(i, previousYear, previousMonth, journals, colors)
+        : renderBlankTabView(i, previousMonth, colors);
+    }
   }
   setTabAndTabContainerState(tabs, tabContainer, tabs.length - 1);
 }
 
-//shifts journalIndex to the final entry for chosen year/month/day
-const shiftJournalIndex = (year, month, date, journals) => {
-  //year
-  while (
+//shifts through journals by year, month, and then if the latest journal was written in
+const shiftJournalIndexBasedOnStartDate = (year, month, date, journals) => {
+  shiftJournalIndexByCreatedAtDate("year", year, 0, journals);
+  shiftJournalIndexByCreatedAtDate("month", month + 1, 1, journals);
+  if (
+    journals[journalIndex] &&
     parseInt(
-      journals[journalIndex].created_at.split("T")[0].split("-")[0],
+      journals[journalIndex].created_at.split("T")[0].split("-")[1],
       10
-    ) !== year &&
-    journalIndex > 0
+    ) ===
+      month + 1
   ) {
-    journalIndex--;
+    shiftJournalIndexByCreatedAtDate("date", date.getDate(), 2, journals);
   }
-  //month
-  while (
-    //This breaks if all journals are in months previous to the one. This works if the month is july, and its counting down from dec, but not dec => july
+};
+
+//template for shifting by year, month, or day
+const shiftJournalIndexByCreatedAtDate = (
+  type,
+  comparisonValue,
+  createdAtSplitValue,
+  journals
+) => {
+  if (
+    journals[journalIndex] &&
     parseInt(
-      journals[journalIndex].created_at.split("T")[0].split("-")[1] - 1,
+      journals[journalIndex].created_at.split("T")[0].split("-")[
+        createdAtSplitValue
+      ],
       10
-    ) !== month &&
-    journalIndex > 0
+    ) > comparisonValue
   ) {
     journalIndex--;
-  }
-  //days in the future of chosen date
-  while (
-    parseInt(
-      journals[journalIndex].created_at.split("T")[0].split("-")[2],
-      10
-    ) > date.getDate() &&
-    journalIndex > 0
-  ) {
-    journalIndex--;
+    if (journals[journalIndex]) {
+      shiftJournalIndexByCreatedAtDate(
+        type,
+        comparisonValue,
+        createdAtSplitValue,
+        journals
+      );
+    }
   }
 };
 
@@ -192,6 +141,18 @@ const renderTabsDateCheck = (i, year, month, journals, colors) => {
 const renderJournalTabView = (i, month, journals, colors) => {
   let array = [];
   checkForAdditionalTabContainerData(i, array, month, journals, colors);
+};
+
+const addTabtoTabs = (i, month, colors, IconTagName) => {
+  console.log(tabs);
+  tabs.unshift(
+    <Tab
+      key={`${getMonthWord(month)} ${i}`}
+      style={styles.tabRoot}
+      label={`${getMonthWord(month)} ${i}`}
+      icon={<IconTagName style={{ color: colors.tabColor }} />}
+    />
+  );
 };
 
 //constructs an array of all journals for a given day, then assigns it to tabContainer[valueCounter]["journal"]. If there are no journals for a day,
@@ -228,14 +189,15 @@ const checkForAdditionalTabContainerData = (
         IconTagName = Favorite;
       }
     }
-    tabs.unshift(
-      <Tab
-        key={`${getMonthWord(month)} ${i}`}
-        style={styles.tabRoot}
-        label={`${getMonthWord(month)} ${i}`}
-        icon={<IconTagName style={{ color: colors.tabColor }} />}
-      />
-    );
+    addTabtoTabs(i, month, colors, IconTagName);
+    // tabs.unshift(
+    //   <Tab
+    //     key={`${getMonthWord(month)} ${i}`}
+    //     style={styles.tabRoot}
+    //     label={`${getMonthWord(month)} ${i}`}
+    //     icon={<IconTagName style={{ color: colors.tabColor }} />}
+    //   />
+    // );
     tabContainer[valueCounter] = {};
     tabContainer[valueCounter]["journal"] = array;
     tabContainer[valueCounter]["date"] = `${getFullMonthWord(month)} ${i}`;
@@ -245,14 +207,15 @@ const checkForAdditionalTabContainerData = (
 
 //No journals for this day, no 'journal' key gets created for tabContainer[valueCounter]
 const renderBlankTabView = (i, month, colors) => {
-  tabs.unshift(
-    <Tab
-      key={`${getMonthWord(month)} ${i}`}
-      style={styles.tabRoot}
-      label={`${getMonthWord(month)} ${i}`}
-      icon={<RadioButtonUnchecked style={{ color: colors.tabColor }} />}
-    />
-  );
+  addTabtoTabs(i, month, colors, RadioButtonUnchecked);
+  // tabs.unshift(
+  //   <Tab
+  //     key={`${getMonthWord(month)} ${i}`}
+  //     style={styles.tabRoot}
+  //     label={`${getMonthWord(month)} ${i}`}
+  //     icon={<RadioButtonUnchecked style={{ color: colors.tabColor }} />}
+  //   />
+  // );
   tabContainer[valueCounter] = {};
   tabContainer[valueCounter]["date"] = `${getFullMonthWord(month)} ${i}`;
 

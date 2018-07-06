@@ -3,8 +3,8 @@ import { Route, withRouter } from "react-router-dom";
 import AppBar from "./components/containers/appbarContainer/AppBar";
 import LoginDrawer from "./components/containers/login/LoginDrawer";
 import TabCreator from "./components/containers/journalTabsContainer/TabCreator";
-import { renderTabsHelper } from "./components/containers/RenderTabsHelper";
-import { checkColorCodes } from "./components/containers/Helper";
+import { renderTabsHelper } from "./components/containers/helperFilesContainer/RenderTabsHelper";
+import { checkColorCodes } from "./components/containers/helperFilesContainer/Helper";
 
 class App extends Component {
   state = {
@@ -101,6 +101,27 @@ class App extends Component {
     });
   };
 
+  //self explanatory. logs out a user, resets or removes state.
+  logoutLink = () => {
+    this.setState(
+      {
+        loginDrawerOpen: false,
+        currentUser: [],
+        users: [],
+        textTitle: "",
+        textArea: "",
+        isHelpPage: false,
+        colors: this.props.store.getState().defaultSettings
+      },
+      () => {
+        this.props.store.dispatch({ type: "RESET_COLORS" });
+        localStorage.removeItem("token");
+        this.props.history.push("/journaler");
+      }
+    );
+  };
+
+  //maintains and updates the journal textArea state when navigating links/loggin in, etc.
   setTextAreaAndCallAFunction = (
     textTitle,
     textArea,
@@ -248,25 +269,6 @@ class App extends Component {
         ? 1
         : b.created_at > a.created_at ? -1 : 0;
     });
-  };
-
-  //self explanatory. logs out a user, resets or removes state.
-  logoutLink = () => {
-    this.setState(
-      {
-        loginDrawerOpen: false,
-        currentUser: [],
-        users: [],
-        textTitle: "",
-        textArea: "",
-        colors: this.props.store.getState().defaultSettings
-      },
-      () => {
-        this.props.store.dispatch({ type: "RESET_COLORS" });
-        localStorage.removeItem("token");
-        this.props.history.push("/journaler");
-      }
-    );
   };
 
   //toggles the login drawer open and closed.  Begins on signup section if its opened from the 'signup to save journal' button.

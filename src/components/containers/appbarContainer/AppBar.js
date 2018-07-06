@@ -19,16 +19,12 @@ const styles = theme => ({
     marginRight: theme.spacing.unit * 2,
     flex: 1
   },
-  flex: {
-    flex: 1
-  },
   tabsRoot: {
     borderBottom: "1px solid #e8e8e8"
   },
   tabsIndicator: {
     backgroundColor: "#1890ff"
-  },
-  tabSelected: {}
+  }
 });
 
 class SimpleAppBar extends React.Component {

@@ -8,9 +8,6 @@ import Drawer from "@material-ui/core/Drawer";
 import Button from "@material-ui/core/Button";
 
 const styles = theme => ({
-  list: {
-    width: 250
-  },
   button: {
     marginTop: theme.spacing.unit * 3
   },

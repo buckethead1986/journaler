@@ -4,15 +4,12 @@ import { withStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 import Input from "@material-ui/core/Input";
 import Button from "@material-ui/core/Button";
-import { renderButton } from "../CreateButtonHelper";
 
 const styles = theme => ({
   submitButton: {
-    margin: theme.spacing.unit,
-    marginLeft: theme.spacing.unit * 2,
-    flex: 1,
-    marginRight: theme.spacing.unit * 2,
-    marginBottom: theme.spacing.unit * 2
+    margin: theme.spacing.unit * 2,
+    marginTop: theme.spacing.unit,
+    flex: 1
   },
   text: theme.mixins.gutters({
     paddingTop: 16,

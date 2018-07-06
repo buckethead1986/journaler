@@ -6,8 +6,6 @@ import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import IconButton from "@material-ui/core/IconButton";
 import ZoomOutMap from "@material-ui/icons/ZoomOutMap";
-import StarBorder from "@material-ui/icons/StarBorder";
-import Star from "@material-ui/icons/Star";
 import Clear from "@material-ui/icons/Clear";
 import Edit from "@material-ui/icons/Edit";
 import ReactTooltip from "react-tooltip";
@@ -28,7 +26,6 @@ const styles = theme => ({
 class PaperSheet extends React.Component {
   state = {
     isExpanded: false
-    // isFavorite: false
   };
 
   toggleExpanded = () => {
@@ -67,16 +64,6 @@ class PaperSheet extends React.Component {
   callDelete = () => {
     this.props.deleteJournal(this.props.id, this.props.shownJournalValue);
   };
-
-  // callFavorite = () => {
-  //   this.setState(prevState => {
-  //     return { isFavorite: !prevState.isFavorite };
-  //   });
-  // };
-
-  // callJournalStatsLink = () => {
-  //   this.props.journalEditOrStatsLink(this.props.id, "stats");
-  // };
 
   callJournalEditLink = () => {
     this.props.journalEditOrStatsLink(this.props.id, "edit");

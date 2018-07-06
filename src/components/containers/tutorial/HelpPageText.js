@@ -27,37 +27,24 @@ const styles = theme => ({
     marginTop: theme.spacing.unit * 3,
     marginBottom: theme.spacing.unit
   },
-  // list: {
-  //   width: 250
-  // },
-  // button: {
-  //   marginTop: theme.spacing.unit * 3
-  // },
-  // textField: {
-  //   marginLeft: theme.spacing.unit * 3,
-  //   marginRight: theme.spacing.unit * 3,
-  //   width: 200
-  // },
-  // typography: {
-  //   marginTop: theme.spacing.unit * 3
-  // },
   inputField: {
     marginRight: 20,
     marginBottom: 20,
     marginTop: 20,
     width: 150
   }
-  // grid: {
-  //   marginBottom: theme.spacing.unit * 3
-  // }
 });
 
 class HelpPage extends React.Component {
   state = {
-    colors: {},
-    wordCountGoal:
-      this.props.store.getState().defaultSettings.wordCountGoal || ""
+    colors: {}
   };
+
+  componentDidMount() {
+    this.setState({
+      colors: this.props.colors
+    });
+  }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.colors !== this.state.colors) {
@@ -142,8 +129,7 @@ class HelpPage extends React.Component {
           className={classes.inputField}
           style={{ height: "25px" }}
           id="word-count-goal"
-          placeholder={`Current goal: ${this.props.store.getState()
-            .defaultSettings.wordCountGoal}`}
+          placeholder={`Current goal: ${this.state.colors.wordCountGoal}`}
           onChange={this.handleChange("wordCountGoal")}
         />
       </Grid>

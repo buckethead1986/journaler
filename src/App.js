@@ -286,7 +286,7 @@ class App extends Component {
       <div
         style={{
           backgroundColor: this.state.colors.background,
-          height: "100vh"
+          height: this.state.currentUser.length === 0 ? "100vh" : "100%"
         }}
       >
         <AppBar

@@ -1,6 +1,5 @@
 export default function reducer(
   state = {
-    // url: "http://localhost:3001/api/v1",
     url: "https://journaler-api.herokuapp.com/api/v1",
     date: "",
     defaultSettings: {

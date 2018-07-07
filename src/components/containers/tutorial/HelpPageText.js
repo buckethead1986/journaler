@@ -58,7 +58,7 @@ class HelpPage extends React.Component {
   handleChange = name => event => {
     let value = event.target.value;
     if (name === "wordCountGoal") {
-      value = this.checkForNegativesAndNaN(name, parseInt(value));
+      value = this.checkForNegativesAndNaN(name, parseInt(value, 10));
     }
 
     let newColorsState = Object.assign({}, this.state.colors);

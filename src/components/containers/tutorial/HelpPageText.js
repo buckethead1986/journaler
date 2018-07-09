@@ -6,7 +6,9 @@ import {
   Grid,
   TextField,
   Button,
-  InputAdornment
+  Checkbox,
+  InputAdornment,
+  FormControlLabel
 } from "@material-ui/core";
 import Edit from "@material-ui/icons/Edit";
 import Clear from "@material-ui/icons/Clear";
@@ -29,27 +31,37 @@ const styles = theme => ({
   },
   inputField: {
     marginRight: 20,
-    marginBottom: 20,
-    marginTop: 20,
+    marginBottom: 5,
+    marginTop: 5,
     width: 150
-  }
+  },
+  checkbox: {
+    color: "default",
+    "&$checked": {
+      color: "#3F51B5"
+    }
+  },
+  checked: {}
 });
 
 class HelpPage extends React.Component {
   state = {
-    colors: {}
+    colors: {},
+    useDummyData: false
   };
 
   componentDidMount() {
     this.setState({
-      colors: this.props.colors
+      colors: this.props.colors,
+      useDummyData: this.props.colors.useDummyData
     });
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.colors !== this.state.colors) {
       this.setState({
-        colors: nextProps.colors
+        colors: nextProps.colors,
+        useDummyData: nextProps.colors.useDummyData
       });
     }
   }
@@ -65,6 +77,15 @@ class HelpPage extends React.Component {
     newColorsState[`${name}`] = value;
     this.setState({
       colors: newColorsState
+    });
+  };
+
+  toggleDummyDataCheckbox = () => {
+    let newColorsState = Object.assign({}, this.state.colors);
+    newColorsState["useDummyData"] = !newColorsState["useDummyData"];
+    this.setState({
+      colors: newColorsState,
+      useDummyData: newColorsState["useDummyData"]
     });
   };
 
@@ -167,6 +188,22 @@ class HelpPage extends React.Component {
           {this.renderTabColorChangeInput(classes)}
           {this.renderColorChangeInput(classes, "buttonColor")}
           {this.renderColorChangeInput(classes, "background")}
+          <Grid>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={this.state.useDummyData}
+                  onChange={() => this.toggleDummyDataCheckbox()}
+                  value="useDummyData"
+                  classes={{
+                    root: classes.checkbox,
+                    checked: classes.checked
+                  }}
+                />
+              }
+              label="Include pre-made journals"
+            />
+          </Grid>
           <Grid container spacing={0}>
             <Grid item xs={6}>
               <Button
@@ -219,9 +256,9 @@ class HelpPage extends React.Component {
         <Paper className={classes.root} elevation={4}>
           <Typography variant="headline">What do I do?</Typography>
           <Typography variant="subheading">
-            Write whatever you want in the space to the right. Titles aren't
-            required, and when you're satisfied, hit 'Submit' at the bottom to
-            save your work.
+            Write whatever you want in the space to the right. When you're
+            satisfied, hit 'Submit' at the bottom to save your work. Click on a
+            day in the scrollbar above to see Journals from that day.
           </Typography>
           <Typography variant="subheading" />
         </Paper>

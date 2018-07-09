@@ -45,9 +45,9 @@ const LoginText = props => {
         <Typography variant="headline">Why?</Typography>
         <Typography variant="subheading">
           Writing is valuable, timeless, and therapeutic. I'm a firm believer in
-          the power of writing, and I try to start every day by writing at least
-          750 words, and built a platform to make it simple for other people to
-          do the same. On Journaler, you can:
+          the power of writing, I try to start every day by writing at least 750
+          words, and built a platform to make it simple for other people to do
+          the same. On Journaler, you can:
         </Typography>
         <ul>
           <li>
@@ -77,6 +77,15 @@ const LoginText = props => {
             </Typography>
           </li>
         </ul>
+      </Paper>
+      <Paper className={props.classes.root} elevation={4}>
+        <Typography variant="headline">New Users</Typography>
+        <Typography variant="subheading">
+          I recommend selecting 'Add pre-made journals' when signing up. That
+          will add some ready-made nonsense journals, showing how your journals
+          (and journals that reach your word count goal) appear in the top
+          scrollbar. Don't worry, these can be removed on the Help page.
+        </Typography>
       </Paper>
     </Grid>
   );

@@ -7,7 +7,8 @@ export default function reducer(
       buttonText: "white",
       buttonColor: "#3F51B5",
       background: "#DCDCDC",
-      wordCountGoal: 750
+      wordCountGoal: 750,
+      useDummyData: false
     }
   },
   action

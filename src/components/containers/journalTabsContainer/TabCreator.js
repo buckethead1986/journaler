@@ -52,7 +52,7 @@ class TabCreator extends React.Component {
         }
       }
     } else {
-      return <LoginText />;
+      return <LoginText colors={this.props.colors} />;
     }
   };
 
@@ -254,7 +254,15 @@ class TabCreator extends React.Component {
     const { classes } = this.props;
 
     return (
-      <Grid container wrap="nowrap" spacing={0}>
+      <Grid
+        container
+        wrap="nowrap"
+        spacing={0}
+        style={{
+          backgroundColor: this.props.colors.background,
+          height: "100%"
+        }}
+      >
         {this.renderJournalPaperArea(classes)}
         {this.renderJournalTextArea(classes)}
       </Grid>

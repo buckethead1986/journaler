@@ -69,7 +69,7 @@ class PaperSheet extends React.Component {
     this.props.journalEditOrStatsLink(this.props.id, "edit");
   };
 
-  createIconButtonsList = (isLargeJournal, help = false) => {
+  createIconButtonsList = isLargeJournal => {
     return (
       <Grid container>
         <Grid item style={{ flex: 8 }}>
@@ -77,9 +77,19 @@ class PaperSheet extends React.Component {
             {this.props.title}
           </Typography>
         </Grid>
-        {this.createIconButton("Delete", Clear, this.callDelete, help)}
-        {this.createIconButton("Edit", Edit, this.callJournalEditLink, help)}
-        {this.createExpandButton(isLargeJournal, help)}
+        {this.createIconButton(
+          "Delete",
+          Clear,
+          this.callDelete,
+          this.props.lorem
+        )}
+        {this.createIconButton(
+          "Edit",
+          Edit,
+          this.callJournalEditLink,
+          this.props.lorem
+        )}
+        {this.createExpandButton(isLargeJournal)}
         <ReactTooltip type="light" border={true} effect="solid" />
       </Grid>
     );
@@ -89,17 +99,26 @@ class PaperSheet extends React.Component {
   createIconButton = (type, icon, callbackFunction, help) => {
     let IconTagName = icon;
 
-    return (
-      <Grid item style={{ flex: 1 }}>
-        <IconButton
-          style={{ height: "32px", width: "32px" }}
-          onClick={() => callbackFunction()}
-          disabled={help ? true : false}
-        >
-          <IconTagName data-tip={type} />
-        </IconButton>
-      </Grid>
-    );
+    if (help) {
+      return (
+        <Grid item style={{ flex: 1 }}>
+          <IconButton style={{ height: "32px", width: "32px" }}>
+            <IconTagName data-tip={`${type} disabled for pre-made journals`} />
+          </IconButton>
+        </Grid>
+      );
+    } else {
+      return (
+        <Grid item style={{ flex: 1 }}>
+          <IconButton
+            style={{ height: "32px", width: "32px" }}
+            onClick={() => callbackFunction()}
+          >
+            <IconTagName data-tip={type} />
+          </IconButton>
+        </Grid>
+      );
+    }
   };
 
   //action button, toggles journalPaper size between truncated and full size. Renders a blank space on journals that are too short, to maintain spacing.
@@ -131,7 +150,7 @@ class PaperSheet extends React.Component {
   renderJournal = (isLargeJournal, journalContent) => {
     return (
       <div>
-        <Paper className={this.props.classes.root} elevation={2}>
+        <Paper className={this.props.classes.root} elevation={2} square={true}>
           {this.createIconButtonsList(isLargeJournal)}
           <Typography component="h3">
             {this.reformatJsonDataWithLineBreaks(journalContent)}

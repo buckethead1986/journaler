@@ -2,10 +2,12 @@ import React from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
 import Drawer from "@material-ui/core/Drawer";
 import Button from "@material-ui/core/Button";
+import Checkbox from "@material-ui/core/Checkbox";
 
 const styles = theme => ({
   button: {
@@ -18,7 +20,14 @@ const styles = theme => ({
   },
   typography: {
     marginTop: theme.spacing.unit * 3
-  }
+  },
+  checkbox: {
+    color: "default",
+    "&$checked": {
+      color: "#3F51B5"
+    }
+  },
+  checked: {}
 });
 
 class TemporaryDrawer extends React.Component {
@@ -27,7 +36,8 @@ class TemporaryDrawer extends React.Component {
     username: "",
     password: "",
     loginError: false,
-    signup: false
+    signup: false,
+    dummyDataCheckbox: false
   };
 
   //toggles logindrawer state open or closed.  If 'login' button was clicked, changes signup state so login form is rendered.  If 'signup' was clicked, rendered signup form first
@@ -64,6 +74,14 @@ class TemporaryDrawer extends React.Component {
     });
   };
 
+  toggleDummyDataCheckbox = () => {
+    this.setState(prevState => {
+      return {
+        dummyDataCheckbox: !prevState.dummyDataCheckbox
+      };
+    });
+  };
+
   handleChange = name => event => {
     this.setState({
       [name]: event.target.value
@@ -82,6 +100,8 @@ class TemporaryDrawer extends React.Component {
       "Content-Type": "application/json"
     };
     const settings = this.props.store.getState().defaultSettings;
+    settings.useDummyData = this.state.dummyDataCheckbox;
+
     const body = {
       username: this.state.username,
       password: this.state.password,
@@ -124,7 +144,7 @@ class TemporaryDrawer extends React.Component {
         if (!json.error) {
           localStorage.setItem("token", json.jwt);
           this.setState({ loginError: false }, () => {
-            this.props.fetchUsersAndCurrentUser();
+            this.props.fetchUsersAndCurrentUser(this.state.signup);
             this.props.openLoginDrawer();
           });
         } else {
@@ -155,8 +175,9 @@ class TemporaryDrawer extends React.Component {
             onSubmit={e => this.handleSignup(e)}
           >
             {this.renderLoginForm(classes, "signup")}
+
             <Button variant="raised" color="primary" type="submit">
-              Login
+              Signup
             </Button>
           </form>
 
@@ -273,6 +294,26 @@ class TemporaryDrawer extends React.Component {
               margin="normal"
             />
           </Grid>
+          {this.state.signup ? (
+            <Grid>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={this.state.dummyDataCheckbox}
+                    onChange={() => this.toggleDummyDataCheckbox()}
+                    value="dummyDataCheckbox"
+                    classes={{
+                      root: classes.checkbox,
+                      checked: classes.checked
+                    }}
+                  />
+                }
+                label="Add pre-made journals"
+              />
+            </Grid>
+          ) : (
+            ""
+          )}
         </Grid>
       );
     }

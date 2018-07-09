@@ -20,7 +20,8 @@ class App extends Component {
     textArea: "",
     journalId: "",
     colors: {},
-    isHelpPage: false
+    isHelpPage: false,
+    toggledJournalExpand: false
   };
 
   //redirects to '/journaler' unless localstorage token is authorized.
@@ -155,7 +156,9 @@ class App extends Component {
           }
         })
       }
-    );
+    ).then(() => {
+      this.fetchJournals(this.helpPageLink);
+    });
   };
 
   changeShownJournalValue = value => {
@@ -166,7 +169,7 @@ class App extends Component {
     this.setState({ tabs, tabContainer, shownJournalValue });
   };
 
-  fetchUsersAndCurrentUser = () => {
+  fetchUsersAndCurrentUser = (signup = false) => {
     fetch(`${this.props.store.getState().url}/users`)
       .then(res => res.json())
       .then(json =>
@@ -202,16 +205,23 @@ class App extends Component {
                 }
               );
             })
-            .then(() =>
-              this.props.history.push(
-                `/journaler/${this.state.currentUser.id}/new`
-              )
-            )
+            .then(() => {
+              if (signup) {
+                this.helpPageLink();
+              } else {
+                this.props.history.push(
+                  `/journaler/${this.state.currentUser.id}/new`
+                );
+              }
+            })
         )
       );
   };
 
-  fetchJournals = (shownJournalValue = 29) => {
+  fetchJournals = (
+    callbackFunction = this.newJournalLink,
+    shownJournalValue = 29
+  ) => {
     fetch(
       `${this.props.store.getState().url}/users/${this.state.currentUser.id}`
     )
@@ -223,7 +233,7 @@ class App extends Component {
         this.setTextAreaAndCallAFunction("", "", "", {});
         this.changeShownJournalValue(shownJournalValue);
       })
-      .then(() => this.newJournalLink());
+      .then(() => callbackFunction());
   };
 
   deleteJournal = (id, shownJournalValue) => {
@@ -283,12 +293,7 @@ class App extends Component {
 
   render() {
     return (
-      <div
-        style={{
-          backgroundColor: this.state.colors.background,
-          height: this.state.currentUser.length === 0 ? "100vh" : "100%"
-        }}
-      >
+      <div style={{ background: "grey", height: "100vh" }}>
         <AppBar
           store={this.props.store}
           currentUser={this.state.currentUser}
@@ -308,6 +313,7 @@ class App extends Component {
           openLoginDrawer={this.openLoginDrawer}
           fetchUsersAndCurrentUser={this.fetchUsersAndCurrentUser}
           fromHomePage={this.state.fromHomePage}
+          fetchJournals={this.fetchJournals}
         />
 
         <Route

@@ -3,7 +3,12 @@ import Tab from "@material-ui/core/Tab";
 import RadioButtonUnchecked from "@material-ui/icons/RadioButtonUnchecked";
 import CheckCircle from "@material-ui/icons/CheckCircle";
 import Favorite from "@material-ui/icons/Favorite";
-import { daysInEachMonth, getMonthWord, getFullMonthWord } from "./Helper";
+import {
+  seedJournals,
+  daysInEachMonth,
+  getMonthWord,
+  getFullMonthWord
+} from "./Helper";
 
 let tabs;
 let tabContainer;
@@ -42,6 +47,9 @@ export function renderTabsHelper(
   tabs = [];
   tabContainer = [];
   valueCounter = 29;
+  if (colors.useDummyData) {
+    journals = seedJournals(journals);
+  }
   journalIndex = journals.length - 1;
   let year = date.getFullYear();
   let month = date.getMonth();
@@ -148,7 +156,8 @@ const checkForAdditionalTabContainerData = (
   array.push([
     journals[journalIndex].id,
     journals[journalIndex].title,
-    journals[journalIndex].content
+    journals[journalIndex].content,
+    journals[journalIndex].lorem
   ]);
   journalIndex--;
 

@@ -11,7 +11,7 @@ const JournalTabs = props => {
         id={journal[0]}
         title={journal[1]}
         content={journal[2]}
-        date={journal[3]}
+        lorem={journal[3]}
         colors={props.colors}
         deleteJournal={props.deleteJournal}
         shownJournalValue={props.shownJournalValue}

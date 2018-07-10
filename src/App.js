@@ -233,7 +233,7 @@ class App extends Component {
         this.setTextAreaAndCallAFunction("", "", "", {});
         this.changeShownJournalValue(shownJournalValue);
       })
-      .then(() => callbackFunction());
+      .then(() => callbackFunction);
   };
 
   deleteJournal = (id, shownJournalValue) => {

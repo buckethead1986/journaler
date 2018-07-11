@@ -90,7 +90,7 @@ class TextFields extends React.Component {
         .then(() => {
           method === "POST"
             ? this.props.fetchJournals()
-            : this.props.fetchJournals(this.props.shownJournalValue);
+            : this.props.fetchJournals({}, this.props.shownJournalValue);
         });
     } else {
       this.setState({
